@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm") version "1.6.20"
     application
+    id("net.researchgate.release") version "2.8.1"
 }
 
 group = "pub.carkeys.logparse"
