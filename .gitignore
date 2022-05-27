@@ -1,2 +1,4 @@
 /build/
 /.gradle/
+/src/test/data/first.txt
+/src/test/data/second.txt

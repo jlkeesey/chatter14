@@ -8,6 +8,7 @@ import java.time.format.DateTimeFormatterBuilder
 import kotlin.io.path.forEachDirectoryEntry
 
 class LogParse(args: Array<String>) {
+    private var forceReplace = false
     private var shouldProcessAll = false
     private var shouldProcessEmotes = true
     private var participants = primaryParticipants
@@ -19,6 +20,7 @@ class LogParse(args: Array<String>) {
             when (arg) {
                 "-a" -> shouldProcessAll = true
                 "-e" -> shouldProcessEmotes = true
+                "-f" -> forceReplace = true
                 "-s" -> participants = secondaryParticipants
                 else -> {
                     if (arg[0] == '-') {
@@ -47,7 +49,7 @@ class LogParse(args: Array<String>) {
                     }
                 }
             } else {
-                current.toPath().parent.forEachDirectoryEntry(current.name) { p ->
+                current.parentFile.toPath().forEachDirectoryEntry(current.name) { p ->
                     val file = p.toFile()
                     if (file.isFile) {
                         processFile(file)
@@ -66,8 +68,9 @@ class LogParse(args: Array<String>) {
     }
 
     private fun writeFile(file: File, chatLog: List<ChatInfo>) {
-        if (file.exists()) {
-            throw IllegalStateException("Target file exists: '${file.canonicalPath}")
+        if (!forceReplace && file.exists()) {
+            System.err.println("Target file exists, skipping: '${file.canonicalPath}")
+            return
         }
         FileWriter(file).use { writer ->
             var nameMax = 0
@@ -91,13 +94,10 @@ class LogParse(args: Array<String>) {
         val chatLog = mutableListOf<ChatInfo>()
         JFile(file).forEach { lineNumber, line ->
             val parts = line.split("|")
-            if (parts.size >= 5) {
+            if (parts[0] == "00" && parts.size >= 5) {
                 val info = ChatInfo.create(
                     lineNumber = lineNumber, name = parts[3], type = parts[2], msg = parts[4], timestamp = parts[1]
                 )
-                if (info.type == ChatType.CHAT) {
-                    println("@@@")
-                }
                 if (codes.contains(info.type)) {
                     if (shouldProcessAll || participants.contains(info.name)) {
                         chatLog.add(info)

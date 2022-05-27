@@ -31,21 +31,24 @@ data class ChatInfo(
         fun create(
             lineNumber: Int, name: String, type: String, msg: String, timestamp: String
         ): ChatInfo {
+            val cleanName = cleanUpName(name)
             return ChatInfo(
                 lineNumber = lineNumber,
-                name = cleanUpName(name),
-                type = parseType(type),
+                name = cleanName,
+                type = parseType(type, cleanName),
                 msg = cleanUpMsg(msg),
                 timestamp = parseTimestamp(timestamp)
             )
         }
 
         private fun parseTimestamp(timestamp: String): OffsetDateTime {
-            val ts = OffsetDateTime.parse(timestamp, timestampParser)
-            return ts
+            return OffsetDateTime.parse(timestamp, timestampParser)
         }
 
-        private fun parseType(s: String): ChatType {
+        private fun parseType(s: String, name: String): ChatType {
+            if (name.isEmpty()) {
+                return ChatType.OTHER
+            }
             return when (s) {
                 CODE_CHAT1, CODE_CHAT2 -> ChatType.CHAT
                 CODE_EMOTE             -> ChatType.EMOTE
