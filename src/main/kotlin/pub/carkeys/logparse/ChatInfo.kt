@@ -1,3 +1,20 @@
+/*
+ * Copyright 2022 James Keesey
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 package pub.carkeys.logparse
 
 import java.time.OffsetDateTime
@@ -9,6 +26,10 @@ enum class ChatType {
     CHAT, EMOTE, OTHER
 }
 
+/**
+ * Contains the parsed information from a log. This only captures chat and emote types which the logs basically
+ * treat as the same.
+ */
 data class ChatInfo(
     val lineNumber: Int, val name: String, val type: ChatType, val msg: String, val timestamp: OffsetDateTime
 ) {
@@ -28,6 +49,9 @@ data class ChatInfo(
         }
 
     companion object {
+        /**
+         * This should be used to construct new ChatInfo objects as it massages the data into a clean form.
+         */
         fun create(
             lineNumber: Int, name: String, type: String, msg: String, timestamp: String
         ): ChatInfo {
@@ -56,7 +80,11 @@ data class ChatInfo(
             }
         }
 
+        /**
+         * Cleans up the message. We remove any mention of a world as that is just messy.
+         */
         private fun cleanUpMsg(msg: String): String {
+            // TODO: we should remove the user name if it starts the message
             var result = msg
             var changed = true
             while (changed) {
@@ -76,6 +104,10 @@ data class ChatInfo(
             return result
         }
 
+        /**
+         * Cleans up the name. We remove any of the high Unicode values because they don't display correctly. If the
+         * name is recognized, we convert it to a short form.
+         */
         private fun cleanUpName(name: String): String {
             var result = name
             if (result.isNotEmpty()) {
@@ -91,6 +123,9 @@ data class ChatInfo(
             return result
         }
 
+        /**
+         * This "formatter" is used only to parse the timestamp from the log file which has a specific format.
+         */
         private val timestampParser = DateTimeFormatterBuilder()
             .parseCaseInsensitive()
             .append(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
@@ -98,6 +133,7 @@ data class ChatInfo(
             .appendOffsetId()
             .toFormatter()
 
+        // So far I've found 2 different codes for chat lines.
         private const val CODE_CHAT1 = "000E"
         private const val CODE_CHAT2 = "0011"
         private const val CODE_EMOTE = "001D"
@@ -112,6 +148,10 @@ data class ChatInfo(
         private const val SHORT_TIFAA_S = "Tifaa"
         private const val SHORT_TIFAA_L = "Tifaa"
 
+        /**
+         * These are all the worlds in the Crytal data center. We currently cannot get messaged from another data
+         * center.
+         */
         @Suppress("SpellCheckingInspection")
         private val worlds = setOf(
             "Balmung",
@@ -121,6 +161,7 @@ data class ChatInfo(
             "Goblin",
             "Malboro",
             "Mateus",
+            "Zelera",
         )
     }
 }
