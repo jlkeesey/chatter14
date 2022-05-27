@@ -24,7 +24,6 @@ plugins {
 }
 
 group = "pub.carkeys.logparse"
-version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -43,5 +42,5 @@ tasks.withType<KotlinCompile> {
 }
 
 application {
-    mainClass.set("MainKt")
+    mainClass.set("pub.carkeys.logparse.MainKt")
 }
