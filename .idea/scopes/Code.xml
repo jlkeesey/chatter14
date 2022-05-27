@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="Code" pattern="(file[logparse.main]:kotlin/pub/carkeys/logparse//*||file[logparse.test]:*/)&amp;&amp;!file[logparse.test]:data/*" />
+</component>
