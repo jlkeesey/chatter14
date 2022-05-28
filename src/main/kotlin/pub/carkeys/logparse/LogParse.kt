@@ -29,45 +29,14 @@ import kotlin.io.path.forEachDirectoryEntry
 /**
  * The log processor. This reads each file in turn, filters for the requested items, and then writes them to a file.
  */
-class LogParse(args: List<String>) {
-    private var dryRun = false
-    private var forceReplace = false
-    private var shouldProcessAll = false
-    private var shouldProcessEmotes = false
-    private var participants = primaryParticipants
-    private val filenames = mutableListOf<String>()
-    private val codes: Set<ChatType>
-
-    init {
-        args.forEach { arg ->
-            when (arg) {
-                "-a" -> shouldProcessAll = true
-                "-d" -> dryRun = true
-                "-e" -> shouldProcessEmotes = true
-                "-f" -> forceReplace = true
-                "-s" -> participants = secondaryParticipants
-                else -> {
-                    if (arg[0] == '-') {
-                        throw UsageException("Unknown flag: '$arg'")
-                    }
-                    filenames.add(arg)
-                }
-            }
-        }
-        if (filenames.size == 0) {
-            throw UsageException("No files entered")
-        }
-        codes = if (shouldProcessEmotes) setOf(ChatType.CHAT, ChatType.EMOTE) else setOf(ChatType.CHAT)
-    }
-
+class LogParse(private val options: ParseOptions) {
     /**
      * Process each of the files on the command line. If the name is a file we just process that file. If the name is
      * a directory, we process all .log files in that directory. Otherwise, we assume that the name is a globbing
      * spec and process each file that matches.
      */
     fun process() {
-        filenames.forEach { filename ->
-            val current = File(filename)
+        options.files.forEach { current ->
             if (current.isFile) {
                 processFile(current)
             } else if (current.isDirectory) {
@@ -105,14 +74,14 @@ class LogParse(args: List<String>) {
     private fun writeFile(file: File, chatLog: List<ChatInfo>) {
         if (chatLog.isEmpty()) return
 
-        if (!forceReplace && file.exists()) {
+        if (!options.forceReplace && file.exists()) {
             System.err.println("Target file exists, skipping: '${file.canonicalPath}")
             return
         }
 
         val nameMax = chatLog.map { it.shortName.length }.reduce { lhs, rhs -> max(lhs, rhs) }
 
-        if (dryRun) {
+        if (options.dryRun) {
             writeOut(PrintWriter(System.out), chatLog, nameMax)
         } else {
             FileWriter(file).use { writer -> writeOut(writer, chatLog, nameMax) }
@@ -143,8 +112,8 @@ class LogParse(args: List<String>) {
                 val info = ChatInfo.create(
                     lineNumber = lineNumber, name = parts[3], type = parts[2], msg = parts[4], timestamp = parts[1]
                 )
-                if (codes.contains(info.type)) {
-                    if (shouldProcessAll || participants.contains(info.name)) {
+                if (options.codes.contains(info.type)) {
+                    if (options.participantType == ParticipantType.ALL || options.participants.contains(info.name)) {
                         chatLog.add(info)
                     }
                 }
@@ -163,16 +132,11 @@ class LogParse(args: List<String>) {
     }
 
     companion object {
-        private val primaryParticipants = setOf(ChatInfo.FULL_AELYM, ChatInfo.FULL_TIFAA_L, ChatInfo.FULL_TIFAA_S)
-
-        private val secondaryParticipants: Set<String> = setOf(ChatInfo.FULL_FIORA, *primaryParticipants.toTypedArray())
-
         private val timestampFormatter = DateTimeFormatterBuilder()
             .parseCaseInsensitive()
             .append(DateTimeFormatter.ISO_LOCAL_DATE)
             .appendLiteral(' ')
             .append(DateTimeFormatter.ISO_LOCAL_TIME)
             .toFormatter()
-
     }
 }

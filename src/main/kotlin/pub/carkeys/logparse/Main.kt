@@ -23,34 +23,39 @@ import kotlin.system.exitProcess
  * Main entry point for the application.
  */
 fun main(args: Array<String>) {
-    // This is just for debugging purposes
-    val showStackTrace = args.isNotEmpty() && args[0] == "--stacktrace"
-    val arguments = if (showStackTrace) args.drop(1) else args.toList()
-    try {
-        LogParse(arguments).process()
-    } catch (e: UsageException) {
-        println(e.localizedMessage)
-        println()
-        println("usage: logparse [ -a | -s ] [ -e ] file ...")
-        println()
-        println("  -a    capture all participants")
-        println("  -e    capture emotes from participants")
-        println("  -f    overwrites existing files")
-        println("  -s    capture Aelym, Tifaa, and Fiora")
-        println("  file  one or more files to process, can include wildcard")
-        println()
-        println("Each file will be processed and the filtered results written to a new")
-        println("file of the same name with the extension changed to .txt")
-        println()
-        println("By default only chats from Aelym and Tifaa (both last names) are written")
-        println("out.")
-        exitProcess(1)
-    } catch (e: Exception) {
-        System.err.println("Error: ${e.localizedMessage}")
-        if (showStackTrace) {
-            System.err.println()
-            System.err.println(e.stackTraceToString())
+    DropPanel()
+
+    if (false) {
+        // This is just for debugging purposes
+        val showStackTrace = args.isNotEmpty() && args[0] == "--stacktrace"
+        val arguments = if (showStackTrace) args.drop(1) else args.toList()
+        try {
+            val options = ParseOptions.parseArgs(arguments)
+            LogParse(options).process()
+        } catch (e: UsageException) {
+            println(e.localizedMessage)
+            println()
+            println("usage: logparse [ -a | -s ] [ -e ] file ...")
+            println()
+            println("  -a    capture all participants")
+            println("  -e    capture emotes from participants")
+            println("  -f    overwrites existing files")
+            println("  -s    capture Aelym, Tifaa, and Fiora")
+            println("  file  one or more files to process, can include wildcard")
+            println()
+            println("Each file will be processed and the filtered results written to a new")
+            println("file of the same name with the extension changed to .txt")
+            println()
+            println("By default only chats from Aelym and Tifaa (both last names) are written")
+            println("out.")
+            exitProcess(1)
+        } catch (e: Exception) {
+            System.err.println("Error: ${e.localizedMessage}")
+            if (showStackTrace) {
+                System.err.println()
+                System.err.println(e.stackTraceToString())
+            }
+            exitProcess(3)
         }
-        exitProcess(3)
     }
 }
