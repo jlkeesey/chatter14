@@ -60,7 +60,7 @@ data class ChatInfo(
                 lineNumber = lineNumber,
                 name = cleanName,
                 type = parseType(type, cleanName),
-                msg = cleanUpMsg(msg),
+                msg = cleanUpMsg(msg, cleanName),
                 timestamp = parseTimestamp(timestamp)
             )
         }
@@ -83,7 +83,7 @@ data class ChatInfo(
         /**
          * Cleans up the message. We remove any mention of a world as that is just messy.
          */
-        private fun cleanUpMsg(msg: String): String {
+        private fun cleanUpMsg(msg: String, fullName: String): String {
             // TODO: we should remove the user name if it starts the message
             var result = msg
             var changed = true
@@ -101,6 +101,8 @@ data class ChatInfo(
                     }
                 }
             }
+            result = result.removePrefix(fullName)
+            result = result.trim()
             return result
         }
 
@@ -120,6 +122,7 @@ data class ChatInfo(
                     }
                 }
             }
+            result = result.trim()
             return result
         }
 

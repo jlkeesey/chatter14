@@ -82,9 +82,11 @@ class LogParse(private val options: ParseOptions) {
         val nameMax = chatLog.map { it.shortName.length }.reduce { lhs, rhs -> max(lhs, rhs) }
 
         if (options.dryRun) {
-            writeOut(PrintWriter(System.out), chatLog, nameMax)
+            val writer = PrintWriter(System.out)
+            writeOut(writer, chatLog, nameMax)
+            writer.flush()
         } else {
-            FileWriter(file).use { writer -> writeOut(writer, chatLog, nameMax) }
+            FileWriter(file).use { writeOut(it, chatLog, nameMax) }
         }
     }
 
@@ -92,10 +94,10 @@ class LogParse(private val options: ParseOptions) {
      * Writes the chat log to the given Writer.
      */
     private fun writeOut(writer: Writer, chatLog: List<ChatInfo>, nameMax: Int) {
-        val formatString = "%s %s %${nameMax}.${nameMax}s: %s\n"
+        val formatString = "%s %s %-${nameMax}.${nameMax}s: %s\n"
         chatLog.forEach { info ->
             val message = String.format(
-                formatString, timestampFormatter.format(info.timestamp), info.typeName, info.name, info.msg
+                formatString, timestampFormatter.format(info.timestamp), info.typeName, info.shortName, info.msg
             )
             writer.write(message)
         }

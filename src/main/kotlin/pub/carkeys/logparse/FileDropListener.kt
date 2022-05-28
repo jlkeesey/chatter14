@@ -18,6 +18,7 @@
 package pub.carkeys.logparse
 
 import java.awt.Color
+import java.awt.datatransfer.DataFlavor
 import java.awt.dnd.*
 import java.io.File
 import javax.swing.JComponent
@@ -28,23 +29,22 @@ class FileDropListener(private val parseOptions: ParseOptions, private val compo
     override fun drop(event: DropTargetDropEvent) {
         event.acceptDrop(DnDConstants.ACTION_COPY)
         val transferable = event.transferable
-        val flavors = transferable.transferDataFlavors
-        println("@@@ parseOptions = $parseOptions")
-        for (flavor in flavors) {
-            if (flavor.isFlavorJavaFileListType) {
-                val entries = transferable.getTransferData(flavor) as List<*>
-                for (entry in entries) {
-                    if (entry is File) {
-                        println("File path is '" + entry.path + "'.")
-                    }
+        if (transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+            val entries = transferable.getTransferData(DataFlavor.javaFileListFlavor) as List<*>
+            for (entry in entries) {
+                if (entry is File) {
+                    parseOptions.files.add(entry)
                 }
             }
         }
         event.dropComplete(true)
+        component.background = background
+        LogParse(parseOptions).process()
+        parseOptions.files.clear()
     }
 
     override fun dragEnter(event: DropTargetDragEvent?) {
-        component.background = Color(100, 160, 220,255)
+        component.background = dropColor
     }
 
     override fun dragExit(event: DropTargetEvent?) {
@@ -53,4 +53,8 @@ class FileDropListener(private val parseOptions: ParseOptions, private val compo
 
     override fun dragOver(event: DropTargetDragEvent?) {}
     override fun dropActionChanged(event: DropTargetDragEvent?) {}
+
+    companion object {
+        private val dropColor = Color(100, 160, 220, 255)
+    }
 }

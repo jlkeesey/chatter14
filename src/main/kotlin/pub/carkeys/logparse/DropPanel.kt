@@ -38,7 +38,7 @@ class DropPanel : JFrame("LogParse") {
 
     init {
         defaultCloseOperation = EXIT_ON_CLOSE
-        setSize(300, 150)
+        setSize(300, 200)
 
         contentPane.add(createTopPanel(), BorderLayout.PAGE_START)
         contentPane.add(createDropLabel(), BorderLayout.CENTER)
