@@ -17,16 +17,25 @@
 
 package pub.carkeys.logparse
 
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.swing.Swing
 import java.awt.Color
 import java.awt.datatransfer.DataFlavor
 import java.awt.dnd.*
 import java.io.File
 import javax.swing.JComponent
 
-class FileDropListener(private val parseOptions: ParseOptions, private val component: JComponent) : DropTargetListener {
+class FileDropListener(
+    private val parseOptions: ParseOptions, private val component: JComponent, private val logger: Logger
+) : DropTargetListener {
     private var background: Color = component.background
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun drop(event: DropTargetDropEvent) {
+        parseOptions.files.clear()
         event.acceptDrop(DnDConstants.ACTION_COPY)
         val transferable = event.transferable
         if (transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
@@ -39,8 +48,9 @@ class FileDropListener(private val parseOptions: ParseOptions, private val compo
         }
         event.dropComplete(true)
         component.background = background
-        LogParse(parseOptions).process()
-        parseOptions.files.clear()
+        GlobalScope.launch(Dispatchers.Swing) {
+            LogParse(parseOptions).process(logger)
+        }
     }
 
     override fun dragEnter(event: DropTargetDragEvent?) {

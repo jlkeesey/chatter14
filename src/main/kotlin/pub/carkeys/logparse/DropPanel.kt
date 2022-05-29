@@ -18,27 +18,29 @@
 package pub.carkeys.logparse
 
 import java.awt.BorderLayout
-import java.awt.Color
+import java.awt.Dimension
 import java.awt.FlowLayout
 import java.awt.GridLayout
 import java.awt.dnd.DropTarget
 import javax.swing.*
 import javax.swing.border.EmptyBorder
 
-
 private const val AELYM_AND_TIFAA = "Aelym and Tifaa"
 private const val AND_FIORA = "... and Fiora"
 private const val EVERYONE = "Everyone"
 
-class DropPanel : JFrame("LogParse") {
+class DropPanel(private val logger: Logger) : JFrame("LogParse") {
 
     @Suppress("unused")
     private val serialVersionUID = 1L
     private val parseOptions = ParseOptions()
+    private var logWindow: LogFrame? = null
 
     init {
         defaultCloseOperation = EXIT_ON_CLOSE
-        setSize(300, 200)
+        val panelSize = Dimension(350, 200)
+        size = panelSize
+        minimumSize = panelSize
 
         contentPane.add(createTopPanel(), BorderLayout.PAGE_START)
         contentPane.add(createDropLabel(), BorderLayout.CENTER)
@@ -49,20 +51,36 @@ class DropPanel : JFrame("LogParse") {
     private fun createDropLabel(): JLabel {
         val label = JLabel("Drag something here!", SwingConstants.CENTER)
         label.isOpaque = true
-        val dropListener = FileDropListener(parseOptions, label)
+        val dropListener = FileDropListener(parseOptions, label, logger)
         DropTarget(label, dropListener)
         return label
     }
 
     private fun createTopPanel(): JPanel {
         // val panel = JPanel(FlowLayout())
+        val topPanel = JPanel(FlowLayout())
         val panel = JPanel(GridLayout(0, 2, 10, 0))
-        panel.border = EmptyBorder(0, 10, 0, 0);
+        panel.border = EmptyBorder(0, 10, 0, 0)
         panel.add(createParticipantsControl())
         panel.add(createForceControl())
         panel.add(createEmotesControl())
         panel.add(createDryRunControl())
-        return panel
+        topPanel.add(panel)
+        topPanel.add(createShowLogControl())
+        return topPanel
+    }
+
+    private fun createShowLogControl(): JButton {
+        val control = JButton("Log")
+        control.setSize(20, control.height)
+        control.addActionListener {
+            if (logWindow == null) {
+                logWindow = LogFrame(this)
+                logger.setMessenger(logWindow!!)
+            }
+            logWindow?.makeVisible()
+        }
+        return control
     }
 
     private fun createParticipantsControl(): JComboBox<String> {

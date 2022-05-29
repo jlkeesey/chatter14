@@ -17,13 +17,24 @@
 
 package pub.carkeys.logparse
 
+import java.awt.Font
+import java.awt.FontFormatException
+import java.awt.GraphicsEnvironment
+import java.io.File
+import java.io.IOException
+import java.io.PrintWriter
+import kotlin.io.path.forEachDirectoryEntry
 import kotlin.system.exitProcess
 
 /**
  * Main entry point for the application.
  */
 fun main(args: Array<String>) {
-    DropPanel()
+    val logger = Logger()
+
+    registerFonts()
+
+    DropPanel(logger)
 
     if (false) {
         // This is just for debugging purposes
@@ -31,7 +42,7 @@ fun main(args: Array<String>) {
         val arguments = if (showStackTrace) args.drop(1) else args.toList()
         try {
             val options = ParseOptions.parseArgs(arguments)
-            LogParse(options).process()
+            LogParse(options).process(logger)
         } catch (e: UsageException) {
             println(e.localizedMessage)
             println()
@@ -58,4 +69,33 @@ fun main(args: Array<String>) {
             exitProcess(3)
         }
     }
+}
+
+private fun registerFonts() {
+    val directory = File("src/main/fonts")
+    if (!directory.exists()) return // Nothing to do
+
+    val graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment()
+    directory.toPath().forEachDirectoryEntry("*.ttf") { p ->
+        val file = p.toFile()
+        if (file.isFile) {
+            try {
+                val customFont = Font.createFont(Font.TRUETYPE_FONT, file)
+                graphicsEnvironment.registerFont(customFont)
+            } catch (e: IOException) {
+                System.err.println("Cannot read font '${file.name}': ${e.localizedMessage}")
+            } catch (e: FontFormatException) {
+                System.err.println("Cannot parse font '${file.name}': ${e.localizedMessage}")
+            }
+        }
+    }
+//    val fonts = listOf("Hack-Regular", "Hack-Italic", "Hack-Bold", "Hack-BoldItalic")
+//    try {
+//        customFont = Font.createFont(Font.TRUETYPE_FONT, File("src/main/fonts/Hack-Italic.ttf"))
+//        ge.registerFont(customFont)
+//    } catch (e: IOException) {
+//        e.printStackTrace()
+//    } catch (e: FontFormatException) {
+//        e.printStackTrace()
+//    }
 }
