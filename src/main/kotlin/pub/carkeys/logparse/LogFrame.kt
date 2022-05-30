@@ -15,8 +15,15 @@
  *
  */
 
+@file:OptIn(DelicateCoroutinesApi::class)
+
 package pub.carkeys.logparse
 
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.swing.Swing
 import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.Toolkit
@@ -31,11 +38,17 @@ import javax.swing.text.StyleConstants
 import javax.swing.text.StyleContext
 import javax.swing.text.StyledDocument
 
+/**
+ * An object that can handle output normal and error messages.
+ */
 interface Messenger {
     fun message(msg: String)
     fun error(msg: String)
 }
 
+/**
+ * Swing frame that displays the output log if desired.
+ */
 class LogFrame(private val owner: JFrame) : JFrame("LogParse Log"), Messenger {
     private val document: StyledDocument
     private lateinit var normalStyle: Style
@@ -43,22 +56,25 @@ class LogFrame(private val owner: JFrame) : JFrame("LogParse Log"), Messenger {
 
     init {
         defaultCloseOperation = HIDE_ON_CLOSE
-        setSize(400, 400)
+        setSize(600, 400)
         locateRelativeTo(owner)
 
         val textPane = createTextPane()
         document = textPane.styledDocument
 
-        document.insertString(0, "This is a string 000\n", errorStyle)
-        document.insertString(document.length, "123456789012345678901234567890\n", normalStyle)
-
+        // This hack allows the JTextPane to scroll but also not wrap the lines. There is a strange interaction with
+        // JScrollPane that forces JTextPane to wrap lines and there is no way to stop it. Adding the extra layer
+        // fixes it.
         val noWrap = JPanel(BorderLayout())
         noWrap.add(textPane)
         val scroll = JScrollPane(noWrap)
 
-        contentPane.add(scroll, BorderLayout.CENTER)
+        contentPane.add(scroll)
     }
 
+    /**
+     * Creates the pane that displays the log. We also create the styles that are needed to display the data.
+     */
     private fun createTextPane(): JTextPane {
         val textPane = JTextPane()
         textPane.isEditable = false
@@ -71,19 +87,36 @@ class LogFrame(private val owner: JFrame) : JFrame("LogParse Log"), Messenger {
         return textPane
     }
 
+    /**
+     * Adds the given text to the end of the pane as a normal message.
+     */
     override fun message(msg: String) {
-        document.insertString(document.length, msg, normalStyle)
+        GlobalScope.launch(Dispatchers.Swing) {
+            document.insertString(document.length, msg, normalStyle)
+        }
     }
 
+    /**
+     * Adds the given text to the end of the pane as an error message.
+     */
     override fun error(msg: String) {
-        document.insertString(document.length, msg, errorStyle)
+        GlobalScope.launch(Dispatchers.Swing) {
+            document.insertString(document.length, msg, errorStyle)
+        }
     }
 
+    /**
+     * Make this frame visible. When we make the frame visible we want to relocate it relative to its owner.
+     */
     fun makeVisible() {
         locateRelativeTo(owner)
         isVisible = true
     }
 
+    /**
+     * Attempts to move the frame next to the owner. First we try aligned with the top right of the owner, then the
+     * left, and the overlapping if necessary. IF the frame is too large to fit the screen we shrink it to fit.
+     */
     private fun locateRelativeTo(owner: JFrame) {
         val screenSize = Toolkit.getDefaultToolkit().screenSize
         val ownerSize = owner.size

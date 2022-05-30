@@ -29,6 +29,9 @@ private const val AELYM_AND_TIFAA = "Aelym and Tifaa"
 private const val AND_FIORA = "... and Fiora"
 private const val EVERYONE = "Everyone"
 
+/**
+ * Display the drop panel with the controls for how to process any dropped files.
+ */
 class DropPanel(private val logger: Logger) : JFrame("LogParse") {
 
     @Suppress("unused")
@@ -48,14 +51,21 @@ class DropPanel(private val logger: Logger) : JFrame("LogParse") {
         this.isVisible = true
     }
 
+    /**
+     * Creates the label which is the drop target for this application. The label is added to the BorderLayout.CENTER
+     * which makes if fill all remaining space after the controls, so it is suitably sized for a drop target.
+     */
     private fun createDropLabel(): JLabel {
-        val label = JLabel("Drag something here!", SwingConstants.CENTER)
+        val label = JLabel("Drag log files here!", SwingConstants.CENTER)
         label.isOpaque = true
         val dropListener = FileDropListener(parseOptions, label, logger)
         DropTarget(label, dropListener)
         return label
     }
 
+    /**
+     * Creates the top panel which contains all the controls for affecting the LogParse process.
+     */
     private fun createTopPanel(): JPanel {
         // val panel = JPanel(FlowLayout())
         val topPanel = JPanel(FlowLayout())
@@ -70,6 +80,9 @@ class DropPanel(private val logger: Logger) : JFrame("LogParse") {
         return topPanel
     }
 
+    /**
+     * Creates the show log button.
+     */
     private fun createShowLogControl(): JButton {
         val control = JButton("Log")
         control.setSize(20, control.height)
@@ -83,6 +96,9 @@ class DropPanel(private val logger: Logger) : JFrame("LogParse") {
         return control
     }
 
+    /**
+     * Creates the participants combobox.
+     */
     private fun createParticipantsControl(): JComboBox<String> {
         val items = arrayOf(AELYM_AND_TIFAA, AND_FIORA, EVERYONE)
         val control = JComboBox(items)
@@ -98,6 +114,9 @@ class DropPanel(private val logger: Logger) : JFrame("LogParse") {
         return control
     }
 
+    /**
+     * Creates the dry run checkbox.
+     */
     private fun createDryRunControl(): JCheckBox {
         val checkBox = JCheckBox("Dry run", parseOptions.dryRun)
         checkBox.addActionListener { action ->
@@ -107,6 +126,9 @@ class DropPanel(private val logger: Logger) : JFrame("LogParse") {
         return checkBox
     }
 
+    /**
+     * Creates the process emotes checkbox.
+     */
     private fun createEmotesControl(): JCheckBox {
         val checkBox = JCheckBox("Emotes", parseOptions.shouldProcessEmotes)
         checkBox.addActionListener { action ->
@@ -116,6 +138,9 @@ class DropPanel(private val logger: Logger) : JFrame("LogParse") {
         return checkBox
     }
 
+    /**
+     * Creates the force file replacement checkbox.
+     */
     private fun createForceControl(): JCheckBox {
         val checkBox = JCheckBox("Replace files", parseOptions.forceReplace)
         checkBox.addActionListener { action ->

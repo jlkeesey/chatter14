@@ -20,6 +20,9 @@ package pub.carkeys.logparse
 import java.io.PrintWriter
 import java.io.Writer
 
+/**
+ * Simplistic logger abstraction so that we can send the output to the command line or a Swing panel.
+ */
 class Logger {
     private val stdout = PrintWriter(System.out)
     private val stderr = PrintWriter(System.err)
@@ -27,34 +30,60 @@ class Logger {
     private var messageWriter = LogWriter { s -> stdout.print(s) }
     private var errorWriter = LogWriter { s -> stderr.print(s) }
 
+    /**
+     * Write a normal message to the log.
+     */
     fun message(msg: String) {
         messageWriter.write(msg)
     }
 
+    /**
+     * Write an error message to the log.
+     */
     fun error(msg: String) {
         errorWriter.write(msg)
     }
 
+    /**
+     * Return the normal message writer. Bit of a hack but I just didn't feel like doing any more work on this.
+     */
     fun messageWriter(): Writer = messageWriter
 
+    /**
+     * Sets the output of this logger to the given Messager.
+     */
     fun setMessenger(message: Messenger) {
         flush()
         messageWriter = LogWriter { s -> message.message(s) }
         errorWriter = LogWriter { s -> message.error(s) }
     }
 
+    /**
+     * Flushes all the outputs.
+     */
     fun flush() {
         messageWriter.flush()
         errorWriter.flush()
     }
 
+    /**
+     * Simple Writer implementation to send the output where it should go and prevent close() from actually closing
+     * anything.
+     */
     private class LogWriter(private val out: (String) -> Unit) : Writer() {
         private val builder = StringBuilder()
 
+        /**
+         * Don't actually close anything. This is a bit of a hack, but it wasn't important to fix this is a real way.
+         */
         override fun close() {
             flush()
         }
 
+        /**
+         * Flushes any buffered data. As we are working with lines of text, we add a newline to the end of the buffer
+         * if there isn't one.
+         */
         override fun flush() {
             if (builder.isNotEmpty()) {
                 if (builder[builder.length - 1] != '\n') {
@@ -65,6 +94,9 @@ class Logger {
             }
         }
 
+        /**
+         * Writes the given characters to the output.
+         */
         override fun write(cbuf: CharArray, off: Int, len: Int) {
             val end = off + len - 1
             for (i in off..end) {

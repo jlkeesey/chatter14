@@ -23,6 +23,7 @@ plugins {
     kotlin("jvm") version "1.6.20"
     application
     id("net.researchgate.release") version "2.8.1"
+    id("edu.sc.seis.launch4j") version "2.5.3"
 }
 
 group = "pub.carkeys.logparse"
@@ -37,6 +38,20 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.6.1")
 
     testImplementation(kotlin("test"))
+}
+
+//launch4j {
+//    mainClassName = "pub.carkeys.logparse.MainKt"
+//    icon = "${projectDir}/icons/logparse.ico"
+//}
+
+tasks.withType<edu.sc.seis.launch4j.tasks.DefaultLaunch4jTask> {
+    outfile = "${rootProject.name}.exe"
+    mainClassName = "pub.carkeys.logparse.MainKt"
+    icon = "$projectDir/icons/${rootProject.name}.ico"
+    productName = "LogParse"
+    bundledJrePath = "C:/Program Files/Java/jdk-18.0.1.1"
+    jreMinVersion = "18"
 }
 
 tasks.test {
