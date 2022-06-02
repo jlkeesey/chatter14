@@ -40,18 +40,13 @@ dependencies {
     testImplementation(kotlin("test"))
 }
 
-//launch4j {
-//    mainClassName = "pub.carkeys.logparse.MainKt"
-//    icon = "${projectDir}/icons/logparse.ico"
-//}
-
 tasks.withType<edu.sc.seis.launch4j.tasks.DefaultLaunch4jTask> {
     outfile = "${rootProject.name}.exe"
     mainClassName = "pub.carkeys.logparse.MainKt"
     icon = "$projectDir/icons/${rootProject.name}.ico"
     productName = "LogParse"
     bundledJrePath = "C:/Program Files/Java/jdk-18.0.1.1"
-    jreMinVersion = "18"
+    jreMinVersion = "1.8.0"
 }
 
 tasks.test {
