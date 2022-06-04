@@ -120,7 +120,7 @@ class LogParse(private val options: ParseOptions) {
                     lineNumber = lineNumber, name = parts[3], type = parts[2], msg = parts[4], timestamp = parts[1]
                 )
                 if (options.codes.contains(info.type)) {
-                    if (options.participantType == ParticipantType.ALL || options.participants.contains(info.name)) {
+                    if (options.group.matches(info.name)) {
                         chatLog.add(info)
                     }
                 }

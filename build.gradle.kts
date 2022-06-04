@@ -30,12 +30,17 @@ group = "pub.carkeys.logparse"
 
 repositories {
     mavenCentral()
+    maven {
+        url = uri("https://jitpack.io")
+    }
 }
 
 dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.6.1")
+    implementation("cc.ekblad:4koma:1.0.1")
+    implementation("com.github.ajalt.clikt:clikt:3.4.2")
 
     testImplementation(kotlin("test"))
 }

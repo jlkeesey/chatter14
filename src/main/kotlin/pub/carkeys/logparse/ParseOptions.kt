@@ -26,19 +26,36 @@ enum class ParticipantType {
 data class ParseOptions(
     var dryRun: Boolean = false,
     var forceReplace: Boolean = false,
-    var shouldProcessEmotes: Boolean = false,
+    var includeEmotes: Boolean = false,
+    var group: ParseConfig.Group = ParseConfig.everyone,
     var participantType: ParticipantType = ParticipantType.PRIMARY,
     val files: MutableList<File> = mutableListOf(),
 ) {
-    val participants: Set<String>
-        get() = when (participantType) {
-            ParticipantType.PRIMARY   -> primaryParticipants
-            ParticipantType.SECONDARY -> secondaryParticipants
-            ParticipantType.ALL       -> setOf()
-        }
 
     val codes: Set<ChatType>
-        get() = if (shouldProcessEmotes) emoteCodes else chatCodes
+        get() = if (includeEmotes) emoteCodes else chatCodes
+
+
+    fun parseArgs(args: List<String>) {
+        args.forEach { arg ->
+            when (arg) {
+                "-a" -> participantType = ParticipantType.ALL
+                "-d" -> dryRun = true
+                "-e" -> includeEmotes = true
+                "-f" -> forceReplace = true
+                "-s" -> participantType = ParticipantType.SECONDARY
+                else -> {
+                    if (arg[0] == '-') {
+                        throw UsageException("Unknown flag: '$arg'")
+                    }
+                    files.add(File(arg))
+                }
+            }
+        }
+        if (files.size == 0) {
+            throw UsageException("No files entered")
+        }
+    }
 
     companion object {
         private val primaryParticipants = setOf(ChatInfo.FULL_AELYM, ChatInfo.FULL_TIFAA_L, ChatInfo.FULL_TIFAA_S)
@@ -47,28 +64,5 @@ data class ParseOptions(
 
         private val chatCodes = setOf(ChatType.CHAT)
         private val emoteCodes = setOf(ChatType.CHAT, ChatType.EMOTE)
-
-        fun parseArgs(args: List<String>): ParseOptions {
-            val options = ParseOptions()
-            args.forEach { arg ->
-                when (arg) {
-                    "-a" -> options.participantType = ParticipantType.ALL
-                    "-d" -> options.dryRun = true
-                    "-e" -> options.shouldProcessEmotes = true
-                    "-f" -> options.forceReplace = true
-                    "-s" -> options.participantType = ParticipantType.SECONDARY
-                    else -> {
-                        if (arg[0] == '-') {
-                            throw UsageException("Unknown flag: '$arg'")
-                        }
-                        options.files.add(File(arg))
-                    }
-                }
-            }
-            if (options.files.size == 0) {
-                throw UsageException("No files entered")
-            }
-            return options
-        }
     }
 }

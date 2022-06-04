@@ -32,11 +32,13 @@ private const val EVERYONE = "Everyone"
 /**
  * Display the drop panel with the controls for how to process any dropped files.
  */
-class DropPanel(private val logger: Logger) : JFrame("LogParse") {
+class DropPanel(
+    private val logger: Logger,
+    private val parseOptions: ParseOptions = ParseOptions()
+) : JFrame("LogParse") {
 
     @Suppress("unused")
     private val serialVersionUID = 1L
-    private val parseOptions = ParseOptions()
     private var logWindow: LogFrame? = null
 
     init {
@@ -130,10 +132,10 @@ class DropPanel(private val logger: Logger) : JFrame("LogParse") {
      * Creates the process emotes checkbox.
      */
     private fun createEmotesControl(): JCheckBox {
-        val checkBox = JCheckBox("Emotes", parseOptions.shouldProcessEmotes)
+        val checkBox = JCheckBox("Emotes", parseOptions.includeEmotes)
         checkBox.addActionListener { action ->
             val cb = action.source as JCheckBox
-            parseOptions.shouldProcessEmotes = cb.isSelected
+            parseOptions.includeEmotes = cb.isSelected
         }
         return checkBox
     }

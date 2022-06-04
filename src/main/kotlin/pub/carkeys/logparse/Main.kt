@@ -17,6 +17,14 @@
 
 package pub.carkeys.logparse
 
+import com.github.ajalt.clikt.core.CliktCommand
+import com.github.ajalt.clikt.parameters.arguments.argument
+import com.github.ajalt.clikt.parameters.arguments.multiple
+import com.github.ajalt.clikt.parameters.options.default
+import com.github.ajalt.clikt.parameters.options.flag
+import com.github.ajalt.clikt.parameters.options.option
+import com.github.ajalt.clikt.parameters.types.choice
+import com.github.ajalt.clikt.parameters.types.file
 import java.awt.Font
 import java.awt.FontFormatException
 import java.awt.GraphicsEnvironment
@@ -25,35 +33,83 @@ import java.io.IOException
 import kotlin.io.path.forEachDirectoryEntry
 import kotlin.system.exitProcess
 
-/**
- * Main entry point for the application.
- */
-fun main(args: Array<String>) {
-    val logger = Logger()
-    if (args.isEmpty()) {
-        executeWindowed(logger)
-    } else {
-        executeCommandLine(logger, args)
+class ChatterBox(private val config: ParseConfig) : CliktCommand(name="chatterbox") {
+    private val dryRun by option("-d", "--dryrun", help = "process without creating output files").flag(
+        "-P", "--process", default = config.dryRun
+    )
+    private val replace by option("-r", "--replace", help = "replace existing text files").flag(
+        "-S", "--no-replace", default = config.replaceIfExists
+    )
+    private val includeEmotes by option("-e", "--emotes", help = "include emotes in the output").flag(
+        "-E", "--no-emotes", default = config.includeEmotes
+    )
+    private val windowed by option("-w", "--window", help = "display drag-and-drop target window").flag(
+        "-W", "--no-window", default = true
+    )
+    private val group by option("-g", "--group", help = "group to filter for").choice(
+        config.groups.values.associate { Pair(it.shortName, it.label) }, ignoreCase = true
+    ).default(ParseConfig.everyone.label)
+    private val files: List<File> by argument().file(mustExist = false, canBeFile = true).multiple()
+
+    override fun run() {
+        val options = config.asOptions().copy(
+            dryRun = dryRun,
+            forceReplace = replace,
+            includeEmotes = includeEmotes,
+            group = config.groups[group]!!,
+            files = files.toMutableList() // TODO get rid of toMutableList() if possible
+        )
+        echo("options = $options")
+        val logger = Logger()
+        val args: Array<String> = arrayOf()
+        if (windowed) {
+            executeWindowed(logger, options)
+        } else {
+            executeCommandLine(logger, options, args)
+        }
     }
 }
 
 /**
+ * Main entry point for the application.
+ */
+fun main(args: Array<String>) {
+    try {
+        val config = ParseConfig.read()
+        ChatterBox(config).main(args)
+    } catch (e: ShutdownException) {
+        // This is present to prevent any automatic exception printing
+    }
+}
+
+//fun main(args: Array<String>) {
+//    val config = ParseConfig.read() ?: return
+//    val options = config.asOptions()
+//    val logger = Logger()
+//    if (args.isEmpty()) {
+//        executeWindowed(logger, options)
+//    } else {
+//        executeCommandLine(logger, options, args)
+//    }
+//}
+
+/**
  * Starts the application in windowed, drag-and-drop mode.
  */
-private fun executeWindowed(logger: Logger) {
+private fun executeWindowed(logger: Logger, options: ParseOptions) {
     registerFonts()
-    DropPanel(logger)
+    DropPanel(logger, options)
 }
 
 /**
  * Executes the LogParser from the command line.
  */
-private fun executeCommandLine(logger: Logger, args: Array<String>) {
+private fun executeCommandLine(logger: Logger, options: ParseOptions, args: Array<String>) {
     // This is just for debugging purposes
     val showStackTrace = args[0] == "--stacktrace"
     val arguments = if (showStackTrace) args.drop(1) else args.toList()
     try {
-        val options = ParseOptions.parseArgs(arguments)
+        options.parseArgs(arguments)
         LogParse(options).process(logger)
     } catch (e: UsageException) {
         println(e.localizedMessage)

@@ -39,14 +39,6 @@ import javax.swing.text.StyleContext
 import javax.swing.text.StyledDocument
 
 /**
- * An object that can handle output normal and error messages.
- */
-interface Messenger {
-    fun message(msg: String)
-    fun error(msg: String)
-}
-
-/**
  * Swing frame that displays the output log if desired.
  */
 class LogFrame(private val owner: JFrame) : JFrame("LogParse Log"), Messenger {
