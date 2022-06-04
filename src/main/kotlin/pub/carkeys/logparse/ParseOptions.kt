@@ -31,10 +31,6 @@ data class ParseOptions(
         get() = if (includeEmotes) emoteCodes else chatCodes
 
     companion object {
-//        private val primaryParticipants = setOf(ChatInfo.FULL_AELYM, ChatInfo.FULL_TIFAA_L, ChatInfo.FULL_TIFAA_S)
-//
-//        private val secondaryParticipants: Set<String> = setOf(ChatInfo.FULL_FIORA, *primaryParticipants.toTypedArray())
-
         private val chatCodes = setOf(ChatType.CHAT)
         private val emoteCodes = setOf(ChatType.CHAT, ChatType.EMOTE)
     }
