@@ -19,48 +19,21 @@ package pub.carkeys.logparse
 
 import java.io.File
 
-enum class ParticipantType {
-    PRIMARY, SECONDARY, ALL
-}
-
 data class ParseOptions(
     var dryRun: Boolean = false,
     var forceReplace: Boolean = false,
     var includeEmotes: Boolean = false,
     var group: ParseConfig.Group = ParseConfig.everyone,
-    var participantType: ParticipantType = ParticipantType.PRIMARY,
     val files: MutableList<File> = mutableListOf(),
 ) {
 
     val codes: Set<ChatType>
         get() = if (includeEmotes) emoteCodes else chatCodes
 
-
-    fun parseArgs(args: List<String>) {
-        args.forEach { arg ->
-            when (arg) {
-                "-a" -> participantType = ParticipantType.ALL
-                "-d" -> dryRun = true
-                "-e" -> includeEmotes = true
-                "-f" -> forceReplace = true
-                "-s" -> participantType = ParticipantType.SECONDARY
-                else -> {
-                    if (arg[0] == '-') {
-                        throw UsageException("Unknown flag: '$arg'")
-                    }
-                    files.add(File(arg))
-                }
-            }
-        }
-        if (files.size == 0) {
-            throw UsageException("No files entered")
-        }
-    }
-
     companion object {
-        private val primaryParticipants = setOf(ChatInfo.FULL_AELYM, ChatInfo.FULL_TIFAA_L, ChatInfo.FULL_TIFAA_S)
-
-        private val secondaryParticipants: Set<String> = setOf(ChatInfo.FULL_FIORA, *primaryParticipants.toTypedArray())
+//        private val primaryParticipants = setOf(ChatInfo.FULL_AELYM, ChatInfo.FULL_TIFAA_L, ChatInfo.FULL_TIFAA_S)
+//
+//        private val secondaryParticipants: Set<String> = setOf(ChatInfo.FULL_FIORA, *primaryParticipants.toTypedArray())
 
         private val chatCodes = setOf(ChatType.CHAT)
         private val emoteCodes = setOf(ChatType.CHAT, ChatType.EMOTE)

@@ -25,21 +25,20 @@ import java.awt.dnd.DropTarget
 import javax.swing.*
 import javax.swing.border.EmptyBorder
 
-private const val AELYM_AND_TIFAA = "Aelym and Tifaa"
-private const val AND_FIORA = "... and Fiora"
-private const val EVERYONE = "Everyone"
-
 /**
  * Display the drop panel with the controls for how to process any dropped files.
  */
 class DropPanel(
     private val logger: Logger,
-    private val parseOptions: ParseOptions = ParseOptions()
+    private val parseConfig: ParseConfig,
+    private val parseOptions: ParseOptions = ParseOptions(),
 ) : JFrame("LogParse") {
 
     @Suppress("unused")
     private val serialVersionUID = 1L
     private var logWindow: LogFrame? = null
+
+    private val groupLabels = parseConfig.groups.keys.toList().sorted().toTypedArray()
 
     init {
         defaultCloseOperation = EXIT_ON_CLOSE
@@ -102,16 +101,12 @@ class DropPanel(
      * Creates the participants combobox.
      */
     private fun createParticipantsControl(): JComboBox<String> {
-        val items = arrayOf(AELYM_AND_TIFAA, AND_FIORA, EVERYONE)
-        val control = JComboBox(items)
+        val control = JComboBox(groupLabels)
+        control.selectedItem = parseOptions.group.label
         control.addActionListener { action ->
             val cb = action.source as JComboBox<*>
             val item = cb.selectedItem as String
-            parseOptions.participantType = when (item) {
-                AELYM_AND_TIFAA -> ParticipantType.PRIMARY
-                AND_FIORA       -> ParticipantType.SECONDARY
-                else            -> ParticipantType.ALL
-            }
+            parseOptions.group = parseConfig.groups[item]!!
         }
         return control
     }
