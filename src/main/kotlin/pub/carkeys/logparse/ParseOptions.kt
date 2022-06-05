@@ -23,6 +23,7 @@ data class ParseOptions(
     var dryRun: Boolean = false,
     var forceReplace: Boolean = false,
     var includeEmotes: Boolean = false,
+    val dataCenter: DataCenter = DataCenter.DEFAULT,
     var group: ParseConfig.Group = ParseConfig.everyone,
     val renames: Map<String, String> = mutableMapOf(),
     val files: MutableList<File> = mutableListOf(),

@@ -130,6 +130,8 @@ class DataCenter(val name: String, val region: Region, val servers: Set<String>)
             )
         )
 
+        val DEFAULT = crystal
+
         val centers = mapOf(
             aether.name to aether,
             chaos.name to chaos,

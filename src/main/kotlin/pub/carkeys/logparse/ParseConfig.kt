@@ -79,6 +79,7 @@ data class ParseConfig(
             dryRun = dryRun,
             forceReplace = replaceIfExists,
             includeEmotes = includeEmotes,
+            dataCenter = dataCenter(),
             renames = if (performRename) renames.toMap() else mapOf()
         )
     }
