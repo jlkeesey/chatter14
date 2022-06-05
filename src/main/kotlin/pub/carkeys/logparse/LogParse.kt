@@ -117,9 +117,14 @@ class LogParse(private val options: ParseOptions) {
             val parts = line.split("|")
             if (parts[0] == "00" && parts.size >= 5) {
                 val info = ChatInfo.create(
-                    lineNumber = lineNumber, name = parts[3], type = parts[2], msg = parts[4], timestamp = parts[1]
+                    options,
+                    lineNumber = lineNumber,
+                    name = parts[3],
+                    code = parts[2],
+                    msg = parts[4],
+                    timestamp = parts[1]
                 )
-                if (options.codes.contains(info.type)) {
+                if (options.types.contains(info.code.type)) {
                     if (options.group.matches(info.name)) {
                         chatLog.add(info)
                     }

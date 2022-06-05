@@ -23,6 +23,7 @@ import com.github.ajalt.clikt.parameters.arguments.multiple
 import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
+import com.github.ajalt.clikt.parameters.options.versionOption
 import com.github.ajalt.clikt.parameters.types.choice
 import com.github.ajalt.clikt.parameters.types.file
 import java.awt.Font
@@ -34,6 +35,10 @@ import kotlin.io.path.forEachDirectoryEntry
 import kotlin.system.exitProcess
 
 class LogParseApp(private val config: ParseConfig) : CliktCommand(name = "logparse") {
+    init {
+        versionOption("1.3")
+    }
+
     private val dryRun by option("-d", "--dryrun", help = "process without creating output files").flag(
         "-P", "--process", default = config.dryRun
     )
@@ -57,6 +62,7 @@ class LogParseApp(private val config: ParseConfig) : CliktCommand(name = "logpar
     private val files: List<File> by argument().file(mustExist = false, canBeFile = true).multiple()
 
     override fun run() {
+        config.validate()
         val parseOptions = config.asOptions().copy(
             dryRun = dryRun,
             forceReplace = replace,
@@ -87,27 +93,26 @@ class LogParseApp(private val config: ParseConfig) : CliktCommand(name = "logpar
     private fun executeCommandLine(logger: Logger, options: ParseOptions) {
         try {
             LogParse(options).process(logger)
-        } catch (e: UsageException) {
-            println(e.localizedMessage)
-            println()
-            println("usage: logparse [ -a | -s ] [ -e ] file ...")
-            println()
-            println("  -a    capture all participants")
-            println("  -e    capture emotes from participants")
-            println("  -f    overwrites existing files")
-            println("  -s    capture Aelym, Tifaa, and Fiora")
-            println("  file  one or more files to process, can include wildcard")
-            println()
-            println("If LogParse is started with not command line options and files then it will")
-            println("start in windowed, drag-and-drop mode. This will display a window where files")
-            println("can be dragged to to be process.")
-            println()
-            println("Each file will be processed and the filtered results written to a new")
-            println("file of the same name with the extension changed to .txt")
-            println()
-            println("By default only chats from Aelym and Tifaa (both last names) are written")
-            println("out.")
-            exitProcess(1)
+
+//
+//            println("usage: logparse [ -a | -s ] [ -e ] file ...")
+//            println()
+//            println("  -a    capture all participants")
+//            println("  -e    capture emotes from participants")
+//            println("  -f    overwrites existing files")
+//            println("  -s    capture Aelym, Tifaa, and Fiora")
+//            println("  file  one or more files to process, can include wildcard")
+//            println()
+//            println("If LogParse is started with not command line options and files then it will")
+//            println("start in windowed, drag-and-drop mode. This will display a window where files")
+//            println("can be dragged to to be process.")
+//            println()
+//            println("Each file will be processed and the filtered results written to a new")
+//            println("file of the same name with the extension changed to .txt")
+//            println()
+//            println("By default only chats from Aelym and Tifaa (both last names) are written")
+//            println("out.")
+//            exitProcess(1)
         } catch (e: Exception) {
             System.err.println("Error: ${e.localizedMessage}")
             if (showStackTrace) {

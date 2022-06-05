@@ -31,7 +31,7 @@ import javax.swing.border.EmptyBorder
 class DropPanel(
     private val logger: Logger,
     private val parseConfig: ParseConfig,
-    private val parseOptions: ParseOptions = ParseOptions(),
+    private val parseOptions: ParseOptions,
 ) : JFrame("LogParse") {
 
     @Suppress("unused")

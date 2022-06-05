@@ -17,22 +17,23 @@
 
 package pub.carkeys.logparse
 
-import java.io.File
+class DataCenter(val name: String, val servers: Set<String>) {
 
-data class ParseOptions(
-    var dryRun: Boolean = false,
-    var forceReplace: Boolean = false,
-    var includeEmotes: Boolean = false,
-    var group: ParseConfig.Group = ParseConfig.everyone,
-    val renames: Map<String, String> = mutableMapOf(),
-    val files: MutableList<File> = mutableListOf(),
-) {
-
-    val types: Set<ChatType>
-        get() = if (includeEmotes) emoteTypes else chatTypes
-
+    @Suppress("SpellCheckingInspection")
     companion object {
-        private val chatTypes = setOf(ChatType.CHAT)
-        private val emoteTypes = setOf(ChatType.CHAT, ChatType.EMOTE)
+        private val crystal = DataCenter(
+            name = "Crystal", servers = setOf(
+                "Balmung",
+                "Brynhildr",
+                "Coeurl",
+                "Diabolos",
+                "Goblin",
+                "Malboro",
+                "Mateus",
+                "Zelera",
+            )
+        )
+
+        val centers = mapOf(crystal.name to crystal)
     }
 }

@@ -22,44 +22,34 @@ import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
 import java.time.temporal.ChronoField
 
-enum class ChatType {
-    CHAT, EMOTE, OTHER
-}
-
 /**
  * Contains the parsed information from a log. This only captures chat and emote types which the logs basically
  * treat as the same.
  */
 data class ChatInfo(
-    val lineNumber: Int, val name: String, val type: ChatType, val msg: String, val timestamp: OffsetDateTime
+    val lineNumber: Int,
+    val name: String,
+    val shortName: String,
+    val code: ChatCode,
+    val msg: String,
+    val timestamp: OffsetDateTime
 ) {
-    val shortName: String = when (name) {
-        FULL_AELYM   -> SHORT_AELYM
-        FULL_FIORA   -> SHORT_FIORA
-        FULL_TIFAA_L -> SHORT_TIFAA_L
-        FULL_TIFAA_S -> SHORT_TIFAA_S
-        else         -> name
-    }
-
     val typeName: String
-        get() = when (type) {
-            ChatType.CHAT  -> "C"
-            ChatType.EMOTE -> "E"
-            else           -> "?"
-        }
+        get() = code.type.shortName
 
     companion object {
         /**
          * This should be used to construct new ChatInfo objects as it massages the data into a clean form.
          */
         fun create(
-            lineNumber: Int, name: String, type: String, msg: String, timestamp: String
+            options: ParseOptions, lineNumber: Int, name: String, code: String, msg: String, timestamp: String
         ): ChatInfo {
             val cleanName = cleanUpName(name)
             return ChatInfo(
                 lineNumber = lineNumber,
                 name = cleanName,
-                type = parseType(type, cleanName),
+                shortName = options.renames[cleanName] ?: cleanName,
+                code = parseCode(code, cleanName),
                 msg = cleanUpMsg(msg, cleanName),
                 timestamp = parseTimestamp(timestamp)
             )
@@ -69,15 +59,11 @@ data class ChatInfo(
             return OffsetDateTime.parse(timestamp, timestampParser)
         }
 
-        private fun parseType(s: String, name: String): ChatType {
+        private fun parseCode(code: String, name: String): ChatCode {
             if (name.isEmpty()) {
-                return ChatType.OTHER
+                return ChatCode.OTHER
             }
-            return when (s) {
-                CODE_CHAT1, CODE_CHAT2 -> ChatType.CHAT
-                CODE_EMOTE             -> ChatType.EMOTE
-                else                   -> ChatType.OTHER
-            }
+            return ChatCode.fromCode(code)
         }
 
         /**
@@ -135,21 +121,6 @@ data class ChatInfo(
             .appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true)
             .appendOffsetId()
             .toFormatter()
-
-        // So far I've found 2 different codes for chat lines.
-        private const val CODE_CHAT1 = "000E"
-        private const val CODE_CHAT2 = "0011"
-        private const val CODE_EMOTE = "001D"
-
-        const val FULL_AELYM = "Aelym Sidrasylan"
-        const val FULL_FIORA = "Fiora Greyback"
-        const val FULL_TIFAA_S = "Tifaa Sidrasylan"
-        const val FULL_TIFAA_L = "Tifaa Leonhart"
-
-        private const val SHORT_AELYM = "Aelym"
-        private const val SHORT_FIORA = "Fiora"
-        private const val SHORT_TIFAA_S = "Tifaa"
-        private const val SHORT_TIFAA_L = "Tifaa"
 
         /**
          * These are all the worlds in the Crytal data center. We currently cannot get messaged from another data

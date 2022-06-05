@@ -17,22 +17,8 @@
 
 package pub.carkeys.logparse
 
-import java.io.File
-
-data class ParseOptions(
-    var dryRun: Boolean = false,
-    var forceReplace: Boolean = false,
-    var includeEmotes: Boolean = false,
-    var group: ParseConfig.Group = ParseConfig.everyone,
-    val renames: Map<String, String> = mutableMapOf(),
-    val files: MutableList<File> = mutableListOf(),
-) {
-
-    val types: Set<ChatType>
-        get() = if (includeEmotes) emoteTypes else chatTypes
-
-    companion object {
-        private val chatTypes = setOf(ChatType.CHAT)
-        private val emoteTypes = setOf(ChatType.CHAT, ChatType.EMOTE)
-    }
+enum class ChatType(val shortName: String) {
+    CHAT("C"),
+    EMOTE("E"),
+    OTHER("?")
 }

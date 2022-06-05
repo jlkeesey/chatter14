@@ -28,11 +28,18 @@ import java.io.IOException
 data class ParseConfig(
     val dryRun: Boolean = false,
     val replaceIfExists: Boolean = false,
-    val includeEmotes: Boolean = false,
+    val includeEmotes: Boolean = true,
+    val performRename: Boolean = true,
+    val dataCenterName: String = "Crystal",
+    val serverName: String = "Zalera",
+    val renames: Map<String, String> = mapOf(),
     val groupEntries: List<GroupEntry> = listOf(),
 ) {
     private val groupMap =
         groupEntries.associateBy({ it.label }, { it }).plus(Pair(everyone.label, everyone)).toSortedMap()
+
+    val dataCenter: DataCenter
+        get() = DataCenter.centers[dataCenterName]!!
 
     interface Group {
         fun matches(name: String): Boolean
@@ -71,13 +78,24 @@ data class ParseConfig(
 
     fun asOptions(): ParseOptions {
         return ParseOptions(
-            dryRun = dryRun, forceReplace = replaceIfExists, includeEmotes = includeEmotes
+            dryRun = dryRun,
+            forceReplace = replaceIfExists,
+            includeEmotes = includeEmotes,
+            renames = if (performRename) renames.toMap() else mapOf()
         )
+    }
+
+    fun validate() {
+        val dataCenter = DataCenter.centers[dataCenterName]
+                         ?: throw IllegalArgumentException("Unknown data center '$dataCenterName'")
+        if (!dataCenter.servers.contains(serverName)) throw IllegalArgumentException("Unknown server '$serverName'")
     }
 
     companion object {
         private val mapper = tomlMapper {
             mapping<ParseConfig>("group" to "groupEntries")
+            mapping<ParseConfig>("datacenter" to "dataCenterName")
+            mapping<ParseConfig>("server" to "serverName")
             mapping<GroupEntry>("shortname" to "theShortName")
         }
 
