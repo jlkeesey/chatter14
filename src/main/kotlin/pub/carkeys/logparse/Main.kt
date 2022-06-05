@@ -100,7 +100,7 @@ class LogParseApp(private val config: ParseConfig) : CliktCommand(name = "logpar
 //            println("  -a    capture all participants")
 //            println("  -e    capture emotes from participants")
 //            println("  -f    overwrites existing files")
-//            println("  -s    capture Aelym, Tifaa, and Fiora")
+//            println("  -s    capture people")
 //            println("  file  one or more files to process, can include wildcard")
 //            println()
 //            println("If LogParse is started with not command line options and files then it will")
@@ -110,7 +110,7 @@ class LogParseApp(private val config: ParseConfig) : CliktCommand(name = "logpar
 //            println("Each file will be processed and the filtered results written to a new")
 //            println("file of the same name with the extension changed to .txt")
 //            println()
-//            println("By default only chats from Aelym and Tifaa (both last names) are written")
+//            println("By default only chats from people (both last names) are written")
 //            println("out.")
 //            exitProcess(1)
         } catch (e: Exception) {
