@@ -30,7 +30,7 @@ class DataCenter(val name: String, val servers: Set<String>) {
                 "Goblin",
                 "Malboro",
                 "Mateus",
-                "Zelera",
+                "Zalera",
             )
         )
 

@@ -48,7 +48,7 @@ dependencies {
 tasks.withType<edu.sc.seis.launch4j.tasks.DefaultLaunch4jTask> {
     outfile = "${rootProject.name}.exe"
     mainClassName = "pub.carkeys.logparse.MainKt"
-    icon = "$projectDir/icons/${rootProject.name}.ico"
+    icon = "$projectDir/icons/Iconka-Cat-Shadows-Cat-shadow.ico"
     productName = "LogParse"
     bundledJrePath = "C:/Program Files/Java/jdk-18.0.1.1"
     jreMinVersion = "1.8.0"

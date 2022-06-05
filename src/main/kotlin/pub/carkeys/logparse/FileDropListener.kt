@@ -21,11 +21,9 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.awt.Color
 import java.awt.datatransfer.DataFlavor
 import java.awt.dnd.*
 import java.io.File
-import javax.swing.JComponent
 
 /**
  * Listens to file drop messages and invokes the LogParse process for each one.
@@ -34,10 +32,8 @@ import javax.swing.JComponent
  * mess with it?
  */
 class FileDropListener(
-    private val parseOptions: ParseOptions, private val component: JComponent, private val logger: Logger
+    private val parseOptions: ParseOptions, private val panel: DropPanel, private val logger: Logger
 ) : DropTargetListener {
-    private var background: Color = component.background
-
     /**
      * Handles the drop action on the control. For each drop item if it is a file type we collect it into a list and
      * the pass the list to LogParse to handle each one.
@@ -56,7 +52,7 @@ class FileDropListener(
             }
         }
         event.dropComplete(true)
-        component.background = background
+        panel.resetImage()
         GlobalScope.launch(Dispatchers.IO) {
             LogParse(parseOptions).process(logger)
         }
@@ -68,20 +64,16 @@ class FileDropListener(
      * TODO: this should look for file types and only signal acceptance if they are files.
      */
     override fun dragEnter(event: DropTargetDragEvent?) {
-        component.background = dropColor
+        panel.randomImage()
     }
 
     /**
      * Handle dragging out of the component. We reset the background color.
      */
     override fun dragExit(event: DropTargetEvent?) {
-        component.background = background
+        panel.resetImage()
     }
 
     override fun dragOver(event: DropTargetDragEvent?) {}
     override fun dropActionChanged(event: DropTargetDragEvent?) {}
-
-    companion object {
-        private val dropColor = Color(100, 160, 220, 255)
-    }
 }

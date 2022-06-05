@@ -17,13 +17,16 @@
 
 package pub.carkeys.logparse
 
-import java.awt.BorderLayout
-import java.awt.Dimension
-import java.awt.FlowLayout
-import java.awt.GridLayout
+import java.awt.*
 import java.awt.dnd.DropTarget
+import java.awt.event.ComponentAdapter
+import java.awt.event.ComponentEvent
+import java.awt.image.BufferedImage
+import java.io.File
+import javax.imageio.ImageIO
 import javax.swing.*
 import javax.swing.border.EmptyBorder
+
 
 /**
  * Display the drop panel with the controls for how to process any dropped files.
@@ -40,6 +43,18 @@ class DropPanel(
 
     private val groupLabels = parseConfig.groups.keys.toList().sorted().toTypedArray()
 
+    private val randomImages = listOf(
+        loadImage("/images/cat-shadow-ball-icon.png"),
+        loadImage("/images/cat-shadow-fly-icon.png"),
+        loadImage("/images/cat-shadow-lady-icon.png"),
+        loadImage("/images/cat-shadow-lion-icon.png"),
+        loadImage("/images/cat-shadow-whale-icon.png"),
+    )
+    private var imageIndex = 0
+    private val normalImage = loadImage("/images/cat-shadow-icon.png")
+    private var currentImage = normalImage
+    private val label = createDropLabel()
+
     init {
         defaultCloseOperation = EXIT_ON_CLOSE
         val panelSize = Dimension(350, 200)
@@ -47,9 +62,26 @@ class DropPanel(
         minimumSize = panelSize
 
         contentPane.add(createTopPanel(), BorderLayout.PAGE_START)
-        contentPane.add(createDropLabel(), BorderLayout.CENTER)
+        contentPane.add(label, BorderLayout.CENTER)
 
         this.isVisible = true
+    }
+
+    fun resetImage() {
+        currentImage = normalImage
+        setImage(label, currentImage)
+    }
+
+    fun randomImage() {
+        currentImage = randomImages[imageIndex]
+        imageIndex = (imageIndex + 1) % randomImages.size
+        setImage(label, currentImage)
+    }
+
+    private fun loadImage(name: String): BufferedImage {
+        val url = DropPanel::class.java.getResource(name)
+        val file = File(url.toURI())
+        return ImageIO.read(file)
     }
 
     /**
@@ -57,11 +89,54 @@ class DropPanel(
      * which makes if fill all remaining space after the controls, so it is suitably sized for a drop target.
      */
     private fun createDropLabel(): JLabel {
-        val label = JLabel("Drag log files here!", SwingConstants.CENTER)
+        //val label = JLabel("Drag log files here!", SwingConstants.CENTER)
+        val label = JLabel("", SwingConstants.CENTER)
+        setImage(label, currentImage)
+        label.addComponentListener(object : ComponentAdapter() {
+            override fun componentResized(e: ComponentEvent?) {
+                super.componentResized(e)
+                setImage(label, currentImage)
+            }
+        })
         label.isOpaque = true
-        val dropListener = FileDropListener(parseOptions, label, logger)
+        val dropListener = FileDropListener(parseOptions, this, logger)
         DropTarget(label, dropListener)
         return label
+    }
+
+    private fun setImage(label: JLabel, image: BufferedImage) {
+        val labelWidth = label.width.coerceAtLeast(1)
+        val labelHeight = label.height.coerceAtLeast(1)
+
+        val diffWidth = image.width - labelWidth
+        val diffHeight = image.height - labelHeight
+
+        val newWidth: Int
+        val newHeight: Int
+
+        if (diffWidth < 0 && diffHeight < 0) {
+            if (diffWidth < diffHeight) {
+                newWidth = -image.width
+                newHeight = labelHeight
+            } else {
+                newWidth = labelWidth
+                newHeight = -image.height
+            }
+        } else if (diffWidth < 0 /* && diffHeight >= 0 */) {
+            newWidth = -image.width
+            newHeight = labelHeight
+        } else if (/* diffWidth >= 0 && */ diffHeight < 0) {
+            newWidth = labelWidth
+            newHeight = -image.height
+        } else if (diffWidth < diffHeight) {
+            newWidth = -image.width
+            newHeight = labelHeight
+        } else {
+            newWidth = labelWidth
+            newHeight = -image.height
+        }
+        val newImage = image.getScaledInstance(newWidth, newHeight, Image.SCALE_DEFAULT)
+        label.icon = ImageIcon(newImage)
     }
 
     /**

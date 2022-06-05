@@ -35,11 +35,12 @@ data class ParseConfig(
     val renames: Map<String, String> = mapOf(),
     val groupEntries: List<GroupEntry> = listOf(),
 ) {
-    private val groupMap =
+    val groups: Map<String, Group> =
         groupEntries.associateBy({ it.label }, { it }).plus(Pair(everyone.label, everyone)).toSortedMap()
 
-    val dataCenter: DataCenter
-        get() = DataCenter.centers[dataCenterName]!!
+    private fun dataCenter(): DataCenter {
+        return DataCenter.centers[dataCenterName]!!
+    }
 
     interface Group {
         fun matches(name: String): Boolean
@@ -73,9 +74,6 @@ data class ParseConfig(
         }
     }
 
-    val groups: Map<String, Group>
-        get() = groupMap
-
     fun asOptions(): ParseOptions {
         return ParseOptions(
             dryRun = dryRun,
@@ -108,7 +106,7 @@ data class ParseConfig(
 
         private fun parse(input: String): ParseConfig {
             return try {
-                mapper.decode(TomlValue.from(input))
+                mapper.decodeWithDefaults(ParseConfig(), TomlValue.from(input))
             } catch (e: TomlException.DecodingError) {
                 System.err.println(cleanUpDecodingExceptionMessage(e))
                 throw ShutdownException()
