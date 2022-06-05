@@ -17,12 +17,42 @@
 
 package pub.carkeys.logparse
 
-class DataCenter(val name: String, val servers: Set<String>) {
+/**
+ * Defines all the known data centers and their servers.
+ */
+class DataCenter(val name: String, val region: Region, val servers: Set<String>) {
+    enum class Region {
+        EUROPE,
+        JAPAN,
+        NORTH_AMERICA,
+    }
 
     @Suppress("SpellCheckingInspection")
     companion object {
+        private val aether = DataCenter(
+            name = "Aether", region = Region.NORTH_AMERICA, servers = setOf(
+                "Adamantoise",
+                "Cactuar",
+                "Faerie",
+                "Gilgamesh",
+                "Jenova",
+                "Midgardsormr",
+                "Sargatanas",
+                "Siren",
+            )
+        )
+        private val chaos = DataCenter(
+            name = "Chaos", region = Region.EUROPE, servers = setOf(
+                "Cerberus",
+                "Louisoix",
+                "Moogle",
+                "Omega",
+                "Ragnarok",
+                "Spriggan",
+            )
+        )
         private val crystal = DataCenter(
-            name = "Crystal", servers = setOf(
+            name = "Crystal", region = Region.NORTH_AMERICA, servers = setOf(
                 "Balmung",
                 "Brynhildr",
                 "Coeurl",
@@ -33,7 +63,82 @@ class DataCenter(val name: String, val servers: Set<String>) {
                 "Zalera",
             )
         )
+        private val elemental = DataCenter(
+            name = "Elemental", region = Region.JAPAN, servers = setOf(
+                "Aegis",
+                "Atomos",
+                "Carbuncle",
+                "Garuda",
+                "Gungir",
+                "Kujata",
+                "Ramuh",
+                "Tonberry",
+                "Typhon",
+                "Unicorn",
+            )
+        )
+        private val gaia = DataCenter(
+            name = "Gaia", region = Region.JAPAN, servers = setOf(
+                "Alexander",
+                "Bahamut",
+                "Durandal",
+                "Fenrir",
+                "Ifrit",
+                "Ridill",
+                "Tiamat",
+                "Ultima",
+                "Valefor",
+                "Yojimbo",
+                "Zeromus",
+            )
+        )
+        private val light = DataCenter(
+            name = "Light", region = Region.EUROPE, servers = setOf(
+                "Lich",
+                "Odin",
+                "Phoenix",
+                "Shiva",
+                "Twintania",
+                "Zodiark",
+            )
+        )
+        private val mana = DataCenter(
+            name = "Mana", region = Region.JAPAN, servers = setOf(
+                "Anima",
+                "Asura",
+                "Belias",
+                "Chocobo",
+                "Hades",
+                "Ixion",
+                "Mandragora",
+                "Masamune",
+                "Pandaemonium",
+                "Shinryu",
+                "Titan",
+            )
+        )
+        private val primal = DataCenter(
+            name = "Primal", region = Region.NORTH_AMERICA, servers = setOf(
+                "Behemoth",
+                "Excalibur",
+                "Exodus",
+                "Famfrit",
+                "Hyperion",
+                "Lamia",
+                "Leviathan",
+                "Ultros",
+            )
+        )
 
-        val centers = mapOf(crystal.name to crystal)
+        val centers = mapOf(
+            aether.name to aether,
+            chaos.name to chaos,
+            crystal.name to crystal,
+            elemental.name to elemental,
+            gaia.name to gaia,
+            light.name to light,
+            mana.name to mana,
+            primal.name to primal,
+        )
     }
 }
