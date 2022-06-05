@@ -5,9 +5,17 @@ chat conversations.
 
 ## Licenses
 
-These are the packages used in this project.
+These are the packages used in this project and their licenses.
 
-### Included Libararies
+### Libraries
+
+#### 4koma Toml parser
+
+> See [LICENSE.md](https://github.com/valderman/4koma/blob/main/LICENSE) for the full texts of the licenses.
+
+#### Clickt arguments processor
+
+> See [LICENSE.md](https://github.com/ajalt/clikt/blob/master/LICENSE.txt) for the full texts of the licenses.
 
 #### Hack font
 
@@ -18,10 +26,6 @@ These are the packages used in this project.
 > See [LICENSE.md](https://github.com/source-foundry/Hack/blob/master/LICENSE.md) for the full texts of the licenses.
 
 ### Build Tools
-
-#### KToml parser
-
-> See [LICENSE.md](https://github.com/akuleshov7/ktoml/LICENSE) for the full texts of the licenses.
 
 #### gradle-release plugin
 
