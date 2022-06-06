@@ -23,8 +23,8 @@ import java.time.format.DateTimeFormatterBuilder
 import java.time.temporal.ChronoField
 
 /**
- * Contains the parsed information from a log line. This only captures chat and emote types which the logs basically
- * treat as the same.
+ * Contains the parsed information from a log line. This only captures chat and emote types
+ * which the logs basically treat as the same.
  */
 data class ChatInfo(
     val lineNumber: Int,
@@ -32,17 +32,18 @@ data class ChatInfo(
     val shortName: String,
     val code: ChatCode,
     val msg: String,
-    val timestamp: OffsetDateTime
+    val timestamp: OffsetDateTime,
 ) {
     val typeName: String
         get() = code.type.shortName
 
     companion object {
         /**
-         * This should be used to construct new ChatInfo objects as it massages the data into a clean form.
+         * This should be used to construct new ChatInfo objects as it massages the data into a clean
+         * form.
          */
         fun create(
-            options: ParseOptions, lineNumber: Int, name: String, code: String, msg: String, timestamp: String
+            options: ParseOptions, lineNumber: Int, name: String, code: String, msg: String, timestamp: String,
         ): ChatInfo {
             val cleanName = cleanUpName(options, name)
             return ChatInfo(
@@ -67,10 +68,11 @@ data class ChatInfo(
         }
 
         /**
-         * Cleans up the message. We remove any mention of a world as that is just messy. We only remove the world if
-         * it is abutted to the previous word and that signifies that it is part of a name. We only want to remove the
-         * world if it is part of a name. This is not perfect as a typo that leaves out the space before a world will
-         * be removed, but that should be unlikely, partly because people rarely spell out worlds correctly.
+         * Cleans up the message. We remove any mention of a world as that is just messy. We only
+         * remove the world if it is abutted to the previous word and that signifies that it is part
+         * of a name. We only want to remove the world if it is part of a name. This is not perfect
+         * as a typo that leaves out the space before a world will be removed, but that should be
+         * unlikely, partly because people rarely spell out worlds correctly.
          */
         private fun cleanUpMsg(options: ParseOptions, msg: String, fullName: String): String {
             // TODO: we should remove the user name if it starts the message
@@ -96,13 +98,13 @@ data class ChatInfo(
         }
 
         /**
-         * Cleans up the name. We remove any of the high Unicode values because they don't display correctly. If the
-         * name is recognized, we convert it to a short form.
+         * Cleans up the name. We remove any of the high Unicode values because they don't display
+         * correctly. If the name is recognized, we convert it to a short form.
          *
          * NOTE: this may have to be revisited in asian countries.
          *
-         * TODO: maybe it would be better to just remove the known offending characters or possibly from the one plane
-         *       that they are in. I believe it is a user plane.
+         * TODO: maybe it would be better to just remove the known offending characters or possibly
+         *     from the one plane that they are in. I believe it is a user plane.
          */
         private fun cleanUpName(options: ParseOptions, name: String): String {
             var result = name
@@ -121,7 +123,8 @@ data class ChatInfo(
         }
 
         /**
-         * This "formatter" is used only to parse the timestamp from the log file which has a specific format.
+         * This "formatter" is used only to parse the timestamp from the log file which has a
+         * specific format.
          */
         private val timestampParser = DateTimeFormatterBuilder()
             .parseCaseInsensitive()

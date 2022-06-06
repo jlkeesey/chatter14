@@ -19,6 +19,19 @@ package pub.carkeys.logparse
 
 import java.io.File
 
+/**
+ * The options to parse with.
+ *
+ * @property dryRun true if no output file should be generated.
+ * @property forceReplace true if an existing output file should be replaced, otherwise it
+ *     will be skipped.
+ * @property includeEmotes true if emote "chat" lines should be included in the output.
+ * @property dataCenter the data center this chat is from. Used to process server names.
+ * @property group what lines should be kept in the output. This is usually a list of users
+ *     whose chats are desired.
+ * @property renames any username renames, usually used to shorten the names of common users.
+ * @property files the list of files, directories, and globs to process.
+ */
 data class ParseOptions(
     var dryRun: Boolean = false,
     var forceReplace: Boolean = false,
@@ -29,6 +42,9 @@ data class ParseOptions(
     val files: MutableList<File> = mutableListOf(),
 ) {
 
+    /**
+     * Returns the ChatTypes to include in the output based on the settings.
+     */
     val types: Set<ChatType>
         get() = if (includeEmotes) emoteTypes else chatTypes
 

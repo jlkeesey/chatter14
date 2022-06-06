@@ -65,7 +65,8 @@ class LogFrame(private val owner: JFrame) : JFrame("LogParse Log"), Messenger {
     }
 
     /**
-     * Creates the pane that displays the log. We also create the styles that are needed to display the data.
+     * Creates the pane that displays the log. We also create the styles that are needed to
+     * display the data.
      */
     private fun createTextPane(): JTextPane {
         val textPane = JTextPane()
@@ -98,7 +99,8 @@ class LogFrame(private val owner: JFrame) : JFrame("LogParse Log"), Messenger {
     }
 
     /**
-     * Make this frame visible. When we make the frame visible we want to relocate it relative to its owner.
+     * Make this frame visible. When we make the frame visible we want to relocate it relative to
+     * its owner.
      */
     fun makeVisible() {
         locateRelativeTo(owner)
@@ -106,8 +108,9 @@ class LogFrame(private val owner: JFrame) : JFrame("LogParse Log"), Messenger {
     }
 
     /**
-     * Attempts to move the frame next to the owner. First we try aligned with the top right of the owner, then the
-     * left, and the overlapping if necessary. IF the frame is too large to fit the screen we shrink it to fit.
+     * Attempts to move the frame next to the owner. First we try aligned with the top right of
+     * the owner, then the left, and the overlapping if necessary. IF the frame is too large to
+     * fit the screen we shrink it to fit.
      */
     private fun locateRelativeTo(owner: JFrame) {
         val screenSize = Toolkit.getDefaultToolkit().screenSize

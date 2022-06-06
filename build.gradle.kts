@@ -39,8 +39,12 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.6.1")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.6.21")
     implementation("cc.ekblad:4koma:1.0.1")
     implementation("com.github.ajalt.clikt:clikt:3.4.2")
+//    implementation("org.apache.logging.log4j:log4j-api-kotlin:1.1.0")
+    implementation("org.apache.logging.log4j:log4j-api:2.17.0")
+    implementation("org.apache.logging.log4j:log4j-core:2.17.2")
 
     testImplementation(kotlin("test"))
 }
@@ -49,6 +53,7 @@ tasks.withType<edu.sc.seis.launch4j.tasks.DefaultLaunch4jTask> {
     outfile = "${rootProject.name}.exe"
     mainClassName = "pub.carkeys.logparse.MainKt"
     icon = "$projectDir/icons/Iconka-Cat-Shadows-Cat-shadow.ico"
+    jvmOptions = setOf("-Dbuild.version=${version}")
     productName = "LogParse"
     bundledJrePath = "C:/Program Files/Java/jdk-18.0.1.1"
     jreMinVersion = "1.8.0"

@@ -28,15 +28,15 @@ import java.io.File
 /**
  * Listens to file drop messages and invokes the LogParse process for each one.
  *
- * I get the felling that there is a newer, better way of doing this, but it works for this simple situation so why
- * mess with it?
+ * I get the felling that there is a newer, better way of doing this, but it works for this
+ * simple situation so why mess with it?
  */
 class FileDropListener(
-    private val parseOptions: ParseOptions, private val panel: DropPanel, private val logger: Logger
+    private val parseOptions: ParseOptions, private val panel: DropPanel, private val myLogger: MyLogger,
 ) : DropTargetListener {
     /**
-     * Handles the drop action on the control. For each drop item if it is a file type we collect it into a list and
-     * the pass the list to LogParse to handle each one.
+     * Handles the drop action on the control. For each drop item if it is a file type we collect
+     * it into a list and the pass the list to LogParse to handle each one.
      */
     @OptIn(DelicateCoroutinesApi::class)
     override fun drop(event: DropTargetDropEvent) {
@@ -54,12 +54,13 @@ class FileDropListener(
         event.dropComplete(true)
         panel.resetImage()
         GlobalScope.launch(Dispatchers.IO) {
-            LogParse(parseOptions).process(logger)
+            LogParse(parseOptions).process(myLogger)
         }
     }
 
     /**
-     * Handle dragging into the component. We change the background color to show that a drop is possible.
+     * Handle dragging into the component. We change the background color to show that a drop is
+     * possible.
      *
      * TODO: this should look for file types and only signal acceptance if they are files.
      */

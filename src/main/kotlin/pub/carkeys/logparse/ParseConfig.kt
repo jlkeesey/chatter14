@@ -25,6 +25,23 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.IOException
 
+/**
+ * The application settings from the configuration file(s).
+ *
+ * @property dryRun true if no output file should be generated.
+ * @property replaceIfExists true if an existing output file should be replaced, otherwise it
+ *     will be skipped.
+ * @property includeEmotes true if emote "chat" lines should be included in the output.
+ * @property dataCenterName the data center name this chat is from. Used to process server
+ *     names.
+ * @property serverName the name of the server the main user is from. Generally this will be
+ *     the user that is executing this application.
+ *     This server will not be included in the output.
+ * @property performRename true if usenames should be renamed according to the renames list.
+ * @property renames any username renames, usually used to shorten the names of common users.
+ * @property groupEntries the group definitions. One of these will be used to process the
+ *     files.
+ */
 data class ParseConfig(
     val dryRun: Boolean = false,
     val replaceIfExists: Boolean = false,
@@ -35,20 +52,43 @@ data class ParseConfig(
     val renames: Map<String, String> = mapOf(),
     val groupEntries: List<GroupEntry> = listOf(),
 ) {
+    /**
+     * The Groups that have been generated from the GroupEntry definitions.
+     *
+     * NOTE: this must not be private because the config parser can't handle private fields.
+     */
     val groups: Map<String, Group> =
         groupEntries.associateBy({ it.label }, { it }).plus(Pair(everyone.label, everyone)).toSortedMap()
 
+    /**
+     * Returns the DataCenter from the configuration data center name.
+     *
+     * NOTE: this is a function because the config parser can't handle private fields.
+     */
     private fun dataCenter(): DataCenter {
         return DataCenter.centers[dataCenterName]!!
     }
 
+    /**
+     * Defines a basic group definition.
+     */
     interface Group {
+        /**
+         * Returns true if the given [name] matches the criteria of this Group.
+         */
         fun matches(name: String): Boolean
         val label: String
         val shortName: String
             get() = label.lowercase()
     }
 
+    /**
+     * A group entry definition from the configuration file.
+     *
+     * @property label the label shown to the user.
+     * @property theShortName the short name used in command line arguments.
+     * @property participants the list of users to include.
+     */
     data class GroupEntry(
         override val label: String,
         val theShortName: String? = null,
@@ -68,12 +108,18 @@ data class ParseConfig(
         }
     }
 
+    /**
+     * Group definition that includes everyone.
+     */
     data class GroupEveryone(override val label: String = "Everyone") : Group {
         override fun matches(name: String): Boolean {
             return true
         }
     }
 
+    /**
+     * Returns this configuration as a ParseOptions object.
+     */
     fun asOptions(): ParseOptions {
         return ParseOptions(
             dryRun = dryRun,
@@ -84,6 +130,10 @@ data class ParseConfig(
         )
     }
 
+    /**
+     * Validates the configuration for consistency. Throw an IllegalArgumentException if there
+     * are any violations.
+     */
     fun validate() {
         val dataCenter = DataCenter.centers[dataCenterName]
                          ?: throw IllegalArgumentException("Unknown data center '$dataCenterName'")
@@ -91,6 +141,9 @@ data class ParseConfig(
     }
 
     companion object {
+        /**
+         * Used by the Toml parser to map configuration file field names to code names.
+         */
         private val mapper = tomlMapper {
             mapping<ParseConfig>("group" to "groupEntries")
             mapping<ParseConfig>("datacenter" to "dataCenterName")
@@ -98,13 +151,25 @@ data class ParseConfig(
             mapping<GroupEntry>("shortname" to "theShortName")
         }
 
+        /**
+         * The everyone accepted group.
+         */
         val everyone = GroupEveryone()
 
+        /**
+         * Reads the configuration from a file.
+         *
+         * @param filename the file to read defaults to <code>.logparse.toml</code>
+         */
         fun read(filename: String = ".logparse.toml"): ParseConfig {
             val input = readConfigFile(filename)
             return if (input == null) ParseConfig() else parse(input)
         }
 
+        /**
+         * Parses a string into a ParseConfiguration. Normally this string comes from an external
+         * file.
+         */
         private fun parse(input: String): ParseConfig {
             return try {
                 mapper.decodeWithDefaults(ParseConfig(), TomlValue.from(input))
@@ -114,6 +179,9 @@ data class ParseConfig(
             }
         }
 
+        /**
+         * Returns a more used friendly error message from the ones given by the Toml parser.
+         */
         private fun cleanUpDecodingExceptionMessage(e: TomlException.DecodingError): String {
             return when (e.reason) {
                 "no value found for non-nullable parameter 'label'" -> "A group label is missing"
@@ -121,20 +189,11 @@ data class ParseConfig(
             }
         }
 
+        /**
+         * Reads the given configuration file and returns the contents as a string. Null is returned
+         * if the file cannot be read.
+         */
         private fun readConfigFile(filename: String): String? {
-//            return """
-//                dryRun = true
-//                forceReplace = true
-//                includeEmotes = true
-//
-//                [[group]]
-//                label = "My, Myself, and Irene"
-//                participants = [
-//                   "R.L Stein",
-//                   "Det. Poirot",
-//                ]
-//            """.trimIndent()
-
             try {
                 var file = File(filename)
                 if (!file.exists()) {

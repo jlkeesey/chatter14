@@ -34,9 +34,17 @@ import java.io.IOException
 import kotlin.io.path.forEachDirectoryEntry
 import kotlin.system.exitProcess
 
+/**
+ * The application class. The run() method will be invoked by the Clikt command line
+ * processing library.
+ *
+ * @property config the ParseConfig to use to parse any files.
+ */
 class LogParseApp(private val config: ParseConfig) : CliktCommand(name = "logparse") {
+    val version = (System.getProperty("build.version") ?: "1.4").removeSuffix("-SNAPSHOT")
+
     init {
-        versionOption("1.3")
+        versionOption(version)
     }
 
     private val dryRun by option("-d", "--dryrun", help = "process without creating output files").flag(
@@ -61,6 +69,9 @@ class LogParseApp(private val config: ParseConfig) : CliktCommand(name = "logpar
 
     private val files: List<File> by argument().file(mustExist = false, canBeFile = true).multiple()
 
+    /**
+     * Entry point for the main processing.
+     */
     override fun run() {
         config.validate()
         val parseOptions = config.asOptions().copy(
@@ -71,28 +82,28 @@ class LogParseApp(private val config: ParseConfig) : CliktCommand(name = "logpar
             files = files.toMutableList() // TODO get rid of toMutableList() if possible
         )
         echo("options = $parseOptions")
-        val logger = Logger()
+        val myLogger = MyLogger()
         if (windowed) {
-            executeWindowed(logger, parseOptions)
+            executeWindowed(myLogger, parseOptions)
         } else {
-            executeCommandLine(logger, parseOptions)
+            executeCommandLine(myLogger, parseOptions)
         }
     }
 
     /**
      * Starts the application in windowed, drag-and-drop mode.
      */
-    private fun executeWindowed(logger: Logger, options: ParseOptions) {
+    private fun executeWindowed(myLogger: MyLogger, options: ParseOptions) {
         registerFonts()
-        DropPanel(logger = logger, parseConfig = config, parseOptions = options)
+        DropPanel(myLogger = myLogger, parseConfig = config, parseOptions = options)
     }
 
     /**
      * Executes the LogParser from the command line.
      */
-    private fun executeCommandLine(logger: Logger, options: ParseOptions) {
+    private fun executeCommandLine(myLogger: MyLogger, options: ParseOptions) {
         try {
-            LogParse(options).process(logger)
+            LogParse(options).process(myLogger)
 
 //
 //            println("usage: logparse [ -a | -s ] [ -e ] file ...")
@@ -124,7 +135,8 @@ class LogParseApp(private val config: ParseConfig) : CliktCommand(name = "logpar
     }
 
     /**
-     * Register needed fonts with the Swing environment. All fonts in the src/main/fonts directory will be registered.
+     * Register needed fonts with the Swing environment. All fonts in the src/main/fonts
+     * directory will be registered.
      */
     private fun registerFonts() {
         val directory = File("src/main/fonts")
@@ -148,7 +160,9 @@ class LogParseApp(private val config: ParseConfig) : CliktCommand(name = "logpar
 }
 
 /**
- * Main entry point for the application.
+ * Main entry point for the application. We read the configuration file if present then
+ * invoke the Clikt command line processing library to handle and command line arguments
+ * which then invokes the run() method of our application class.
  */
 fun main(args: Array<String>) {
     try {

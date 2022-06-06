@@ -21,9 +21,10 @@ import java.io.PrintWriter
 import java.io.Writer
 
 /**
- * Simplistic logger abstraction so that we can send the output to the command line or a Swing panel.
+ * Simplistic logger abstraction so that we can send the output to the command line or a
+ * Swing panel.
  */
-class Logger {
+class MyLogger {
     private val stdout = PrintWriter(System.out)
     private val stderr = PrintWriter(System.err)
 
@@ -45,7 +46,8 @@ class Logger {
     }
 
     /**
-     * Return the normal message writer. Bit of a hack but I just didn't feel like doing any more work on this.
+     * Return the normal message writer. Bit of a hack but I just didn't feel like doing any more
+     * work on this.
      */
     fun messageWriter(): Writer = messageWriter
 
@@ -67,22 +69,23 @@ class Logger {
     }
 
     /**
-     * Simple Writer implementation to send the output where it should go and prevent close() from actually closing
-     * anything.
+     * Simple Writer implementation to send the output where it should go and prevent close()
+     * from actually closing anything.
      */
     private class LogWriter(private val out: (String) -> Unit) : Writer() {
         private val builder = StringBuilder()
 
         /**
-         * Don't actually close anything. This is a bit of a hack, but it wasn't important to fix this is a real way.
+         * Don't actually close anything. This is a bit of a hack, but it wasn't important to fix
+         * this is a real way.
          */
         override fun close() {
             flush()
         }
 
         /**
-         * Flushes any buffered data. As we are working with lines of text, we add a newline to the end of the buffer
-         * if there isn't one.
+         * Flushes any buffered data. As we are working with lines of text, we add a newline to the
+         * end of the buffer if there isn't one.
          */
         override fun flush() {
             if (builder.isNotEmpty()) {

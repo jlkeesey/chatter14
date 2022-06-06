@@ -17,6 +17,13 @@
 
 package pub.carkeys.logparse
 
+/**
+ * These are the secondary codes for each chat type in FFXIV. There are many more than this
+ * but these are the ones that we are most interested in. All the system messages have a type
+ * like for NPC conversations, notifications of teleport, novice network, etc. These aren't
+ * "chat" types as most people consider it. If these are desired the keep all messages option
+ * can be selected.
+ */
 enum class ChatCode(val code: String, val type: ChatType) {
     SAY("000A", ChatType.CHAT),
     YELL("001E", ChatType.CHAT),
@@ -24,7 +31,7 @@ enum class ChatCode(val code: String, val type: ChatType) {
     TELL("000C", ChatType.CHAT),
     FREE_COMPANY("0018", ChatType.CHAT),
     PARTY("000E", ChatType.CHAT),
-    ALLIANCE("", ChatType.CHAT), // TODO find code for this
+    ALLIANCE("000F", ChatType.CHAT),
     CWLS1("0025", ChatType.CHAT),
     CWLS2("0065", ChatType.CHAT),
     CWLS3("0066", ChatType.CHAT),

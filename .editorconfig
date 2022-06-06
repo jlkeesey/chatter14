@@ -1,0 +1,8 @@
+root = true
+
+[{*.kt,*.kts,*.main.kts,*.space.kts}]
+kdoc_formatter_doc_do_not_wrap_if_one_line = true
+
+[*.md]
+max_line_length = 90
+

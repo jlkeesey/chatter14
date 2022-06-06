@@ -17,4 +17,7 @@
 
 package pub.carkeys.logparse
 
+/**
+ * Thrown when the application should shut down but not display a stack trace.
+ */
 class ShutdownException : RuntimeException()

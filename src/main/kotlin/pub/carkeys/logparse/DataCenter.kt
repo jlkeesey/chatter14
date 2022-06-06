@@ -132,7 +132,7 @@ class DataCenter(val name: String, val region: Region, val servers: Set<String>)
 
         val DEFAULT = crystal
 
-        val centers = mapOf(
+        private val mutableCenters = mapOf(
             aether.name to aether,
             chaos.name to chaos,
             crystal.name to crystal,
@@ -142,5 +142,11 @@ class DataCenter(val name: String, val region: Region, val servers: Set<String>)
             mana.name to mana,
             primal.name to primal,
         )
+
+        fun addCenter(dataCenter: DataCenter) {
+
+        }
+
+        val centers: Map<String, DataCenter> = mutableCenters
     }
 }
