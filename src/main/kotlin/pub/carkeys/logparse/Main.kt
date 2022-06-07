@@ -29,10 +29,15 @@ import com.github.ajalt.clikt.parameters.types.file
 import java.awt.Font
 import java.awt.FontFormatException
 import java.awt.GraphicsEnvironment
+import java.awt.event.WindowAdapter
+import java.awt.event.WindowEvent
 import java.io.File
 import java.io.IOException
+import java.util.concurrent.CountDownLatch
+import javax.swing.SwingUtilities
 import kotlin.io.path.forEachDirectoryEntry
 import kotlin.system.exitProcess
+
 
 /**
  * The application class. The run() method will be invoked by the Clikt command line
@@ -82,28 +87,40 @@ class LogParseApp(private val config: ParseConfig) : CliktCommand(name = "logpar
             files = files.toMutableList() // TODO get rid of toMutableList() if possible
         )
         echo("options = $parseOptions")
-        val myLogger = MyLogger()
         if (windowed) {
-            executeWindowed(myLogger, parseOptions)
+            executeWindowed(parseOptions)
         } else {
-            executeCommandLine(myLogger, parseOptions)
+            executeCommandLine(parseOptions)
         }
     }
 
     /**
      * Starts the application in windowed, drag-and-drop mode.
      */
-    private fun executeWindowed(myLogger: MyLogger, options: ParseOptions) {
+    private fun executeWindowed(options: ParseOptions) {
         registerFonts()
-        DropPanel(myLogger = myLogger, parseConfig = config, parseOptions = options)
+
+        // We wait for the panel to close before returning so that we keep the log sequence correct.
+        // Without the latch, the main thread would exit as soon as the panel was started.
+        val panelClosedLatch = CountDownLatch(1)
+        SwingUtilities.invokeLater {
+            val panel = DropPanel(parseConfig = config, parseOptions = options)
+            panel.addWindowListener(object : WindowAdapter() {
+                override fun windowClosed(e: WindowEvent?) {
+                    super.windowClosed(e)
+                    panelClosedLatch.countDown()
+                }
+            })
+        }
+        panelClosedLatch.await()
     }
 
     /**
      * Executes the LogParser from the command line.
      */
-    private fun executeCommandLine(myLogger: MyLogger, options: ParseOptions) {
+    private fun executeCommandLine(options: ParseOptions) {
         try {
-            LogParse(options).process(myLogger)
+            LogParse(options).process()
 
 //
 //            println("usage: logparse [ -a | -s ] [ -e ] file ...")
@@ -125,11 +142,7 @@ class LogParseApp(private val config: ParseConfig) : CliktCommand(name = "logpar
 //            println("out.")
 //            exitProcess(1)
         } catch (e: Exception) {
-            System.err.println("Error: ${e.localizedMessage}")
-            if (showStackTrace) {
-                System.err.println()
-                System.err.println(e.stackTraceToString())
-            }
+            logger.error(e)
             exitProcess(3)
         }
     }
@@ -150,25 +163,35 @@ class LogParseApp(private val config: ParseConfig) : CliktCommand(name = "logpar
                     val customFont = Font.createFont(Font.TRUETYPE_FONT, file)
                     graphicsEnvironment.registerFont(customFont)
                 } catch (e: IOException) {
-                    System.err.println("Cannot read font '${file.name}': ${e.localizedMessage}")
+                    logger.error("Cannot read font '${file.name}': ${e.localizedMessage}")
                 } catch (e: FontFormatException) {
-                    System.err.println("Cannot parse font '${file.name}': ${e.localizedMessage}")
+                    logger.error("Cannot read font '${file.name}': ${e.localizedMessage}")
                 }
             }
         }
     }
+
+    companion object {
+        private val logger by logger()
+
+        /**
+         * Main entry point for the application. We read the configuration file if present then
+         * invoke the Clikt command line processing library to handle and command line arguments
+         * which then invokes the run() method of our application class.
+         */
+        fun main(args: Array<String>) {
+            logger.traceEntry()
+            try {
+                val config = ParseConfig.read()
+                LogParseApp(config).main(args)
+            } catch (e: ShutdownException) {
+                // This is present to prevent any automatic exception printing
+            }
+            logger.traceExit()
+        }
+    }
 }
 
-/**
- * Main entry point for the application. We read the configuration file if present then
- * invoke the Clikt command line processing library to handle and command line arguments
- * which then invokes the run() method of our application class.
- */
 fun main(args: Array<String>) {
-    try {
-        val config = ParseConfig.read()
-        LogParseApp(config).main(args)
-    } catch (e: ShutdownException) {
-        // This is present to prevent any automatic exception printing
-    }
+    LogParseApp.main(args)
 }

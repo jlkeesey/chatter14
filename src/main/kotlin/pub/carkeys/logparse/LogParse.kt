@@ -36,60 +36,58 @@ class LogParse(private val options: ParseOptions) {
      * that file. If the name is a directory, we process all .log files in that directory.
      * Otherwise, we assume that the name is a globbing spec and process each file that matches.
      */
-    fun process(myLogger: MyLogger) {
+    fun process() {
         if (options.files.isEmpty()) {
-            myLogger.error("No files to process")
+            logger.warn("No files to process")
         }
         options.files.forEach { current ->
             if (current.isFile) {
-                processFile(current, myLogger)
+                processFile(current)
             } else if (current.isDirectory) {
                 current.toPath().forEachDirectoryEntry("*.log") { p ->
                     val file = p.toFile()
                     if (file.isFile) {
-                        processFile(file, myLogger)
+                        processFile(file)
                     }
                 }
             } else {
                 current.parentFile.toPath().forEachDirectoryEntry(current.name) { p ->
                     val file = p.toFile()
                     if (file.isFile) {
-                        processFile(file, myLogger)
+                        processFile(file)
                     }
                 }
             }
         }
-        myLogger.flush()
     }
 
     /**
      * Process one file.
      */
-    private fun processFile(file: File, myLogger: MyLogger) {
-        myLogger.message("Processing ${file.name} ...\n")
+    private fun processFile(file: File) {
+        logger.info("Processing ${file.name}")
         val chatLog = parseFile(file)
         val newFile = makeNewFile(file)
-        writeFile(newFile, chatLog, myLogger)
+        writeFile(newFile, chatLog)
     }
 
     /**
      * Writes the filtered contents to the target file. We fail if the target already exists
      * unless the force flag was supplied.
      */
-    private fun writeFile(file: File, chatLog: List<ChatInfo>, myLogger: MyLogger) {
+    private fun writeFile(file: File, chatLog: List<ChatInfo>) {
         if (chatLog.isEmpty()) {
-            myLogger.message("    is empty")
+            logger.info("${file.name} is empty")
             return
         }
 
         val nameMax = chatLog.map { it.shortName.length }.reduce { lhs, rhs -> max(lhs, rhs) }
 
         if (options.dryRun) {
-            writeOut(myLogger.messageWriter(), chatLog, nameMax)
-            myLogger.messageWriter().flush()
+            writeOut(nullWriter, chatLog, nameMax)
         } else {
             if (!options.forceReplace && file.exists()) {
-                myLogger.error("Target file exists, skipping: '${file.canonicalPath}")
+                logger.warn("Target file exists, skipping: '${file.canonicalPath}")
                 return
             }
             FileWriter(file).use { writeOut(it, chatLog, nameMax) }
@@ -106,6 +104,7 @@ class LogParse(private val options: ParseOptions) {
                 formatString, timestampFormatter.format(info.timestamp), info.typeName, info.shortName, info.msg
             )
             writer.write(message)
+            logger.debug(message)
         }
     }
 
@@ -145,6 +144,17 @@ class LogParse(private val options: ParseOptions) {
     }
 
     companion object {
+        private val logger by logger()
+
+        /**
+         * A writer that does nothing.
+         */
+        private val nullWriter = object : Writer() {
+            override fun close() {}
+            override fun flush() {}
+            override fun write(cbuf: CharArray?, off: Int, len: Int) {}
+        }
+
         private val timestampFormatter = DateTimeFormatterBuilder()
             .parseCaseInsensitive()
             .append(DateTimeFormatter.ISO_LOCAL_DATE)

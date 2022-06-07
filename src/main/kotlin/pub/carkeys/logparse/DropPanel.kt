@@ -32,7 +32,6 @@ import javax.swing.border.EmptyBorder
  * Display the drop panel with the controls for how to process any dropped files.
  */
 class DropPanel(
-    private val myLogger: MyLogger,
     private val parseConfig: ParseConfig,
     private val parseOptions: ParseOptions,
 ) : JFrame("LogParse") {
@@ -56,7 +55,7 @@ class DropPanel(
     private val label = createDropLabel()
 
     init {
-        defaultCloseOperation = EXIT_ON_CLOSE
+        defaultCloseOperation = DISPOSE_ON_CLOSE
         val panelSize = Dimension(350, 200)
         size = panelSize
         minimumSize = panelSize
@@ -100,7 +99,7 @@ class DropPanel(
             }
         })
         label.isOpaque = true
-        val dropListener = FileDropListener(parseOptions, this, myLogger)
+        val dropListener = FileDropListener(parseOptions, this)
         DropTarget(label, dropListener)
         return label
     }
@@ -166,7 +165,7 @@ class DropPanel(
         control.addActionListener {
             if (logWindow == null) {
                 logWindow = LogFrame(this)
-                myLogger.setMessenger(logWindow!!)
+                //myLogger.setMessenger(logWindow!!)
             }
             logWindow?.makeVisible()
         }

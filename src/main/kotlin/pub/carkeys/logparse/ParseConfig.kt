@@ -141,6 +141,8 @@ data class ParseConfig(
     }
 
     companion object {
+        private val logger by logger()
+
         /**
          * Used by the Toml parser to map configuration file field names to code names.
          */
@@ -174,7 +176,7 @@ data class ParseConfig(
             return try {
                 mapper.decodeWithDefaults(ParseConfig(), TomlValue.from(input))
             } catch (e: TomlException.DecodingError) {
-                System.err.println(cleanUpDecodingExceptionMessage(e))
+                logger.error(cleanUpDecodingExceptionMessage(e))
                 throw ShutdownException()
             }
         }
