@@ -24,6 +24,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.swing.Swing
+import org.apache.logging.log4j.Level
+import org.apache.logging.log4j.core.appender.AbstractManager
+import pub.carkeys.logparse.log4j.EventManager
 import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.Toolkit
@@ -41,7 +44,7 @@ import javax.swing.text.StyledDocument
 /**
  * Swing frame that displays the output log if desired.
  */
-class LogFrame(private val owner: JFrame) : JFrame("LogParse Log"), Messenger {
+class LogFrame(private val owner: JFrame) : JFrame("LogParse Log") {
     private val document: StyledDocument
     private lateinit var normalStyle: Style
     private lateinit var errorStyle: Style
@@ -77,25 +80,23 @@ class LogFrame(private val owner: JFrame) : JFrame("LogParse Log"), Messenger {
         errorStyle = textPane.addStyle("error", normalStyle)
         StyleConstants.setForeground(errorStyle, Color.RED)
 
+        if (AbstractManager.hasManager("JPanel")) {
+            val manager = AbstractManager.getManager<EventManager, EventManager.EventData>("JPanel", null, null)
+            manager.addListener(object : EventManager.Log4jEventListener {
+                override fun logMessage(event: EventManager.Log4JEvent) {
+                    val style = when (event.level) {
+                        Level.ERROR, Level.FATAL -> errorStyle
+                        else                     -> normalStyle
+                    }
+                    GlobalScope.launch(Dispatchers.Swing) {
+                        document.insertString(document.length, event.msg, style)
+                    }
+                }
+            })
+
+        }
+
         return textPane
-    }
-
-    /**
-     * Adds the given text to the end of the pane as a normal message.
-     */
-    override fun message(msg: String) {
-        GlobalScope.launch(Dispatchers.Swing) {
-            document.insertString(document.length, msg, normalStyle)
-        }
-    }
-
-    /**
-     * Adds the given text to the end of the pane as an error message.
-     */
-    override fun error(msg: String) {
-        GlobalScope.launch(Dispatchers.Swing) {
-            document.insertString(document.length, msg, errorStyle)
-        }
     }
 
     /**
@@ -105,6 +106,8 @@ class LogFrame(private val owner: JFrame) : JFrame("LogParse Log"), Messenger {
     fun makeVisible() {
         locateRelativeTo(owner)
         isVisible = true
+        logger.info("Made the log window visible")
+        logger.error("Eek!")
     }
 
     /**
@@ -135,5 +138,8 @@ class LogFrame(private val owner: JFrame) : JFrame("LogParse Log"), Messenger {
             }
         }
         setBounds(newX, newY, newWidth, newHeight)
+    }
+    companion object {
+        val logger by logger()
     }
 }

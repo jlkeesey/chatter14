@@ -21,6 +21,8 @@ import java.awt.*
 import java.awt.dnd.DropTarget
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
+import java.awt.event.WindowAdapter
+import java.awt.event.WindowEvent
 import java.awt.image.BufferedImage
 import java.io.File
 import javax.imageio.ImageIO
@@ -64,6 +66,14 @@ class DropPanel(
         contentPane.add(label, BorderLayout.CENTER)
 
         this.isVisible = true
+
+        addWindowListener(object : WindowAdapter() {
+            override fun windowClosing(e: WindowEvent?) {
+                super.windowClosing(e)
+                logWindow?.dispose()
+            }
+        })
+
     }
 
     fun resetImage() {
