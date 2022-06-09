@@ -24,20 +24,19 @@ import org.apache.logging.log4j.core.appender.AbstractManager
 import org.apache.logging.log4j.core.appender.ConfigurationFactoryData
 import org.apache.logging.log4j.core.appender.ManagerFactory
 import org.apache.logging.log4j.core.config.Configuration
-import org.apache.logging.log4j.core.layout.PatternLayout
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class EventManager(loggerContext: LoggerContext?, name: String, private val layout: PatternLayout) : AbstractManager(
-    loggerContext, name
-) {
+open class EventManager(loggerContext: LoggerContext?, name: String) : AbstractManager(loggerContext, name) {
     private val listeners: MutableSet<Log4jEventListener> = mutableSetOf()
+    private val writeLock = Any()
 
-    fun raise(logEvent: LogEvent) {
-        if (listeners.isNotEmpty()) {
-            val msg = layout.toSerializable(logEvent)
-            val event = Log4JEvent(logEvent, logEvent.level, msg)
-            listeners.forEach { it.logMessage(event) }
+    fun raise(logEvent: LogEvent, msg: String) {
+        synchronized(writeLock) {
+            if (listeners.isNotEmpty()) {
+                val event = Log4JEvent(logEvent, logEvent.level, msg)
+                listeners.forEach { it.logMessage(event) }
+            }
         }
     }
 
@@ -45,6 +44,7 @@ class EventManager(loggerContext: LoggerContext?, name: String, private val layo
         listeners.add(listener)
     }
 
+    @Suppress("unused")
     fun removeListener(listener: Log4jEventListener) {
         listeners.remove(listener)
     }
@@ -60,21 +60,26 @@ class EventManager(loggerContext: LoggerContext?, name: String, private val layo
         fun logMessage(event: Log4JEvent)
     }
 
-    class EventData(val layout: PatternLayout, configuration: Configuration?) : ConfigurationFactoryData(configuration)
+    class EventData(configuration: Configuration?) : ConfigurationFactoryData(configuration)
 
     companion object {
+
+        @Suppress("unused")
         fun hasManager(name: String): Boolean {
             return hasManager(name)
         }
 
-        fun getEventManager(name: String, layout: PatternLayout, configuration: Configuration?): EventManager {
-            return getManager(name, FACTORY, EventData(layout, configuration))
+        fun getEventManager(
+            name: String,
+            configuration: Configuration?,
+        ): EventManager {
+            return getManager(name, FACTORY, EventData(configuration))
         }
 
         private val FACTORY: ManagerFactory<EventManager, EventData> =
             ManagerFactory<EventManager, EventData> { name, data ->
                 EventManager(
-                    data.loggerContext, name, data.layout
+                    data.loggerContext, name
                 )
             }
     }
