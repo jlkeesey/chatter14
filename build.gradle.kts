@@ -42,11 +42,14 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.6.21")
     implementation("cc.ekblad:4koma:1.0.1")
     implementation("com.github.ajalt.clikt:clikt:3.4.2")
-//    implementation("org.apache.logging.log4j:log4j-api-kotlin:1.1.0")
     implementation("org.apache.logging.log4j:log4j-api:2.17.0")
     implementation("org.apache.logging.log4j:log4j-core:2.17.2")
 
     testImplementation(kotlin("test"))
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("io.kotest:kotest-assertions-core:5.3.0")
+    testImplementation("io.kotest:kotest-property:5.3.0")
+    testImplementation("io.mockk:mockk:1.12.4")
 }
 
 tasks.withType<edu.sc.seis.launch4j.tasks.DefaultLaunch4jTask> {

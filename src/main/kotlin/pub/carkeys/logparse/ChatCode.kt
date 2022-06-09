@@ -53,7 +53,7 @@ enum class ChatCode(val code: String, val type: ChatType) {
     OTHER("????", ChatType.OTHER);
 
     companion object {
-        private val codeToChatCode = mapOf<String, ChatCode>(
+        private val codeToChatCode = mapOf(
             SAY.code to SAY,
             YELL.code to YELL,
             SHOUT.code to SHOUT,
