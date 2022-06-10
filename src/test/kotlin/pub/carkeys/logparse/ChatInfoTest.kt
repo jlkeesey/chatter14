@@ -25,6 +25,7 @@ import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeParseException
 
+@Suppress("SpellCheckingInspection")
 internal class ChatInfoTest {
     private val defaultOptions = ParseOptions()
     private val expectedTimestamp = OffsetDateTime.of(2022, 6, 4, 12, 17, 32, 0, ZoneOffset.ofHours(-7))
@@ -188,6 +189,20 @@ internal class ChatInfoTest {
         }
 
         @Test
+        fun `valid code, empty name`() {
+            val actual = ChatInfo.create(
+                options = defaultOptions,
+                lineNumber = expectedLinenumber,
+                name = "",
+                code = expectedCode.code,
+                msg = expectedMessage,
+                timestamp = stringTimestamp,
+            )
+
+            actual shouldBe expectedChatInfo.copy(code = ChatCode.OTHER, name = "", shortName = "")
+        }
+
+        @Test
         fun `invalid code`() {
             val actual = ChatInfo.create(
                 options = defaultOptions,
@@ -202,6 +217,78 @@ internal class ChatInfoTest {
         }
     }
 
+    @Nested
+    inner class Msg {
+        @Test
+        fun `basic msg`() {
+            val actual = ChatInfo.create(
+                options = defaultOptions,
+                lineNumber = expectedLinenumber,
+                name = expectedName,
+                code = expectedCode.code,
+                msg = expectedMessage,
+                timestamp = stringTimestamp,
+            )
+
+            actual shouldBe expectedChatInfo
+        }
+
+        @Test
+        fun `basic msg with world`() {
+            val actual = ChatInfo.create(
+                options = defaultOptions,
+                lineNumber = expectedLinenumber,
+                name = expectedName,
+                code = expectedCode.code,
+                msg = "${expectedMessage}Goblin",
+                timestamp = stringTimestamp,
+            )
+
+            actual shouldBe expectedChatInfo
+        }
+
+        @Test
+        fun `basic msg with separate world`() {
+            val actual = ChatInfo.create(
+                options = defaultOptions,
+                lineNumber = expectedLinenumber,
+                name = expectedName,
+                code = expectedCode.code,
+                msg = "$expectedMessage Goblin",
+                timestamp = stringTimestamp,
+            )
+
+            actual shouldBe expectedChatInfo.copy(msg = "$expectedMessage Goblin")
+        }
+
+        @Test
+        fun `basic msg with multiple worlds`() {
+            val actual = ChatInfo.create(
+                options = defaultOptions,
+                lineNumber = expectedLinenumber,
+                name = expectedName,
+                code = expectedCode.code,
+                msg = "${expectedMessage}Zalera Goblin Diabolos",
+                timestamp = stringTimestamp,
+            )
+
+            actual shouldBe expectedChatInfo.copy(msg = "$expectedMessage Goblin Diabolos")
+        }
+
+        @Test
+        fun `basic name with name prefix`() {
+            val actual = ChatInfo.create(
+                options = defaultOptions,
+                lineNumber = expectedLinenumber,
+                name = expectedName,
+                code = expectedCode.code,
+                msg = "$expectedName $expectedMessage",
+                timestamp = stringTimestamp,
+            )
+
+            actual shouldBe expectedChatInfo
+        }
+    }
 
     @Nested
     inner class Timestamp {
