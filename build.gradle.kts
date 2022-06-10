@@ -36,7 +36,6 @@ repositories {
 }
 
 dependencies {
-
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.6.1")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.6.21")
@@ -68,28 +67,49 @@ tasks {
     processResources {
         from(versionProperties)
     }
-}
 
-tasks.withType<edu.sc.seis.launch4j.tasks.DefaultLaunch4jTask> {
-    outfile = "${rootProject.name}.exe"
-    mainClassName = "pub.carkeys.logparse.MainKt"
-    icon = "$projectDir/icons/Iconka-Cat-Shadows-Cat-shadow.ico"
-    jvmOptions = setOf("-Dbuild.version=${version}")
-    productName = "LogParse"
-    bundledJrePath = "C:/Program Files/Java/jdk-18.0.1.1"
-    jreMinVersion = "1.8.0"
-}
+    test {
+        useJUnitPlatform()
+    }
 
-tasks.test {
-    useJUnitPlatform()
-}
+    withType<edu.sc.seis.launch4j.tasks.DefaultLaunch4jTask> {
+        outfile = "${rootProject.name}.exe"
+        mainClassName = "pub.carkeys.logparse.MainKt"
+        icon = "$projectDir/icons/Iconka-Cat-Shadows-Cat-shadow.ico"
+        jvmOptions = setOf("-Dbuild.version=${version}")
+        productName = "LogParse"
+        bundledJrePath = "C:/Program Files/Java/jdk-18.0.1.1"
+        jreMinVersion = "1.8.0"
+    }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        jvmTarget = "1.8"
-        freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
+    withType<KotlinCompile> {
+        kotlinOptions {
+            jvmTarget = "1.8"
+            freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
+        }
     }
 }
+
+//tasks.withType<edu.sc.seis.launch4j.tasks.DefaultLaunch4jTask> {
+//    outfile = "${rootProject.name}.exe"
+//    mainClassName = "pub.carkeys.logparse.MainKt"
+//    icon = "$projectDir/icons/Iconka-Cat-Shadows-Cat-shadow.ico"
+//    jvmOptions = setOf("-Dbuild.version=${version}")
+//    productName = "LogParse"
+//    bundledJrePath = "C:/Program Files/Java/jdk-18.0.1.1"
+//    jreMinVersion = "1.8.0"
+//}
+
+//tasks.test {
+//    useJUnitPlatform()
+//}
+
+//tasks.withType<KotlinCompile> {
+//    kotlinOptions {
+//        jvmTarget = "1.8"
+//        freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
+//    }
+//}
 
 application {
     mainClass.set("pub.carkeys.logparse.MainKt")
