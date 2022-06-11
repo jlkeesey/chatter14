@@ -15,7 +15,7 @@
  *
  */
 
-package pub.carkeys.logparse
+package pub.carkeys.chatter14
 
 import com.github.erikhuizinga.mockk.junit5.MockkClearUnmockExtension
 import io.kotest.assertions.throwables.shouldThrow

@@ -15,7 +15,7 @@
  *
  */
 
-package pub.carkeys.logparse
+package pub.carkeys.chatter14
 
 import java.awt.*
 import java.awt.dnd.DropTarget
@@ -25,6 +25,7 @@ import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
 import java.awt.image.BufferedImage
 import java.io.File
+import java.util.MissingResourceException
 import javax.imageio.ImageIO
 import javax.swing.*
 import javax.swing.border.EmptyBorder
@@ -36,7 +37,7 @@ import javax.swing.border.EmptyBorder
 class DropPanel(
     private val parseConfig: ParseConfig,
     private val parseOptions: ParseOptions,
-) : JFrame("LogParse") {
+) : JFrame("Chatter XIV") {
 
     @Suppress("unused")
     private val serialVersionUID = 1L
@@ -88,9 +89,14 @@ class DropPanel(
     }
 
     private fun loadImage(name: String): BufferedImage {
-        val url = DropPanel::class.java.getResource(name)
+        val url = DropPanel::class.java.getResource(name) ?: throw MissingResourceException(
+            "Image $name was not found",
+            DropPanel::class.java.name,
+            name
+        )
         val file = File(url.toURI())
         return ImageIO.read(file)
+
     }
 
     /**
@@ -150,7 +156,7 @@ class DropPanel(
     }
 
     /**
-     * Creates the top panel which contains all the controls for affecting the LogParse process.
+     * Creates the top panel which contains all the controls for affecting the log processor.
      */
     private fun createTopPanel(): JPanel {
         // val panel = JPanel(FlowLayout())

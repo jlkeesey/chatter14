@@ -15,11 +15,9 @@
  *
  */
 
-package pub.carkeys.logparse
+package pub.carkeys.chatter14
 
 /**
- * Main entry point for the application.
+ * Thrown when the application should shut down but not display a stack trace.
  */
-fun main(args: Array<String>) {
-    Application.start(args)
-}
+class ShutdownException : RuntimeException()

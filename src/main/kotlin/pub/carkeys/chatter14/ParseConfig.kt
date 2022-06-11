@@ -15,7 +15,7 @@
  *
  */
 
-package pub.carkeys.logparse
+package pub.carkeys.chatter14
 
 import cc.ekblad.toml.model.TomlException
 import cc.ekblad.toml.model.TomlValue
@@ -161,9 +161,9 @@ data class ParseConfig(
         /**
          * Reads the configuration from a file.
          *
-         * @param filename the file to read defaults to <code>.logparse.toml</code>
+         * @param filename the file to read defaults to <code>.chatter14.toml</code>
          */
-        fun read(filename: String = ".logparse.toml"): ParseConfig {
+        fun read(filename: String = ".chatter14.toml"): ParseConfig {
             val input = readConfigFile(filename)
             return if (input == null) ParseConfig() else parse(input)
         }

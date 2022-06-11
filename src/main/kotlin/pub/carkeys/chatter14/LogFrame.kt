@@ -17,7 +17,7 @@
 
 @file:OptIn(DelicateCoroutinesApi::class)
 
-package pub.carkeys.logparse
+package pub.carkeys.chatter14
 
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.swing.Swing
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.core.appender.AbstractManager
-import pub.carkeys.logparse.log4j.EventManager
+import pub.carkeys.chatter14.log4j.EventManager
 import java.awt.BorderLayout
 import java.awt.Color
 import java.awt.Toolkit
@@ -44,7 +44,7 @@ import javax.swing.text.StyledDocument
 /**
  * Swing frame that displays the output log if desired.
  */
-class LogFrame(private val owner: JFrame) : JFrame("LogParse Log") {
+class LogFrame(private val owner: JFrame) : JFrame("Chatter Log") {
     private val document: StyledDocument
     private lateinit var normalStyle: Style
     private lateinit var errorStyle: Style

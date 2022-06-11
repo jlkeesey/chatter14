@@ -15,7 +15,7 @@
  *
  */
 
-package pub.carkeys.logparse
+package pub.carkeys.chatter14
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe

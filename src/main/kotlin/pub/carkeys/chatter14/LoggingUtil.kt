@@ -15,7 +15,7 @@
  *
  */
 
-package pub.carkeys.logparse
+package pub.carkeys.chatter14
 
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger

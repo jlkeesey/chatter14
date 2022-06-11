@@ -15,7 +15,7 @@
  *
  */
 
-rootProject.name = "logparse"
+rootProject.name = "chatter14"
 
 dependencyResolutionManagement {
     versionCatalogs {

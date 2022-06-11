@@ -15,7 +15,7 @@
  *
  */
 
-package pub.carkeys.logparse.log4j
+package pub.carkeys.chatter14.log4j
 
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.core.LogEvent

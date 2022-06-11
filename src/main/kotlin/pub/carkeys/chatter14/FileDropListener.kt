@@ -15,7 +15,7 @@
  *
  */
 
-package pub.carkeys.logparse
+package pub.carkeys.chatter14
 
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -26,7 +26,7 @@ import java.awt.dnd.*
 import java.io.File
 
 /**
- * Listens to file drop messages and invokes the LogParse process for each one.
+ * Listens to file drop messages and invokes the log processor for each one.
  *
  * I get the felling that there is a newer, better way of doing this, but it works for this
  * simple situation so why mess with it?
@@ -36,7 +36,7 @@ class FileDropListener(
 ) : DropTargetListener {
     /**
      * Handles the drop action on the control. For each drop item if it is a file type we collect
-     * it into a list and the pass the list to LogParse to handle each one.
+     * it into a list and the pass the list to log processor to handle each one.
      */
     @OptIn(DelicateCoroutinesApi::class)
     override fun drop(event: DropTargetDropEvent) {
@@ -54,7 +54,7 @@ class FileDropListener(
         event.dropComplete(true)
         panel.resetImage()
         GlobalScope.launch(Dispatchers.IO) {
-            LogParse(parseOptions).process()
+            ActLogProcessor(parseOptions).process()
         }
     }
 

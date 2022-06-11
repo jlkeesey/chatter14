@@ -15,7 +15,7 @@
  *
  */
 
-package pub.carkeys.logparse
+package pub.carkeys.chatter14
 
 import java.io.File
 import java.io.FileWriter
@@ -29,7 +29,7 @@ import kotlin.io.path.forEachDirectoryEntry
  * The log processor. This reads each file in turn, filters for the requested items, and then
  * writes them to a file.
  */
-class LogParse(private val options: ParseOptions) {
+class ActLogProcessor(private val options: ParseOptions) {
 
     /**
      * Process each of the files on the command line. If the name is a file we just process

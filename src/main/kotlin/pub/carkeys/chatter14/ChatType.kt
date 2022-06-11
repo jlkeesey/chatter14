@@ -15,7 +15,7 @@
  *
  */
 
-package pub.carkeys.logparse
+package pub.carkeys.chatter14
 
 enum class ChatType(val shortName: String) {
     CHAT("C"),

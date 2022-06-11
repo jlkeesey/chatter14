@@ -15,7 +15,7 @@
  *
  */
 
-package pub.carkeys.logparse
+package pub.carkeys.chatter14
 
 /**
  * These are the secondary codes for each chat type in FFXIV. There are many more than this

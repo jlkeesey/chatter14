@@ -15,9 +15,30 @@
  *
  */
 
-package pub.carkeys.logparse
+package pub.carkeys.chatter14
+
+import java.io.File
 
 /**
- * Thrown when the application should shut down but not display a stack trace.
+ * Simple file reader.
  */
-class ShutdownException : RuntimeException()
+class JFile(path: File) {
+    private val file: File = path.canonicalFile
+
+    init {
+        if (!file.exists()) {
+            throw IllegalArgumentException("'${path.name}' does not exist")
+        }
+        if (!file.isFile) {
+            throw IllegalArgumentException("'${path.name}' is not a file")
+        }
+    }
+
+    fun forEach(action: (Int, String) -> Unit) {
+        var lineNumber = 1
+        file.forEachLine { line ->
+            action(lineNumber, line)
+            lineNumber++
+        }
+    }
+}

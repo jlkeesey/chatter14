@@ -27,7 +27,12 @@ plugins {
     id("org.jetbrains.dokka") version "1.6.21"
 }
 
-group = "pub.carkeys.logparse"
+val resourceGenerationDir by extra("${buildDir}/generated_src/main/resources")
+val resourceVersionProperties by extra("${resourceGenerationDir}/application.properties")
+val applicationPackage = "pub.carkeys.chatter14"
+val applicationMainClassName = "$applicationPackage.MainKt"
+
+group = applicationPackage
 
 repositories {
     mavenCentral()
@@ -48,13 +53,10 @@ dependencies {
     testImplementation(libs.mockk.junit5)
 }
 
-val resourceGenerationDir by extra("${buildDir}/generated_src/main/resources")
-val resourceVersionProperties by extra("${resourceGenerationDir}/application.properties")
-
 tasks {
     val versionProperties by registering(WriteProperties::class) {
         description = "Generated application info property file"
-        comment = "Generated application info property file"
+        comment = " Generated application info property file"
         outputFile = file(resourceVersionProperties)
         encoding = "UTF-8"
         property("application.name", project.name)
@@ -71,10 +73,10 @@ tasks {
 
     withType<edu.sc.seis.launch4j.tasks.DefaultLaunch4jTask> {
         outfile = "${rootProject.name}.exe"
-        mainClassName = "pub.carkeys.logparse.MainKt"
+        mainClassName = applicationMainClassName
         icon = "$projectDir/icons/Iconka-Cat-Shadows-Cat-shadow.ico"
         jvmOptions = setOf("-Dbuild.version=${version}")
-        productName = "LogParse"
+        productName = "Chatter 14"
         bundledJrePath = "C:/Program Files/Java/jdk-18.0.1.1"
         jreMinVersion = "1.8.0"
     }
@@ -92,5 +94,5 @@ tasks {
 }
 
 application {
-    mainClass.set("pub.carkeys.logparse.MainKt")
+    mainClass.set(applicationMainClassName)
 }
