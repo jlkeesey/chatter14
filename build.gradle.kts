@@ -24,32 +24,28 @@ plugins {
     application
     id("net.researchgate.release") version "2.8.1"
     id("edu.sc.seis.launch4j") version "2.5.3"
+    id("org.jetbrains.dokka") version "1.6.21"
 }
 
 group = "pub.carkeys.logparse"
 
 repositories {
     mavenCentral()
-    maven {
-        url = uri("https://jitpack.io")
-    }
+    maven(url = "https://jitpack.io")
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.6.1")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.6.21")
-    implementation("cc.ekblad:4koma:1.0.1")
-    implementation("com.github.ajalt.clikt:clikt:3.4.2")
-    implementation("org.apache.logging.log4j:log4j-api:2.17.2")
-    implementation("org.apache.logging.log4j:log4j-core:2.17.2")
+    implementation(libs.bundles.kotlinx.coroutines)
+    implementation(libs.kotlin.reflect)
+    implementation(libs.four.koma)
+    implementation(libs.clikt)
+    implementation(libs.bundles.log4j)
 
     testImplementation(kotlin("test"))
-    testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
-    testImplementation("io.kotest:kotest-assertions-core:5.3.0")
-    testImplementation("io.kotest:kotest-property:5.3.0")
-    testImplementation("io.mockk:mockk:1.12.4")
-    testImplementation("com.github.erikhuizinga:mockk-junit5:2.0.0")
+    testImplementation(libs.junit5)
+    testImplementation(libs.bundles.kotest)
+    testImplementation(libs.mockk)
+    testImplementation(libs.mockk.junit5)
 }
 
 val resourceGenerationDir by extra("${buildDir}/generated_src/main/resources")
@@ -88,28 +84,11 @@ tasks {
             freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
         }
     }
+
+    dokkaHtml.configure {
+        outputDirectory.set(buildDir.resolve("dokka"))
+    }
 }
-
-//tasks.withType<edu.sc.seis.launch4j.tasks.DefaultLaunch4jTask> {
-//    outfile = "${rootProject.name}.exe"
-//    mainClassName = "pub.carkeys.logparse.MainKt"
-//    icon = "$projectDir/icons/Iconka-Cat-Shadows-Cat-shadow.ico"
-//    jvmOptions = setOf("-Dbuild.version=${version}")
-//    productName = "LogParse"
-//    bundledJrePath = "C:/Program Files/Java/jdk-18.0.1.1"
-//    jreMinVersion = "1.8.0"
-//}
-
-//tasks.test {
-//    useJUnitPlatform()
-//}
-
-//tasks.withType<KotlinCompile> {
-//    kotlinOptions {
-//        jvmTarget = "1.8"
-//        freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
-//    }
-//}
 
 application {
     mainClass.set("pub.carkeys.logparse.MainKt")
