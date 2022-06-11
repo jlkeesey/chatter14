@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm") version "1.6.20"
     application
-    id("net.researchgate.release") version "2.8.1"
+        id("net.researchgate.release") version "2.8.1"
     id("edu.sc.seis.launch4j") version "2.5.3"
     id("org.jetbrains.dokka") version "1.6.21"
 }
@@ -49,15 +49,16 @@ dependencies {
 }
 
 val resourceGenerationDir by extra("${buildDir}/generated_src/main/resources")
-val resourceVersionProperties by extra("${resourceGenerationDir}/version.properties")
+val resourceVersionProperties by extra("${resourceGenerationDir}/application.properties")
 
 tasks {
     val versionProperties by registering(WriteProperties::class) {
-        description = "Generated version property file"
-        comment = "Generated version property file"
+        description = "Generated application info property file"
+        comment = "Generated application info property file"
         outputFile = file(resourceVersionProperties)
         encoding = "UTF-8"
-        property("${project.name}.version", project.version)
+        property("application.name", project.name)
+        property("application.version", project.version)
     }
 
     processResources {

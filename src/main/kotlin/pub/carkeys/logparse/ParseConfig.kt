@@ -37,7 +37,7 @@ import java.io.IOException
  * @property serverName the name of the server the main user is from. Generally this will be
  *     the user that is executing this application.
  *     This server will not be included in the output.
- * @property performRename true if usenames should be renamed according to the renames list.
+ * @property performRename true if usernames should be renamed according to the renames list.
  * @property renames any username renames, usually used to shorten the names of common users.
  * @property groupEntries the group definitions. One of these will be used to process the
  *     files.
@@ -182,12 +182,12 @@ data class ParseConfig(
         }
 
         /**
-         * Returns a more used friendly error message from the ones given by the Toml parser.
+         * Returns a more user-friendly error message from the ones given by the Toml parser.
          */
         private fun cleanUpDecodingExceptionMessage(e: TomlException.DecodingError): String {
             return when (e.reason) {
-                "no value found for non-nullable parameter 'label'" -> "A group label is missing"
-                else                                                -> e.reason ?: e.localizedMessage
+                "no value found for required parameter 'label'" -> "A group label is missing"
+                else                                            -> e.reason ?: e.localizedMessage
             }
         }
 

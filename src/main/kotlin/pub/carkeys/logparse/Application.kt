@@ -47,11 +47,10 @@ import kotlin.system.exitProcess
  * @property config the ParseConfig to use to parse any files.
  */
 class Application(private val config: ParseConfig) : CliktCommand(name = "logparse") {
-    val version = loadVersion().removeSuffix("-SNAPSHOT")
-//    val version = (System.getProperty("build.version") ?: "1.4").removeSuffix("-SNAPSHOT")
+    val appInfo = ApplicationInfo.loadInfo()
 
     init {
-        versionOption(version)
+        versionOption(appInfo.version)
     }
 
     private val dryRun by option("-d", "--dryrun", help = "process without creating output files").flag(

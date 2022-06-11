@@ -17,9 +17,6 @@
 
 package pub.carkeys.logparse
 
-import java.io.IOException
-import java.util.Properties
-
 /**
  * Main entry point for the application.
  */

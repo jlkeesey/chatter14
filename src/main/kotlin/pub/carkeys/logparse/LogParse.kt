@@ -152,7 +152,7 @@ class LogParse(private val options: ParseOptions) {
         private val nullWriter = object : Writer() {
             override fun close() {}
             override fun flush() {}
-            override fun write(cbuf: CharArray?, off: Int, len: Int) {}
+            override fun write(cbuf: CharArray, off: Int, len: Int) {}
         }
 
         private val timestampFormatter = DateTimeFormatterBuilder()
