@@ -22,28 +22,31 @@ import pub.carkeys.chatter14.ParseOptions
 import java.io.BufferedReader
 import java.io.Reader
 
-/**
- * Returns a sequence of ChatInfo objects from the target reader.
- */
-fun Reader.readChats(options: ParseOptions): Sequence<ChatInfo> {
-    val reader = this as? BufferedReader ?: BufferedReader(this)
-    var lineNumber = 0
-    return reader.lineSequence().map { line ->
-        lineNumber++
-        line.split("|")
-    }.filter { parts -> parts[0] == "00" && parts.size >= 5 }.map { parts ->
-        ChatInfo.create(
-            options, lineNumber = lineNumber, name = parts[3], code = parts[2], msg = parts[4], timestamp = parts[1]
-        )
-    }
-}
+class ActLogParser {
 
-/**
- * Returns a sequence of filtered ChatInfo objects from the target reader. This filters for
- * the info objects that match the user's requirements.
- */
-fun Reader.readLog(options: ParseOptions): Sequence<ChatInfo> {
-    return this.readChats(options).filter { info ->
-        options.types.contains(info.code.type) && options.group.matches(info.name)
+    /**
+     * Returns a sequence of filtered ChatInfo objects from the reader. This filters for the info
+     * objects that match the user's requirements.
+     */
+    fun readLog(reader: Reader, options: ParseOptions): List<ChatInfo> {
+        return readChats(reader, options).filter { info ->
+            options.types.contains(info.code.type) && options.group.matches(info.name)
+        }.toList()
+    }
+
+    /**
+     * Returns a sequence of ChatInfo objects from the reader.
+     */
+    private fun readChats(input: Reader, options: ParseOptions): Sequence<ChatInfo> {
+        val reader = input as? BufferedReader ?: BufferedReader(input)
+        var lineNumber = 0
+        return reader.lineSequence().map { line ->
+            lineNumber++
+            line.split("|")
+        }.filter { parts -> parts[0] == "00" && parts.size >= 5 }.map { parts ->
+            ChatInfo.create(
+                options, lineNumber = lineNumber, name = parts[3], code = parts[2], msg = parts[4], timestamp = parts[1]
+            )
+        }
     }
 }

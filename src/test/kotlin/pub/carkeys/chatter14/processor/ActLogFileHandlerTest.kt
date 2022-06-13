@@ -38,7 +38,7 @@ internal class ActLogFileHandlerTest {
     fun setup() {
         UnitTestEventAppender.clear()
         val inputFileName = slot<String>()
-        every { processor.process(name = capture(inputFileName), any(), any()) } just Runs
+        every { processor.process(name = capture(inputFileName), any(), any(), any()) } just Runs
         every { fileManager.openForRead(any()) } returns StringReader("")
         every { fileManager.openForWrite(any()) } returns StringWriter(100)
     }
@@ -68,7 +68,7 @@ internal class ActLogFileHandlerTest {
         fun `file exists, new file does not exist`() {
             every { newFile.exists() } returns false
             handler.process()
-            verify(exactly = 1) { processor.process(any(), any(), any()) }
+            verify(exactly = 1) { processor.process(any(), any(), any(), any()) }
             UnitTestEventAppender.messages shouldBe listOf("Processing $FILEPATH")
         }
 
@@ -76,7 +76,7 @@ internal class ActLogFileHandlerTest {
         fun `file exists, new file exists, force = false`() {
             every { newFile.exists() } returns true
             handler.process()
-            verify(exactly = 0) { processor.process(any(), any(), any()) }
+            verify(exactly = 0) { processor.process(any(), any(), any(), any()) }
             UnitTestEventAppender.messages shouldBe listOf("Target file exists, skipping: '$NEW_FILEPATH'")
         }
 
@@ -90,7 +90,7 @@ internal class ActLogFileHandlerTest {
 
             every { newFile.exists() } returns true
             forceHandler.process()
-            verify(exactly = 1) { processor.process(any(), any(), any()) }
+            verify(exactly = 1) { processor.process(any(), any(), any(), any()) }
             UnitTestEventAppender.messages shouldBe listOf("Processing $FILEPATH")
         }
 
@@ -144,7 +144,7 @@ internal class ActLogFileHandlerTest {
 
             handler.process()
 
-            verify(exactly = 0) { processor.process(any(), any(), any()) }
+            verify(exactly = 0) { processor.process(any(), any(), any(), any()) }
             UnitTestEventAppender.messages shouldBe listOf("Processing all log files in $PATH")
         }
 
@@ -160,7 +160,7 @@ internal class ActLogFileHandlerTest {
 
             handler.process()
 
-            verify(exactly = 0) { processor.process(any(), any(), any()) }
+            verify(exactly = 0) { processor.process(any(), any(), any(), any()) }
             UnitTestEventAppender.messages shouldBe listOf(
                 "Processing all log files in $PATH", "   Input file $PATH/first.log does not exist"
             )
@@ -179,7 +179,7 @@ internal class ActLogFileHandlerTest {
 
             handler.process()
 
-            verify(exactly = 0) { processor.process(any(), any(), any()) }
+            verify(exactly = 0) { processor.process(any(), any(), any(), any()) }
             UnitTestEventAppender.messages shouldBe listOf(
                 "Processing all log files in $PATH", "   Input name /a/path/first.log is not a file"
             )
@@ -199,7 +199,7 @@ internal class ActLogFileHandlerTest {
 
             handler.process()
 
-            verify(exactly = 1) { processor.process(any(), any(), any()) }
+            verify(exactly = 1) { processor.process(any(), any(), any(), any()) }
             UnitTestEventAppender.messages shouldBe listOf(
                 "Processing all log files in $PATH", "   Processing $PATH/first.log",
             )

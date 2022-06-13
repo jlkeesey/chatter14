@@ -23,6 +23,8 @@ import pub.carkeys.chatter14.logger
 import java.io.Reader
 import java.io.Writer
 import java.lang.Integer.max
+import java.time.Clock
+import java.time.OffsetDateTime
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
@@ -31,12 +33,15 @@ import java.time.format.DateTimeFormatterBuilder
  * The log processor. This parsers the given Reader as an ACT log, filters for the requested
  * items, and then writes them to the given Writer.
  */
-class ActLogProcessor(private val options: ParseOptions) {
+class ActLogProcessor(
+    private val parser: ActLogParser = ActLogParser(),
+    private val clock: Clock = Clock.systemDefaultZone(),
+) {
     /**
      * Process an Act log into an output containing the filtered chats.
      */
-    fun process(name: String, input: Reader, output: Writer) {
-        val chatLog = input.readLog(options)
+    fun process(name: String, options: ParseOptions, input: Reader, output: Writer) {
+        val chatLog = parser.readLog(input, options)
         writeChats(name, output, chatLog)
     }
 
@@ -44,9 +49,8 @@ class ActLogProcessor(private val options: ParseOptions) {
      * Writes the filtered contents to the target file. We fail if the target already exists
      * unless the force flag was supplied.
      */
-    private fun writeChats(name: String, output: Writer, chats: Sequence<ChatInfo>) {
-        output.write("# Created at ${ZonedDateTime.now()}\n")
-        val chatLog = chats.toList()
+    private fun writeChats(name: String, output: Writer, chatLog: List<ChatInfo>) {
+        output.write("# Created at ${OffsetDateTime.now(clock)}\n")
         if (chatLog.isEmpty()) {
             output.write("# No lines matched the criteria\n")
             logger.info("$name is empty")

@@ -27,7 +27,7 @@ import java.io.File
  */
 class ActLogFileHandler(
     private val options: ParseOptions,
-    private val processor: ActLogProcessor = ActLogProcessor(options),
+    private val processor: ActLogProcessor = ActLogProcessor(),
     private val fileManager: ChatterFileManager = ChatterFileManager(),
 ) {
     /*
@@ -68,7 +68,7 @@ class ActLogFileHandler(
         fileManager.openForRead(inputFile).use { reader ->
             fileManager.openForWrite(outputFile).use { writer ->
                 logger.info("${indent}Processing ${inputFile.path}")
-                processor.process(inputFile.path, reader, writer)
+                processor.process(inputFile.path, options, reader, writer)
             }
         }
     }
