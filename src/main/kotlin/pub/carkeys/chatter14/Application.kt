@@ -26,6 +26,7 @@ import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.versionOption
 import com.github.ajalt.clikt.parameters.types.choice
 import com.github.ajalt.clikt.parameters.types.file
+import pub.carkeys.chatter14.processor.ActLogFileHandler
 import java.awt.Font
 import java.awt.FontFormatException
 import java.awt.GraphicsEnvironment
@@ -118,7 +119,7 @@ class Application(private val config: ParseConfig) : CliktCommand(name = "chatte
      */
     private fun executeCommandLine(options: ParseOptions) {
         try {
-            ActLogProcessor(options).process()
+            ActLogFileHandler(options).process()
 
 //
 //            println("usage: chatter14 [ -a | -s ] [ -e ] file ...")

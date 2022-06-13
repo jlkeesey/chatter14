@@ -21,6 +21,7 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import pub.carkeys.chatter14.processor.ActLogFileHandler
 import java.awt.datatransfer.DataFlavor
 import java.awt.dnd.*
 import java.io.File
@@ -54,7 +55,7 @@ class FileDropListener(
         event.dropComplete(true)
         panel.resetImage()
         GlobalScope.launch(Dispatchers.IO) {
-            ActLogProcessor(parseOptions).process()
+            ActLogFileHandler(parseOptions).process()
         }
     }
 
