@@ -36,6 +36,10 @@ import java.io.File
  * processing library.
  *
  * @property config the ParseConfig to use to parse any files.
+ * @property info the application info.
+ * @property windowManager the window manager to use if windowed is requested.
+ * @property fileHandler the file handler to use. This will be used by both the command line
+ *     and windowed.
  */
 class Application(
     private val config: ParseConfiguration,
@@ -46,6 +50,19 @@ class Application(
     init {
         versionOption(info.version)
     }
+
+    override val commandHelp: String
+        get() = """
+            Extracts chat and emote lines from ACT logs.
+            
+            This application takes one or more ACT log files and extracts various char and optionally 
+            emote lones from the log. The lines can be further filtered by a list of user names.
+            
+            This command can be run in either command line or windowed modes. Command line mode
+            is useful for experience users or inclusion in scripts. Windowed mode allow for 
+            drag-and-drop actions to convert files. The default is to use windowed mode but that
+            can be changed with the -W option.
+        """.trimIndent()
 
     private val dryRun by option("-d", "--dryrun", help = "process without creating output files").flag(
         "-P", "--process", default = config.dryRun
@@ -60,26 +77,28 @@ class Application(
         "-W", "--no-window", default = true
     )
 
-    private val group by option("-g", "--group", help = "group to filter for").choice(
-        config.groups.values.associate { Pair(it.shortName, it.label) }, ignoreCase = true
-    ).default(ParseConfiguration.everyone.label)
+    private val group by option("-g", "--group", help = "group (list of users) to filter for").choice(
+        config.groups.values.associate { Pair(it.shortName, it.shortName) }.toSortedMap(), ignoreCase = true
+    ).default(ParseConfiguration.everyone.shortName)
 
-    private val files: List<File> by argument().file(mustExist = false, canBeFile = true).multiple()
+    private val files: List<File> by argument(help = "The log files to process")
+        .file(mustExist = false, canBeFile = true)
+        .multiple()
 
     /**
-     * Entry point for the main processing.
+     * Entry point for the main processing called by Clikt.
      */
     override fun run() {
         config.validate() // Do this after the command line parsing in case the parsing changed anything.
         val options = config.asOptions().copy(
             dryRun = dryRun,
             forceReplace = replace,
-            includeEmotes = includeEmotes,
             group = config.groups[group]!!,
+            includeEmotes = includeEmotes,
             windowed = windowed
         )
         if (options.windowed) {
-            windowManager.start(config = config, options = options, info = info, fileHandler = fileHandler)
+            windowManager.start(options = options, config = config, info = info, fileHandler = fileHandler)
         } else {
             fileHandler.process(options = options, files = files)
         }
@@ -112,22 +131,3 @@ class Application(
         }
     }
 }
-//
-//            println("usage: chatter14 [ -a | -s ] [ -e ] file ...")
-//            println()
-//            println("  -a    capture all participants")
-//            println("  -e    capture emotes from participants")
-//            println("  -f    overwrites existing files")
-//            println("  -s    capture people")
-//            println("  file  one or more files to process, can include wildcard")
-//            println()
-//            println("If Log Parse is started with not command line options and files then it will")
-//            println("start in windowed, drag-and-drop mode. This will display a window where files")
-//            println("can be dragged to to be process.")
-//            println()
-//            println("Each file will be processed and the filtered results written to a new")
-//            println("file of the same name with the extension changed to .txt")
-//            println()
-//            println("By default only chats from people (both last names) are written")
-//            println("out.")
-//            exitProcess(1)

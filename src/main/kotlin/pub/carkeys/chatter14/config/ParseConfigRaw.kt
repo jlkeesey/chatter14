@@ -77,6 +77,7 @@ data class ParseConfigRaw(
         private val mapper = tomlMapper {
             mapping<ParseConfigRaw>("group" to "groups")
             mapping<ParseConfigRaw>("datacenter" to "dataCenter")
+            mapping<GroupRaw>("shortname" to "shortName")
         }
 
         /**
