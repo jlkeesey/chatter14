@@ -1,6 +1,6 @@
 root = true
 
-[{*.kt,*.kts,*.main.kts,*.space.kts}]
+[{*.kt,*.kts}]
 kdoc_formatter_doc_do_not_wrap_if_one_line = true
 
 [*.md]
