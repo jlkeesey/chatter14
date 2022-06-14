@@ -34,6 +34,7 @@ import java.io.File
  * @property renames any username renames, usually used to shorten the names of common users.
  */
 data class ParseOptions(
+    var windowed: Boolean = false,
     var dryRun: Boolean = false,
     var forceReplace: Boolean = false,
     var includeEmotes: Boolean = false,

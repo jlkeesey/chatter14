@@ -34,7 +34,7 @@ import java.io.File
  * simple situation so why mess with it?
  */
 class FileDropListener(
-    private val parseOptions: ParseOptions, private val panel: DropFrame,
+    private val options: ParseOptions, private val panel: DropFrame, private val fileHandler: ActLogFileHandler,
 ) : DropTargetListener {
     /**
      * Handles the drop action on the control. For each drop item if it is a file type we collect
@@ -56,7 +56,7 @@ class FileDropListener(
         event.dropComplete(true)
         panel.resetImage()
         GlobalScope.launch(Dispatchers.IO) {
-            ActLogFileHandler(parseOptions).process(files)
+            fileHandler.process(options, files)
         }
     }
 

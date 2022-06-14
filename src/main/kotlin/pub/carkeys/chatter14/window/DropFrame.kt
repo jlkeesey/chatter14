@@ -20,6 +20,7 @@ package pub.carkeys.chatter14.window
 import pub.carkeys.chatter14.ApplicationInfo
 import pub.carkeys.chatter14.config.ParseConfiguration
 import pub.carkeys.chatter14.config.ParseOptions
+import pub.carkeys.chatter14.processor.ActLogFileHandler
 import java.awt.*
 import java.awt.dnd.DropTarget
 import java.awt.event.ComponentAdapter
@@ -38,16 +39,17 @@ import javax.swing.border.EmptyBorder
  * Display the drop panel with the controls for how to process any dropped files.
  */
 class DropFrame(
-    private val parseConfiguration: ParseConfiguration,
-    private val parseOptions: ParseOptions,
-    private val applicationInfo: ApplicationInfo,
-) : JFrame(applicationInfo.title) {
+    private val config: ParseConfiguration,
+    private val options: ParseOptions,
+    private val info: ApplicationInfo,
+    private val fileHandler: ActLogFileHandler,
+) : JFrame(info.title) {
 
     @Suppress("unused")
     private val serialVersionUID = 1L
     private var logWindow: LogFrame? = null
 
-    private val groupLabels = parseConfiguration.groups.keys.toList().sorted().toTypedArray()
+    private val groupLabels = config.groups.keys.toList().sorted().toTypedArray()
 
     private val randomImages = listOf(
         loadImage("/images/cat-shadow-ball-icon.png"),
@@ -117,7 +119,7 @@ class DropFrame(
             }
         })
         label.isOpaque = true
-        val dropListener = FileDropListener(parseOptions, this)
+        val dropListener = FileDropListener(options = options, panel = this, fileHandler = fileHandler)
         DropTarget(label, dropListener)
         return label
     }
@@ -182,7 +184,7 @@ class DropFrame(
         control.setSize(20, control.height)
         control.addActionListener {
             if (logWindow == null) {
-                logWindow = LogFrame(owner = this, title = applicationInfo.title)
+                logWindow = LogFrame(owner = this, title = info.title)
                 //myLogger.setMessenger(logWindow!!)
             }
             logWindow?.makeVisible()
@@ -195,11 +197,11 @@ class DropFrame(
      */
     private fun createParticipantsControl(): JComboBox<String> {
         val control = JComboBox(groupLabels)
-        control.selectedItem = parseOptions.group.label
+        control.selectedItem = options.group.label
         control.addActionListener { action ->
             val cb = action.source as JComboBox<*>
             val item = cb.selectedItem as String
-            parseOptions.group = parseConfiguration.groups[item]!!
+            options.group = config.groups[item]!!
         }
         return control
     }
@@ -208,10 +210,10 @@ class DropFrame(
      * Creates the dry run checkbox.
      */
     private fun createDryRunControl(): JCheckBox {
-        val checkBox = JCheckBox("Dry run", parseOptions.dryRun)
+        val checkBox = JCheckBox("Dry run", options.dryRun)
         checkBox.addActionListener { action ->
             val cb = action.source as JCheckBox
-            parseOptions.dryRun = cb.isSelected
+            options.dryRun = cb.isSelected
         }
         return checkBox
     }
@@ -220,10 +222,10 @@ class DropFrame(
      * Creates the process emotes checkbox.
      */
     private fun createEmotesControl(): JCheckBox {
-        val checkBox = JCheckBox("Emotes", parseOptions.includeEmotes)
+        val checkBox = JCheckBox("Emotes", options.includeEmotes)
         checkBox.addActionListener { action ->
             val cb = action.source as JCheckBox
-            parseOptions.includeEmotes = cb.isSelected
+            options.includeEmotes = cb.isSelected
         }
         return checkBox
     }
@@ -232,10 +234,10 @@ class DropFrame(
      * Creates the force file replacement checkbox.
      */
     private fun createForceControl(): JCheckBox {
-        val checkBox = JCheckBox("Replace files", parseOptions.forceReplace)
+        val checkBox = JCheckBox("Replace files", options.forceReplace)
         checkBox.addActionListener { action ->
             val cb = action.source as JCheckBox
-            parseOptions.forceReplace = cb.isSelected
+            options.forceReplace = cb.isSelected
         }
         return checkBox
     }

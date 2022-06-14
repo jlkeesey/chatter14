@@ -27,21 +27,9 @@ import com.github.ajalt.clikt.parameters.options.versionOption
 import com.github.ajalt.clikt.parameters.types.choice
 import com.github.ajalt.clikt.parameters.types.file
 import pub.carkeys.chatter14.config.ParseConfiguration
-import pub.carkeys.chatter14.config.ParseOptions
 import pub.carkeys.chatter14.processor.ActLogFileHandler
-import pub.carkeys.chatter14.window.DropFrame
-import java.awt.Font
-import java.awt.FontFormatException
-import java.awt.GraphicsEnvironment
-import java.awt.event.WindowAdapter
-import java.awt.event.WindowEvent
-import java.io.BufferedReader
+import pub.carkeys.chatter14.window.WindowManager
 import java.io.File
-import java.io.IOException
-import java.io.InputStreamReader
-import java.util.concurrent.CountDownLatch
-import javax.swing.SwingUtilities
-import kotlin.system.exitProcess
 
 /**
  * The application class. The run() method will be invoked by the Clikt command line
@@ -51,10 +39,12 @@ import kotlin.system.exitProcess
  */
 class Application(
     private val config: ParseConfiguration,
-    private val applicationInfo: ApplicationInfo,
-) : CliktCommand(name = applicationInfo.name) {
+    private val info: ApplicationInfo,
+    private val windowManager: WindowManager = WindowManager(),
+    private val fileHandler: ActLogFileHandler = ActLogFileHandler(),
+) : CliktCommand(name = info.name) {
     init {
-        versionOption(applicationInfo.version)
+        versionOption(info.version)
     }
 
     private val dryRun by option("-d", "--dryrun", help = "process without creating output files").flag(
@@ -81,50 +71,47 @@ class Application(
      */
     override fun run() {
         config.validate() // Do this after the command line parsing in case the parsing changed anything.
-        val parseOptions = config.asOptions().copy(
+        val options = config.asOptions().copy(
             dryRun = dryRun,
             forceReplace = replace,
             includeEmotes = includeEmotes,
             group = config.groups[group]!!,
+            windowed = windowed
         )
-        logger.debug("windowed = $windowed")
-        logger.debug("options = $parseOptions")
-        if (windowed) {
-            executeWindowed(parseOptions)
+        if (options.windowed) {
+            windowManager.start(config = config, options = options, info = info, fileHandler = fileHandler)
         } else {
-            executeCommandLine(parseOptions, files = files)
+            fileHandler.process(options = options, files = files)
         }
     }
 
-    /**
-     * Starts the application in windowed, drag-and-drop mode.
-     */
-    private fun executeWindowed(options: ParseOptions) {
-        registerFonts()
+    companion object {
+        private val logger by logger()
 
-        // We wait for the panel to close before returning so that we keep the log sequence correct.
-        // Without the latch, the main thread would exit as soon as the panel was started.
-        val panelClosedLatch = CountDownLatch(1)
-        SwingUtilities.invokeLater {
-            val panel =
-                DropFrame(parseConfiguration = config, parseOptions = options, applicationInfo = applicationInfo)
-            panel.addWindowListener(object : WindowAdapter() {
-                override fun windowClosed(e: WindowEvent?) {
-                    super.windowClosed(e)
-                    panelClosedLatch.countDown()
+        /**
+         * Main entry point for the application. We read the configuration file if present then
+         * invoke the Clikt command line processing library to handle and command line arguments
+         * which then invokes the run() method of our application class.
+         *
+         * This is only present because we need to load the configuration file before starting the
+         * command line processing as the configuration can affect the command line processing.
+         */
+        fun start(args: Array<String>) {
+            try {
+                logger.traceEntry()
+                val info = ApplicationInfo.load()
+                val config = ParseConfiguration.read()
+                if (config != null) {
+                    Application(config = config, info = info).main(args)
                 }
-            })
+            } catch (e: Exception) {
+                logger.error("Something unexpected occured.", e)
+            } finally {
+                logger.traceExit()
+            }
         }
-        panelClosedLatch.await()
     }
-
-    /**
-     * Executes the log processor from the command line.
-     */
-    private fun executeCommandLine(options: ParseOptions, files: List<File>) {
-        try {
-            ActLogFileHandler(options).process(files = files)
-
+}
 //
 //            println("usage: chatter14 [ -a | -s ] [ -e ] file ...")
 //            println()
@@ -144,74 +131,3 @@ class Application(
 //            println("By default only chats from people (both last names) are written")
 //            println("out.")
 //            exitProcess(1)
-        } catch (e: Exception) {
-            logger.error(e)
-            exitProcess(3)
-        }
-    }
-
-    /**
-     * Register needed fonts with the Swing environment. All fonts in the resources/fonts
-     * directory will be registered. Current we only load TrueType files.
-     */
-    private fun registerFonts() {
-        val graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment()
-        val trueTypeFile = Regex("^.*\\.ttf$")
-        this.javaClass.getResourceAsStream("/fonts").use { directory ->
-            BufferedReader(InputStreamReader(directory!!)).use { reader ->
-                reader.lineSequence().filter { line ->
-                    trueTypeFile.matches(line)
-                }.forEach {
-                    registerFont(graphicsEnvironment, "/fonts/$it")
-                }
-            }
-        }
-    }
-
-    /**
-     * Register a single font from a resource path.
-     *
-     * @param graphicsEnvironment the environment to load the font into.
-     * @param filename the fully qualified path name in the resource form.
-     * @param format the font format.
-     */
-    private fun registerFont(
-        graphicsEnvironment: GraphicsEnvironment,
-        filename: String,
-        format: Int = Font.TRUETYPE_FONT,
-    ) {
-        logger.info("Registering font $filename")
-        this.javaClass.getResourceAsStream(filename).use { input ->
-            try {
-                val customFont = Font.createFont(format, input)
-                graphicsEnvironment.registerFont(customFont)
-            } catch (e: IOException) {
-                logger.error("IO error reading font '${filename}'", e)
-            } catch (e: FontFormatException) {
-                logger.error("Font format error reading font '${filename}'", e)
-            }
-        }
-    }
-
-    companion object {
-        private val logger by logger()
-
-        /**
-         * Main entry point for the application. We read the configuration file if present then
-         * invoke the Clikt command line processing library to handle and command line arguments
-         * which then invokes the run() method of our application class.
-         *
-         * This is only present because we need to load the configuration file before starting the
-         * command line processing as the configuration can affect the command line processing.
-         */
-        fun start(args: Array<String>) {
-            logger.traceEntry()
-            val applicationInfo = ApplicationInfo.load()
-            val config = ParseConfiguration.read()
-            if (config != null) {
-                Application(config = config, applicationInfo = applicationInfo).main(args)
-            }
-            logger.traceExit()
-        }
-    }
-}

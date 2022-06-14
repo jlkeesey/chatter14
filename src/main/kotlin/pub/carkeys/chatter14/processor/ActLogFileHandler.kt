@@ -26,7 +26,6 @@ import java.io.File
  * and then writes them to a file.
  */
 class ActLogFileHandler(
-    private val options: ParseOptions,
     private val processor: ActLogProcessor = ActLogProcessor(),
     private val fileManager: ChatterFileManager = ChatterFileManager(),
 ) {
@@ -35,23 +34,23 @@ class ActLogFileHandler(
      * that file. If the name is a directory, we process all .log files in that directory.
      * Otherwise, we assume that the name is a globbing spec and process each file that matches.
      */
-    fun process(files: List<File>) {
+    fun process(options: ParseOptions, files: List<File>) {
         if (files.isEmpty()) {
             logger.warn("No files to process")
         }
         files.forEach { current ->
             if (current.isFile) {
-                processFile(current)
+                processFile(options, current)
             } else if (current.isDirectory) {
                 logger.info("Processing all log files in ${current.path}")
-                fileManager.forEachFile(current, "*.log") { processFile(it, indent = "   ") }
+                fileManager.forEachFile(current, "*.log") { processFile(options, it, indent = "   ") }
             } else {
-                fileManager.forEachFile(current.parentFile, current.name) { processFile(it, indent = "   ") }
+                fileManager.forEachFile(current.parentFile, current.name) { processFile(options, it, indent = "   ") }
             }
         }
     }
 
-    private fun processFile(inputFile: File, indent: String = "") {
+    private fun processFile(options: ParseOptions, inputFile: File, indent: String = "") {
         if (!inputFile.exists()) {
             logger.warn("${indent}Input file ${inputFile.path} does not exist")
             return
