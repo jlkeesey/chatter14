@@ -17,6 +17,8 @@
 
 package pub.carkeys.chatter14.config
 
+import pub.carkeys.chatter14.ffxiv.DataCenter
+
 /**
  * The application settings from the configuration file(s).
  *
@@ -117,9 +119,13 @@ class ParseConfiguration(raw: ParseConfigRaw) {
          */
         val everyone = GroupEveryone()
 
-        fun read(): ParseConfiguration {
+        fun read(): ParseConfiguration? {
             val rawConfig = ParseConfigRaw.read()
-            return ParseConfiguration(rawConfig)
+            return if (rawConfig == null) {
+                null
+            } else {
+                ParseConfiguration(rawConfig)
+            }
         }
 
         private fun mapGroupEntries(rawGroups: List<ParseConfigRaw.GroupRaw>): Map<String, Group> {

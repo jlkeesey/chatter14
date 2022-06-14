@@ -29,6 +29,7 @@ import com.github.ajalt.clikt.parameters.types.file
 import pub.carkeys.chatter14.config.ParseConfiguration
 import pub.carkeys.chatter14.config.ParseOptions
 import pub.carkeys.chatter14.processor.ActLogFileHandler
+import pub.carkeys.chatter14.window.DropFrame
 import java.awt.Font
 import java.awt.FontFormatException
 import java.awt.GraphicsEnvironment
@@ -48,11 +49,12 @@ import kotlin.system.exitProcess
  *
  * @property config the ParseConfig to use to parse any files.
  */
-class Application(private val config: ParseConfiguration) : CliktCommand(name = "chatter14") {
-    private val appInfo = ApplicationInfo.loadInfo()
-
+class Application(
+    private val config: ParseConfiguration,
+    private val applicationInfo: ApplicationInfo,
+) : CliktCommand(name = applicationInfo.name) {
     init {
-        versionOption(appInfo.version)
+        versionOption(applicationInfo.version)
     }
 
     private val dryRun by option("-d", "--dryrun", help = "process without creating output files").flag(
@@ -84,14 +86,13 @@ class Application(private val config: ParseConfiguration) : CliktCommand(name = 
             forceReplace = replace,
             includeEmotes = includeEmotes,
             group = config.groups[group]!!,
-            files = files.toMutableList() // TODO get rid of toMutableList() if possible
         )
-        logger.info("windowed = $windowed")
-        logger.info("options = $parseOptions")
+        logger.debug("windowed = $windowed")
+        logger.debug("options = $parseOptions")
         if (windowed) {
             executeWindowed(parseOptions)
         } else {
-            executeCommandLine(parseOptions)
+            executeCommandLine(parseOptions, files = files)
         }
     }
 
@@ -105,7 +106,8 @@ class Application(private val config: ParseConfiguration) : CliktCommand(name = 
         // Without the latch, the main thread would exit as soon as the panel was started.
         val panelClosedLatch = CountDownLatch(1)
         SwingUtilities.invokeLater {
-            val panel = DropPanel(parseConfiguration = config, parseOptions = options)
+            val panel =
+                DropFrame(parseConfiguration = config, parseOptions = options, applicationInfo = applicationInfo)
             panel.addWindowListener(object : WindowAdapter() {
                 override fun windowClosed(e: WindowEvent?) {
                     super.windowClosed(e)
@@ -119,9 +121,9 @@ class Application(private val config: ParseConfiguration) : CliktCommand(name = 
     /**
      * Executes the log processor from the command line.
      */
-    private fun executeCommandLine(options: ParseOptions) {
+    private fun executeCommandLine(options: ParseOptions, files: List<File>) {
         try {
-            ActLogFileHandler(options).process()
+            ActLogFileHandler(options).process(files = files)
 
 //
 //            println("usage: chatter14 [ -a | -s ] [ -e ] file ...")
@@ -204,11 +206,10 @@ class Application(private val config: ParseConfiguration) : CliktCommand(name = 
          */
         fun start(args: Array<String>) {
             logger.traceEntry()
-            try {
-                val config = ParseConfiguration.read()
-                Application(config).main(args)
-            } catch (e: ShutdownException) {
-                // This is present to prevent any automatic exception printing
+            val applicationInfo = ApplicationInfo.load()
+            val config = ParseConfiguration.read()
+            if (config != null) {
+                Application(config = config, applicationInfo = applicationInfo).main(args)
             }
             logger.traceExit()
         }

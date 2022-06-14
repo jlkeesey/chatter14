@@ -15,7 +15,7 @@
  *
  */
 
-package pub.carkeys.chatter14.config
+package pub.carkeys.chatter14.ffxiv
 
 /**
  * Defines all the known data centers and their servers.

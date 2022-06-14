@@ -27,9 +27,13 @@ plugins {
     id("org.jetbrains.dokka") version "1.6.21"
 }
 
+val applicationName: String by extra(rootProject.name)
+val applicationTitle: String by extra("Chatter XIV")
+val applicationVersion: String by extra(project.version.toString())
+
 val resourceGenerationDir by extra("${buildDir}/generated_src/main/resources")
 val resourceVersionProperties by extra("${resourceGenerationDir}/application.properties")
-val applicationPackage = "pub.carkeys.chatter14"
+val applicationPackage = "pub.carkeys.$applicationName"
 val applicationMainClassName = "$applicationPackage.MainKt"
 
 group = applicationPackage
@@ -59,8 +63,9 @@ tasks {
         comment = " Generated application info property file"
         outputFile = file(resourceVersionProperties)
         encoding = "UTF-8"
-        property("application.name", project.name)
-        property("application.version", project.version)
+        property("application.name", applicationName)
+        property("application.title", applicationTitle)
+        property("application.version", applicationVersion)
     }
 
     processResources {
@@ -76,7 +81,7 @@ tasks {
         mainClassName = applicationMainClassName
         icon = "$projectDir/icons/Iconka-Cat-Shadows-Cat-shadow.ico"
         jvmOptions = setOf("-Dbuild.version=${version}")
-        productName = "Chatter 14"
+        productName = applicationTitle
         bundledJrePath = "C:/Program Files/Java/jdk-18.0.1.1"
         jreMinVersion = "1.8.0"
     }

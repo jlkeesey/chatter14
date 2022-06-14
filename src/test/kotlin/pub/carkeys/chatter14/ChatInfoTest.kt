@@ -22,6 +22,8 @@ import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import pub.carkeys.chatter14.config.ParseOptions
+import pub.carkeys.chatter14.ffxiv.ChatCode
+import pub.carkeys.chatter14.ffxiv.ChatInfo
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeParseException

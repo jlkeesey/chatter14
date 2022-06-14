@@ -35,11 +35,11 @@ class ActLogFileHandler(
      * that file. If the name is a directory, we process all .log files in that directory.
      * Otherwise, we assume that the name is a globbing spec and process each file that matches.
      */
-    fun process() {
-        if (options.files.isEmpty()) {
+    fun process(files: List<File>) {
+        if (files.isEmpty()) {
             logger.warn("No files to process")
         }
-        options.files.forEach { current ->
+        files.forEach { current ->
             if (current.isFile) {
                 processFile(current)
             } else if (current.isDirectory) {

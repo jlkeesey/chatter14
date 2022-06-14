@@ -24,9 +24,9 @@ import io.mockk.mockk
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import pub.carkeys.chatter14.ChatCode
-import pub.carkeys.chatter14.ChatInfo
 import pub.carkeys.chatter14.config.ParseOptions
+import pub.carkeys.chatter14.ffxiv.ChatCode
+import pub.carkeys.chatter14.ffxiv.ChatInfo
 import java.io.StringReader
 import java.io.StringWriter
 import java.time.Clock

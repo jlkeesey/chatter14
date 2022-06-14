@@ -21,7 +21,6 @@ import cc.ekblad.toml.model.TomlException
 import cc.ekblad.toml.model.TomlValue
 import cc.ekblad.toml.serialization.from
 import cc.ekblad.toml.tomlMapper
-import pub.carkeys.chatter14.ShutdownException
 import pub.carkeys.chatter14.logger
 import java.io.BufferedReader
 import java.io.File
@@ -85,21 +84,21 @@ data class ParseConfigRaw(
          *
          * @param filename the file to read defaults to <code>.chatter14.toml</code>
          */
-        fun read(filename: String = ".chatter14.toml"): ParseConfigRaw {
+        fun read(filename: String = ".chatter14.toml"): ParseConfigRaw? {
             val input = readConfigFile(filename)
-            return if (input == null) ParseConfigRaw() else parse(input)
+            return if (input == null) null else parse(input)
         }
 
         /**
          * Parses a string into a ParseConfiguration. Normally this string comes from an external
          * file.
          */
-        private fun parse(input: String): ParseConfigRaw {
+        private fun parse(input: String): ParseConfigRaw? {
             return try {
                 mapper.decodeWithDefaults(ParseConfigRaw(), TomlValue.from(input))
             } catch (e: TomlException.DecodingError) {
-                logger.error(cleanUpDecodingExceptionMessage(e))
-                throw ShutdownException()
+                logger.error(cleanUpDecodingExceptionMessage(e), e)
+                null
             }
         }
 

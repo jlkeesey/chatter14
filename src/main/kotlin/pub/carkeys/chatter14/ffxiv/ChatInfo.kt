@@ -15,7 +15,7 @@
  *
  */
 
-package pub.carkeys.chatter14
+package pub.carkeys.chatter14.ffxiv
 
 import pub.carkeys.chatter14.config.ParseOptions
 import java.time.OffsetDateTime

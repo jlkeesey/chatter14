@@ -17,7 +17,8 @@
 
 package pub.carkeys.chatter14.config
 
-import pub.carkeys.chatter14.ChatType
+import pub.carkeys.chatter14.ffxiv.ChatType
+import pub.carkeys.chatter14.ffxiv.DataCenter
 import java.io.File
 
 /**
@@ -31,7 +32,6 @@ import java.io.File
  * @property group what lines should be kept in the output. This is usually a list of users
  *     whose chats are desired.
  * @property renames any username renames, usually used to shorten the names of common users.
- * @property files the list of files, directories, and globs to process.
  */
 data class ParseOptions(
     var dryRun: Boolean = false,
@@ -40,7 +40,6 @@ data class ParseOptions(
     val dataCenter: DataCenter = DataCenter.DEFAULT,
     var group: ParseConfiguration.Group = ParseConfiguration.everyone,
     val renames: Map<String, String> = mutableMapOf(),
-    val files: MutableList<File> = mutableListOf(),
 ) {
 
     /**

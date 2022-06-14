@@ -22,9 +22,9 @@ import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import pub.carkeys.chatter14.ChatInfo
 import pub.carkeys.chatter14.config.ParseConfiguration
 import pub.carkeys.chatter14.config.ParseOptions
+import pub.carkeys.chatter14.ffxiv.ChatInfo
 import java.io.StringReader
 
 internal class ActLogParserTest {

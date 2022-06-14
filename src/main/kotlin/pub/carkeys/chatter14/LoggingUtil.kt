@@ -21,12 +21,6 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import kotlin.reflect.full.companionObject
 
-@Suppress("SpellCheckingInspection")
-/*
- * Code from [StackOverflow](https://stackoverflow.com/a/34462577/18295) written by
- * [Jayson Minard](https://stackoverflow.com/users/3679676/jayson-minard).
- */
-
 /**
  * Return the logger for this class. If this class is a companion object, gets the logger for
  * the containing class.
@@ -51,9 +45,7 @@ private fun <T : Any> unwrapCompanionClass(ofClass: Class<T>): Class<*> {
     } ?: ofClass
 }
 
-/**
- * Unwrap companion class to enclosing class given a Kotlin Class
+/*
+ * Code from [StackOverflow](https://stackoverflow.com/a/34462577/18295) written by
+ * [Jayson Minard](https://stackoverflow.com/users/3679676/jayson-minard).
  */
-//private fun <T: Any> unwrapCompanionClass(ofClass: KClass<T>): KClass<*> {
-//    return unwrapCompanionClass(ofClass.java).kotlin
-//}

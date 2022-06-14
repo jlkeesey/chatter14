@@ -47,10 +47,9 @@ internal class ActLogFileHandlerTest {
     @Nested
     inner class OneFile {
         private val file = mockk<File>()
-        private val options = defaultOptions.copy(files = mutableListOf(file))
         private val newFile = mockk<File>()
         private val handler = ActLogFileHandler(
-            options = options,
+            options = defaultOptions,
             processor = processor,
             fileManager = fileManager,
         )
@@ -67,7 +66,7 @@ internal class ActLogFileHandlerTest {
         @Test
         fun `file exists, new file does not exist`() {
             every { newFile.exists() } returns false
-            handler.process()
+            handler.process(listOf(file))
             verify(exactly = 1) { processor.process(any(), any(), any(), any()) }
             UnitTestEventAppender.messages shouldBe listOf("Processing $FILEPATH")
         }
@@ -75,7 +74,7 @@ internal class ActLogFileHandlerTest {
         @Test
         fun `file exists, new file exists, force = false`() {
             every { newFile.exists() } returns true
-            handler.process()
+            handler.process(listOf(file))
             verify(exactly = 0) { processor.process(any(), any(), any(), any()) }
             UnitTestEventAppender.messages shouldBe listOf("Target file exists, skipping: '$NEW_FILEPATH'")
         }
@@ -83,13 +82,13 @@ internal class ActLogFileHandlerTest {
         @Test
         fun `file exists, new file exists, force = true`() {
             val forceHandler = ActLogFileHandler(
-                options = options.copy(forceReplace = true),
+                options = defaultOptions.copy(forceReplace = true),
                 processor = processor,
                 fileManager = fileManager,
             )
 
             every { newFile.exists() } returns true
-            forceHandler.process()
+            forceHandler.process(listOf(file))
             verify(exactly = 1) { processor.process(any(), any(), any(), any()) }
             UnitTestEventAppender.messages shouldBe listOf("Processing $FILEPATH")
         }
@@ -100,14 +99,13 @@ internal class ActLogFileHandlerTest {
             every { notExist.isFile } returns true
             every { notExist.exists() } returns false
             every { notExist.path } returns "notExist"
-            val options = defaultOptions.copy(files = mutableListOf(notExist))
 
             val handler = ActLogFileHandler(
-                options = options,
+                options = defaultOptions,
                 processor = processor,
                 fileManager = fileManager,
             )
-            handler.process()
+            handler.process(listOf(notExist))
 
             verify { processor wasNot Called }
             verify { fileManager wasNot Called }
@@ -119,10 +117,9 @@ internal class ActLogFileHandlerTest {
     @Nested
     inner class OneDirectory {
         private val file = mockk<File>()
-        private val options = defaultOptions.copy(files = mutableListOf(file))
         private val newFile = mockk<File>()
         private val handler = ActLogFileHandler(
-            options = options,
+            options = defaultOptions,
             processor = processor,
             fileManager = fileManager,
         )
@@ -142,7 +139,7 @@ internal class ActLogFileHandlerTest {
         fun `directory exists, no files`() {
             every { fileManager.forEachFile(any(), any(), any()) } just Runs
 
-            handler.process()
+            handler.process(listOf(file))
 
             verify(exactly = 0) { processor.process(any(), any(), any(), any()) }
             UnitTestEventAppender.messages shouldBe listOf("Processing all log files in $PATH")
@@ -158,7 +155,7 @@ internal class ActLogFileHandlerTest {
                 action.captured(first)
             }
 
-            handler.process()
+            handler.process(listOf(file))
 
             verify(exactly = 0) { processor.process(any(), any(), any(), any()) }
             UnitTestEventAppender.messages shouldBe listOf(
@@ -177,7 +174,7 @@ internal class ActLogFileHandlerTest {
                 action.captured(first)
             }
 
-            handler.process()
+            handler.process(listOf(file))
 
             verify(exactly = 0) { processor.process(any(), any(), any(), any()) }
             UnitTestEventAppender.messages shouldBe listOf(
@@ -197,7 +194,7 @@ internal class ActLogFileHandlerTest {
                 action.captured(first)
             }
 
-            handler.process()
+            handler.process(listOf(file))
 
             verify(exactly = 1) { processor.process(any(), any(), any(), any()) }
             UnitTestEventAppender.messages shouldBe listOf(
@@ -217,7 +214,7 @@ internal class ActLogFileHandlerTest {
                 fileManager = fileManager,
             )
 
-            handler.process()
+            handler.process(listOf())
 
             verify { processor wasNot Called }
             verify { fileManager wasNot Called }

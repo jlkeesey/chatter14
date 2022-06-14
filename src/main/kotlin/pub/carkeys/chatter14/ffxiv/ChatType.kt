@@ -15,9 +15,10 @@
  *
  */
 
-package pub.carkeys.chatter14
+package pub.carkeys.chatter14.ffxiv
 
-/**
- * Thrown when the application should shut down but not display a stack trace.
- */
-class ShutdownException : RuntimeException()
+enum class ChatType(val shortName: String) {
+    CHAT("C"),
+    EMOTE("E"),
+    OTHER("?")
+}

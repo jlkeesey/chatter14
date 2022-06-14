@@ -15,7 +15,7 @@
  *
  */
 
-package pub.carkeys.chatter14
+package pub.carkeys.chatter14.window
 
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -34,7 +34,7 @@ import java.io.File
  * simple situation so why mess with it?
  */
 class FileDropListener(
-    private val parseOptions: ParseOptions, private val panel: DropPanel,
+    private val parseOptions: ParseOptions, private val panel: DropFrame,
 ) : DropTargetListener {
     /**
      * Handles the drop action on the control. For each drop item if it is a file type we collect
@@ -42,21 +42,21 @@ class FileDropListener(
      */
     @OptIn(DelicateCoroutinesApi::class)
     override fun drop(event: DropTargetDropEvent) {
-        parseOptions.files.clear()
+        val files = mutableListOf<File>()
         event.acceptDrop(DnDConstants.ACTION_COPY)
         val transferable = event.transferable
         if (transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
             val entries = transferable.getTransferData(DataFlavor.javaFileListFlavor) as List<*>
             for (entry in entries) {
                 if (entry is File) {
-                    parseOptions.files.add(entry)
+                    files.add(entry)
                 }
             }
         }
         event.dropComplete(true)
         panel.resetImage()
         GlobalScope.launch(Dispatchers.IO) {
-            ActLogFileHandler(parseOptions).process()
+            ActLogFileHandler(parseOptions).process(files)
         }
     }
 

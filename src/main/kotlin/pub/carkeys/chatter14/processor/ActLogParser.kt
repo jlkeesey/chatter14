@@ -17,8 +17,8 @@
 
 package pub.carkeys.chatter14.processor
 
-import pub.carkeys.chatter14.ChatInfo
 import pub.carkeys.chatter14.config.ParseOptions
+import pub.carkeys.chatter14.ffxiv.ChatInfo
 import java.io.BufferedReader
 import java.io.Reader
 

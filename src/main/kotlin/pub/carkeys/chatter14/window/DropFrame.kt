@@ -15,8 +15,9 @@
  *
  */
 
-package pub.carkeys.chatter14
+package pub.carkeys.chatter14.window
 
+import pub.carkeys.chatter14.ApplicationInfo
 import pub.carkeys.chatter14.config.ParseConfiguration
 import pub.carkeys.chatter14.config.ParseOptions
 import java.awt.*
@@ -36,10 +37,11 @@ import javax.swing.border.EmptyBorder
 /**
  * Display the drop panel with the controls for how to process any dropped files.
  */
-class DropPanel(
+class DropFrame(
     private val parseConfiguration: ParseConfiguration,
     private val parseOptions: ParseOptions,
-) : JFrame("Chatter XIV") {
+    private val applicationInfo: ApplicationInfo,
+) : JFrame(applicationInfo.title) {
 
     @Suppress("unused")
     private val serialVersionUID = 1L
@@ -91,10 +93,8 @@ class DropPanel(
     }
 
     private fun loadImage(name: String): BufferedImage {
-        val url = DropPanel::class.java.getResource(name) ?: throw MissingResourceException(
-            "Image $name was not found",
-            DropPanel::class.java.name,
-            name
+        val url = DropFrame::class.java.getResource(name) ?: throw MissingResourceException(
+            "Image $name was not found", DropFrame::class.java.name, name
         )
         val file = File(url.toURI())
         return ImageIO.read(file)
@@ -182,7 +182,7 @@ class DropPanel(
         control.setSize(20, control.height)
         control.addActionListener {
             if (logWindow == null) {
-                logWindow = LogFrame(this)
+                logWindow = LogFrame(owner = this, title = applicationInfo.title)
                 //myLogger.setMessenger(logWindow!!)
             }
             logWindow?.makeVisible()
