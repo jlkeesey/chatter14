@@ -23,15 +23,15 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import pub.carkeys.chatter14.ChatInfo
-import pub.carkeys.chatter14.ParseConfig
-import pub.carkeys.chatter14.ParseOptions
+import pub.carkeys.chatter14.config.ParseConfiguration
+import pub.carkeys.chatter14.config.ParseOptions
 import java.io.StringReader
 
 internal class ActLogParserTest {
     val parser = ActLogParser()
     val defaultOptions = ParseOptions()
-    val groupMatches = ParseConfig.GroupEntry("Bang Bang", "bang", listOf("Shooty McShootFace"))
-    val groupNotMatches = ParseConfig.GroupEntry("Bang Bang", "bang", listOf("Wilburforce Glamtree"))
+    val groupMatches = ParseConfiguration.GroupEntry("Bang Bang", "bang", listOf("Shooty McShootFace"))
+    val groupNotMatches = ParseConfiguration.GroupEntry("Bang Bang", "bang", listOf("Wilburforce Glamtree"))
 
     @ExtendWith(MockkClearUnmockExtension::class)
     @Nested

@@ -17,7 +17,7 @@
 
 package pub.carkeys.chatter14.processor
 
-import pub.carkeys.chatter14.ParseOptions
+import pub.carkeys.chatter14.config.ParseOptions
 import pub.carkeys.chatter14.logger
 import java.io.File
 

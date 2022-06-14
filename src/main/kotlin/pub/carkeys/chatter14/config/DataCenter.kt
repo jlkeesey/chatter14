@@ -15,12 +15,12 @@
  *
  */
 
-package pub.carkeys.chatter14
+package pub.carkeys.chatter14.config
 
 /**
  * Defines all the known data centers and their servers.
  */
-class DataCenter(val name: String, val region: Region, val servers: Set<String>) {
+class DataCenter(val name: String, @Suppress("unused") val region: Region, val servers: Set<String>) {
     enum class Region {
         EUROPE,
         JAPAN,
@@ -143,9 +143,9 @@ class DataCenter(val name: String, val region: Region, val servers: Set<String>)
             primal.name to primal,
         )
 
-        fun addCenter(dataCenter: DataCenter) {
-
-        }
+//        fun addCenter(dataCenter: DataCenter) {
+//
+//        }
 
         val centers: Map<String, DataCenter> = mutableCenters
     }

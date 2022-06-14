@@ -17,6 +17,8 @@
 
 package pub.carkeys.chatter14
 
+import pub.carkeys.chatter14.config.ParseConfiguration
+import pub.carkeys.chatter14.config.ParseOptions
 import java.awt.*
 import java.awt.dnd.DropTarget
 import java.awt.event.ComponentAdapter
@@ -35,7 +37,7 @@ import javax.swing.border.EmptyBorder
  * Display the drop panel with the controls for how to process any dropped files.
  */
 class DropPanel(
-    private val parseConfig: ParseConfig,
+    private val parseConfiguration: ParseConfiguration,
     private val parseOptions: ParseOptions,
 ) : JFrame("Chatter XIV") {
 
@@ -43,7 +45,7 @@ class DropPanel(
     private val serialVersionUID = 1L
     private var logWindow: LogFrame? = null
 
-    private val groupLabels = parseConfig.groups.keys.toList().sorted().toTypedArray()
+    private val groupLabels = parseConfiguration.groups.keys.toList().sorted().toTypedArray()
 
     private val randomImages = listOf(
         loadImage("/images/cat-shadow-ball-icon.png"),
@@ -197,7 +199,7 @@ class DropPanel(
         control.addActionListener { action ->
             val cb = action.source as JComboBox<*>
             val item = cb.selectedItem as String
-            parseOptions.group = parseConfig.groups[item]!!
+            parseOptions.group = parseConfiguration.groups[item]!!
         }
         return control
     }

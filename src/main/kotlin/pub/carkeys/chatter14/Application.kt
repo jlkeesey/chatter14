@@ -26,6 +26,8 @@ import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.versionOption
 import com.github.ajalt.clikt.parameters.types.choice
 import com.github.ajalt.clikt.parameters.types.file
+import pub.carkeys.chatter14.config.ParseConfiguration
+import pub.carkeys.chatter14.config.ParseOptions
 import pub.carkeys.chatter14.processor.ActLogFileHandler
 import java.awt.Font
 import java.awt.FontFormatException
@@ -46,7 +48,7 @@ import kotlin.system.exitProcess
  *
  * @property config the ParseConfig to use to parse any files.
  */
-class Application(private val config: ParseConfig) : CliktCommand(name = "chatter14") {
+class Application(private val config: ParseConfiguration) : CliktCommand(name = "chatter14") {
     private val appInfo = ApplicationInfo.loadInfo()
 
     init {
@@ -68,7 +70,7 @@ class Application(private val config: ParseConfig) : CliktCommand(name = "chatte
 
     private val group by option("-g", "--group", help = "group to filter for").choice(
         config.groups.values.associate { Pair(it.shortName, it.label) }, ignoreCase = true
-    ).default(ParseConfig.everyone.label)
+    ).default(ParseConfiguration.everyone.label)
 
     private val files: List<File> by argument().file(mustExist = false, canBeFile = true).multiple()
 
@@ -103,7 +105,7 @@ class Application(private val config: ParseConfig) : CliktCommand(name = "chatte
         // Without the latch, the main thread would exit as soon as the panel was started.
         val panelClosedLatch = CountDownLatch(1)
         SwingUtilities.invokeLater {
-            val panel = DropPanel(parseConfig = config, parseOptions = options)
+            val panel = DropPanel(parseConfiguration = config, parseOptions = options)
             panel.addWindowListener(object : WindowAdapter() {
                 override fun windowClosed(e: WindowEvent?) {
                     super.windowClosed(e)
@@ -203,7 +205,7 @@ class Application(private val config: ParseConfig) : CliktCommand(name = "chatte
         fun start(args: Array<String>) {
             logger.traceEntry()
             try {
-                val config = ParseConfig.read()
+                val config = ParseConfiguration.read()
                 Application(config).main(args)
             } catch (e: ShutdownException) {
                 // This is present to prevent any automatic exception printing

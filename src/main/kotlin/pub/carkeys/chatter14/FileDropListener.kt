@@ -21,6 +21,7 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import pub.carkeys.chatter14.config.ParseOptions
 import pub.carkeys.chatter14.processor.ActLogFileHandler
 import java.awt.datatransfer.DataFlavor
 import java.awt.dnd.*

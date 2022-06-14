@@ -15,8 +15,9 @@
  *
  */
 
-package pub.carkeys.chatter14
+package pub.carkeys.chatter14.config
 
+import pub.carkeys.chatter14.ChatType
 import java.io.File
 
 /**
@@ -37,7 +38,7 @@ data class ParseOptions(
     var forceReplace: Boolean = false,
     var includeEmotes: Boolean = false,
     val dataCenter: DataCenter = DataCenter.DEFAULT,
-    var group: ParseConfig.Group = ParseConfig.everyone,
+    var group: ParseConfiguration.Group = ParseConfiguration.everyone,
     val renames: Map<String, String> = mutableMapOf(),
     val files: MutableList<File> = mutableListOf(),
 ) {

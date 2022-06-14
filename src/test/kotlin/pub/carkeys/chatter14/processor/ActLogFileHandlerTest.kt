@@ -23,7 +23,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import pub.carkeys.chatter14.ParseOptions
+import pub.carkeys.chatter14.config.ParseOptions
 import pub.carkeys.chatter14.log4j.UnitTestEventAppender
 import java.io.File
 import java.io.StringReader

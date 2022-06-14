@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import pub.carkeys.chatter14.ChatCode
 import pub.carkeys.chatter14.ChatInfo
-import pub.carkeys.chatter14.ParseOptions
+import pub.carkeys.chatter14.config.ParseOptions
 import java.io.StringReader
 import java.io.StringWriter
 import java.time.Clock
@@ -36,7 +36,7 @@ import java.time.ZoneId
 
 internal class ActLogProcessorTest {
     private val clock = Clock.fixed(Instant.EPOCH, ZoneId.of("America/Los_Angeles"))
-    private val parser = mockk<ActLogParser>();
+    private val parser = mockk<ActLogParser>()
     private val processor = ActLogProcessor(parser, clock)
     private val defaultOptions = ParseOptions()
 

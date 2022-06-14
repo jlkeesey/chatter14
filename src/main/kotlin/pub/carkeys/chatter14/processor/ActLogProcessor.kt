@@ -18,14 +18,13 @@
 package pub.carkeys.chatter14.processor
 
 import pub.carkeys.chatter14.ChatInfo
-import pub.carkeys.chatter14.ParseOptions
+import pub.carkeys.chatter14.config.ParseOptions
 import pub.carkeys.chatter14.logger
 import java.io.Reader
 import java.io.Writer
 import java.lang.Integer.max
 import java.time.Clock
 import java.time.OffsetDateTime
-import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
 
