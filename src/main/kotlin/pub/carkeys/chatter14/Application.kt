@@ -64,6 +64,25 @@ class Application(
             can be changed with the -W option.
         """.trimIndent()
 
+    override val commandHelpEpilog: String
+        get() {
+            val builder = StringBuilder()
+            builder.append("```\n")
+            builder.append("Configured groups:\n")
+            builder.append("\n")
+            config.groups.values.sortedBy { it.shortName }.forEach { group ->
+                builder.append("  ${group.label} (${group.shortName})\n")
+                if (group is ParseConfiguration.GroupEntry) {
+                    group.participants.sorted().forEach { participant ->
+                        builder.append("    $participant\n")
+                    }
+                }
+                builder.append("\n")
+            }
+            builder.append("```\n")
+            return builder.toString()
+        }
+
     private val dryRun by option("-d", "--dryrun", help = "process without creating output files").flag(
         "-P", "--process", default = config.dryRun
     )
