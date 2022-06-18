@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.6.20"
+//    id("org.jetbrains.kotlin.plugin.serialization") version "1.6.20"
     application
         id("net.researchgate.release") version "2.8.1"
     id("edu.sc.seis.launch4j") version "2.5.3"
@@ -41,6 +42,7 @@ group = applicationPackage
 repositories {
     mavenCentral()
     maven(url = "https://jitpack.io")
+    maven(url="https://kotlin.bintray.com/kotlinx")
 }
 
 dependencies {
@@ -49,6 +51,7 @@ dependencies {
     implementation(libs.four.koma)
     implementation(libs.clikt)
     implementation(libs.bundles.log4j)
+//    implementation("com.akuleshov7:ktoml-core:0.2.11")
 
     testImplementation(kotlin("test"))
     testImplementation(libs.junit5)
@@ -88,7 +91,7 @@ tasks {
 
     withType<KotlinCompile> {
         kotlinOptions {
-            jvmTarget = "1.8"
+            jvmTarget = "11"
             freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
         }
     }
