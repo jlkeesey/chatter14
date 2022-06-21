@@ -18,7 +18,7 @@
 rootProject.name = "chatter14"
 
 dependencyResolutionManagement {
-    versionCatalogs {
+    @Suppress("UnstableApiUsage") versionCatalogs {
         create("libs") {
             version("clikt", "3.5.0")
             version("dokka", "1.7.0")
