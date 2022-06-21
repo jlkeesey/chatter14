@@ -19,7 +19,6 @@ package pub.carkeys.chatter14.config
 
 import pub.carkeys.chatter14.ffxiv.ChatType
 import pub.carkeys.chatter14.ffxiv.DataCenter
-import java.io.File
 
 /**
  * The options to parse with.

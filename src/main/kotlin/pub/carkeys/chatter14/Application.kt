@@ -26,7 +26,9 @@ import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.versionOption
 import com.github.ajalt.clikt.parameters.types.choice
 import com.github.ajalt.clikt.parameters.types.file
+import org.apache.logging.log4j.Level
 import pub.carkeys.chatter14.config.ParseConfiguration
+import pub.carkeys.chatter14.log4j.LoggerAppendable
 import pub.carkeys.chatter14.processor.ActLogFileHandler
 import pub.carkeys.chatter14.window.WindowManager
 import java.io.File
@@ -53,15 +55,14 @@ class Application(
 
     override val commandHelp: String
         get() = """
-            Extracts chat and emote lines from ACT logs.
+            Extracts FFXIV chat and emote lines from ACT logs.
             
-            This application takes one or more ACT log files and extracts various char and optionally 
-            emote lones from the log. The lines can be further filtered by a list of user names.
+            This application takes one or more ACT log files and extracts various chat and optionally 
+            emote lines from the log. The lines can be further filtered by a list of user names.
             
             This command can be run in either command line or windowed modes. Command line mode
-            is useful for experience users or inclusion in scripts. Windowed mode allow for 
-            drag-and-drop actions to convert files. The default is to use windowed mode but that
-            can be changed with the -W option.
+            is useful for experience users or inclusion in scripts. Windowed mode allows for 
+            drag-and-drop actions to convert files. The default is to use windowed mode.
         """.trimIndent()
 
     override val commandHelpEpilog: String
@@ -83,6 +84,9 @@ class Application(
             return builder.toString()
         }
 
+    private val logConfig by option("-c", "--config", help = "logs the config").flag(
+        default = false
+    )
     private val dryRun by option("-d", "--dryrun", help = "process without creating output files").flag(
         "-P", "--process", default = config.dryRun
     )
@@ -116,10 +120,23 @@ class Application(
             includeEmotes = includeEmotes,
             windowed = windowed
         )
+        logConfiguration()
         if (options.windowed) {
             windowManager.start(options = options, config = config, info = info, fileHandler = fileHandler)
         } else {
             fileHandler.process(options = options, files = files)
+        }
+    }
+
+    /**
+     * Logs the current configuration.
+     */
+    private fun logConfiguration() {
+        if (logConfig) {
+            logger.info("Configuration file:")
+            LoggerAppendable(logger = logger, level = Level.INFO, indent = "   ").use {
+                config.write(it)
+            }
         }
     }
 
@@ -128,8 +145,8 @@ class Application(
 
         /**
          * Main entry point for the application. We read the configuration file if present then
-         * invoke the Clikt command line processing library to handle and command line arguments
-         * which then invokes the run() method of our application class.
+         * invoke the command line processing library to handle and command line arguments which then
+         * invokes the run() method of our application class.
          *
          * This is only present because we need to load the configuration file before starting the
          * command line processing as the configuration can affect the command line processing.

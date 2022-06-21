@@ -15,17 +15,15 @@
  *
  */
 
-@file:Suppress("SuspiciousCollectionReassignment")
-
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-plugins {
-    kotlin("jvm") version "1.6.20"
-//    id("org.jetbrains.kotlin.plugin.serialization") version "1.6.20"
+@Suppress("DSL_SCOPE_VIOLATION", "UnstableApiUsage") plugins {
+    kotlin("jvm") version libs.versions.kotlin.asProvider()
     application
-        id("net.researchgate.release") version "2.8.1"
-    id("edu.sc.seis.launch4j") version "2.5.3"
-    id("org.jetbrains.dokka") version "1.6.21"
+    alias(libs.plugins.release)
+    alias(libs.plugins.launch4j)
+    alias(libs.plugins.dokka)
+    alias(libs.plugins.gradleVersions)
 }
 
 val applicationName: String by extra(rootProject.name)
@@ -42,16 +40,22 @@ group = applicationPackage
 repositories {
     mavenCentral()
     maven(url = "https://jitpack.io")
-    maven(url="https://kotlin.bintray.com/kotlinx")
+    //maven(url = "https://kotlin.bintray.com/kotlinx")
+    flatDir {
+        dirs("../4koma/build/libs")
+    }
 }
 
 dependencies {
     implementation(libs.bundles.kotlinx.coroutines)
     implementation(libs.kotlin.reflect)
-    implementation(libs.four.koma)
+    //implementation(libs.four.koma)
+    implementation(files("../4koma/build/libs/4koma-1.0.2.jar"))
+    implementation("org.antlr:antlr4:4.10.1")
     implementation(libs.clikt)
     implementation(libs.bundles.log4j)
 //    implementation("com.akuleshov7:ktoml-core:0.2.11")
+    implementation("ch.qos.logback:logback-classic:1.2.10")
 
     testImplementation(kotlin("test"))
     testImplementation(libs.junit5)
@@ -77,6 +81,12 @@ tasks {
 
     test {
         useJUnitPlatform()
+
+        systemProperty("java.util.logging.config.file", "${project.buildDir}/resources/test/logging-test.properties")
+
+        testLogging {
+            showStandardStreams = true
+        }
     }
 
     withType<edu.sc.seis.launch4j.tasks.DefaultLaunch4jTask> {
@@ -89,7 +99,7 @@ tasks {
         jreMinVersion = "1.8.0"
     }
 
-    withType<KotlinCompile> {
+    @Suppress("SuspiciousCollectionReassignment") withType<KotlinCompile> {
         kotlinOptions {
             jvmTarget = "11"
             freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"

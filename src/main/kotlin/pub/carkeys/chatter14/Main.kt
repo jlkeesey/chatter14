@@ -17,9 +17,36 @@
 
 package pub.carkeys.chatter14
 
+import org.apache.logging.log4j.Level
+import pub.carkeys.chatter14.log4j.loggerLevel
+
+private const val ARG_LOGGING_PREFIX = "--logging="
+
 /**
  * Main entry point for the application.
  */
 fun main(args: Array<String>) {
-    Application.start(args)
+    val remainingArgs = handleLoggingLevelArgument(args)
+    Application.start(remainingArgs)
+}
+
+/**
+ * Reads the arguments for a logging level setting value and if present uses that to set the
+ * current logging level of the system. If the parameter is present it is removed from the
+ * command line before passing it on ht eothe Application. This needs to be handled here
+ * before any other porcessing so that the logging level can be changed for all logging
+ * messages.
+ *
+ * We process all setting arguments int order, so the last one will win.
+ *
+ * @param args the command line arguments.
+ * @return the command line arguments with any logging level setting values removed.
+ */
+private fun handleLoggingLevelArgument(args: Array<String>): Array<String> {
+    args.filter { it.startsWith(ARG_LOGGING_PREFIX) }.forEach {
+        val name = it.removePrefix(ARG_LOGGING_PREFIX)
+        val level = Level.toLevel(name, Level.WARN)
+        loggerLevel(level)
+    }
+    return args.filter { !it.startsWith(ARG_LOGGING_PREFIX) }.toTypedArray()
 }

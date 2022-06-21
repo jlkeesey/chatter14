@@ -17,32 +17,48 @@
 
 package pub.carkeys.chatter14.config
 
+import cc.ekblad.toml.encodeTo
+import cc.ekblad.toml.model.TomlException
+import cc.ekblad.toml.model.TomlValue
+import cc.ekblad.toml.serialization.from
+import cc.ekblad.toml.tomlMapper
 import pub.carkeys.chatter14.ffxiv.DataCenter
+import pub.carkeys.chatter14.logger
+import java.io.BufferedReader
+import java.io.File
+import java.io.IOException
 
 /**
- * The application settings from the configuration file(s).
+ * The application settings from the configuration file(s). The Toml reader does not like
+ * fields that it cannot write into and we need to massage the data before using it wo we
+ * use a two step process: first we use the reader to read the raw data into these objects
+ * and then we massage the data as necessary and create the objects that are used by this
+ * application: ParseConfiguration and friends.
  *
  * @property dryRun true if no output file should be generated.
  * @property replaceIfExists true if an existing output file should be replaced, otherwise it
  *     will be skipped.
  * @property includeEmotes true if emote "chat" lines should be included in the output.
- * @property dataCenter the data center this chat is from. Used to process server names.
+ * @property dataCenter the data center name this chat is from. Used to process server names.
  * @property server the name of the server the main user is from. Generally this will be the
  *     user that is executing this application. This server will not be included in the output.
  * @property performRename true if usernames should be renamed according to the renames list.
  * @property renames any username renames, usually used to shorten the names of common users.
  * @property groups the group definitions. One of these will be used to process the files.
  */
-class ParseConfiguration(raw: ParseConfigRaw) {
-    private val performRename: Boolean = raw.performRename
-    private val dataCenter: DataCenter = DataCenter.centers[raw.dataCenter]!!
-    private val server: String = raw.server
-    private val renames: Map<String, String> = raw.renames
+data class ParseConfiguration(
+    val dryRun: Boolean = false,
+    val replaceIfExists: Boolean = false,
+    val includeEmotes: Boolean = true,
+    val performRename: Boolean = true,
+    val dataCenterName: String = "Crystal",
+    val server: String = "Zalera",
+    val renames: Map<String, String> = mapOf(),
+    val groupList: List<GroupEntry> = listOf(),
+) {
+    val groups: Map<String, Group> = groupList.associateBy { it.shortName }.plus(everyone.shortName to everyone)
 
-    val dryRun: Boolean = raw.dryRun
-    val replaceIfExists: Boolean = raw.replaceIfExists
-    val includeEmotes: Boolean = raw.includeEmotes
-    val groups: Map<String, Group> = mapGroupEntries(raw.groups)
+    val dataCenter: DataCenter = DataCenter.centers[dataCenterName]!!
 
     /**
      * Defines a basic group definition.
@@ -113,29 +129,84 @@ class ParseConfiguration(raw: ParseConfigRaw) {
         )
     }
 
+    /**
+     * Writes the current state of the configuration to the given Appendable.
+     */
+    fun write(appendable: Appendable) {
+        mapper.encodeTo(appendable, this)
+    }
+
     companion object {
+        private val logger by logger()
+
         /**
          * The everyone accepted group.
          */
         val everyone = GroupEveryone()
 
-        fun read(): ParseConfiguration? {
-            val rawConfig = ParseConfigRaw.read()
-            return if (rawConfig == null) {
+        /**
+         * Used by the Toml parser to map configuration file field names to code names.
+         */
+        private val mapper = tomlMapper {
+            mapping<ParseConfiguration>("group" to "groupList")
+            mapping<ParseConfiguration>("datacenter" to "dataCenterName")
+            mapping<GroupEntry>("shortname" to "theShortName")
+        }
+
+        /**
+         * Reads the configuration from a file.
+         *
+         * @param filename the file to read defaults to <code>.chatter14.toml</code>
+         */
+        fun read(filename: String = ".chatter14.toml"): ParseConfiguration? {
+            val input = readConfigFile(filename)
+            return if (input == null) null else parse(input)
+        }
+
+        /**
+         * Parses a string into a ParseConfiguration. Normally this string comes from an external
+         * file.
+         */
+        private fun parse(input: String): ParseConfiguration? {
+            return try {
+                mapper.decodeWithDefaults(ParseConfiguration(), TomlValue.from(input))
+            } catch (e: TomlException.DecodingError) {
+                logger.error(cleanUpDecodingExceptionMessage(e), e)
                 null
-            } else {
-                ParseConfiguration(rawConfig)
             }
         }
 
-        private fun mapGroupEntries(rawGroups: List<ParseConfigRaw.GroupRaw>): Map<String, Group> {
-            return rawGroups.map {
-                GroupEntry(
-                    label = it.label,
-                    theShortName = it.shortName ?: it.label.lowercase(),
-                    participants = it.participants,
-                )
-            }.associateBy({ it.label }, { it }).plus(Pair(everyone.label, everyone)).toSortedMap()
+        /**
+         * Returns a more user-friendly error message from the ones given by the Toml parser.
+         */
+        private fun cleanUpDecodingExceptionMessage(e: TomlException.DecodingError): String {
+            return when (e.reason) {
+                "no value found for required parameter 'label'" -> "A group label is missing"
+                else                                            -> e.reason ?: e.localizedMessage
+            }
+        }
+
+        /**
+         * Reads the given configuration file and returns the contents as a string. Null is returned
+         * if the file cannot be read.
+         */
+        private fun readConfigFile(filename: String): String? {
+            try {
+                var file = File(filename)
+                if (!file.exists()) {
+                    val home = System.getProperty("user.home", ".")
+                    val homeDir = File(home)
+                    if (homeDir.exists()) {
+                        file = File(homeDir, filename)
+                    }
+                }
+                if (!file.exists()) return null
+                val bufferedReader: BufferedReader = file.bufferedReader()
+                return bufferedReader.use { it.readText() }
+            } catch (e: IOException) {
+                logger.error("Error attempting to read the configuration file $filename", e)
+                return null
+            }
         }
     }
 }

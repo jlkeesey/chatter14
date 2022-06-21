@@ -20,15 +20,25 @@ rootProject.name = "chatter14"
 dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
-            version("kotlinx-coroutines", "1.6.1")
-            version("kotlin-reflect", "1.6.21")
+            version("clikt", "3.5.0")
+            version("dokka", "1.7.0")
             version("four-koma", "1.0.1")
-            version("clikt", "3.4.2")
-            version("log4j", "2.17.2")
+            version("gradleVersions", "0.1.16")
             version("junit5", "5.8.2")
-            version("kotest", "5.3.0")
+            version("kotest", "5.3.1")
+            version("kotlin", "1.7.0")
+            version("kotlin-reflect", "1.7.0")
+            version("kotlinx-coroutines", "1.6.3")
+            version("launch4j", "2.5.3")
+            version("log4j", "2.17.2")
             version("mockk", "1.12.4")
             version("mockk-junit5", "2.0.0")
+            version("release", "2.8.1")
+
+            plugin("release", "net.researchgate.release").versionRef("release")
+            plugin("launch4j", "edu.sc.seis.launch4j").versionRef("launch4j")
+            plugin("dokka", "org.jetbrains.dokka").versionRef("dokka")
+            plugin("gradleVersions", "se.ascp.gradle.gradle-versions-filter").versionRef("gradleVersions")
 
             library(
                 "kotlinx-coroutines-core", "org.jetbrains.kotlinx", "kotlinx-coroutines-core"
