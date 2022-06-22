@@ -60,7 +60,7 @@ dependencies {
     testImplementation(kotlin("test"))
     testImplementation(libs.junit5)
     testImplementation(libs.bundles.kotest)
-    testImplementation(libs.mockk)
+    testImplementation(libs.mockk.core)
     testImplementation(libs.mockk.junit5)
 }
 
