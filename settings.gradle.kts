@@ -15,4 +15,26 @@
  *
  */
 
+pluginManagement {
+    plugins {
+        kotlin("jvm") version "1.7.0"
+    }
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
+    //includeBuild("plugins")
+}
+
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+        google()
+        maven(url = "https://jitpack.io")
+    }
+}
+
 rootProject.name = "chatter14"
+
+include("app")
+//includeBuild("plugins")

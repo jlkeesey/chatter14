@@ -16,14 +16,16 @@
  */
 
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.apache.tools.ant.taskdefs.condition.Os
 
 @Suppress("DSL_SCOPE_VIOLATION", "UnstableApiUsage") plugins {
-    kotlin("jvm") version libs.versions.kotlin.asProvider()
+    kotlin("jvm")
     application
-    alias(libs.plugins.release)
-    alias(libs.plugins.launch4j)
+    alias(libs.plugins.badassRuntime)
     alias(libs.plugins.dokka)
     alias(libs.plugins.gradleVersions)
+    alias(libs.plugins.launch4j)
+    alias(libs.plugins.release)
 }
 
 val applicationName: String by extra(rootProject.name)
@@ -38,11 +40,11 @@ val applicationMainClassName = "$applicationPackage.MainKt"
 group = applicationPackage
 
 repositories {
-    mavenCentral()
-    maven(url = "https://jitpack.io")
-    //maven(url = "https://kotlin.bintray.com/kotlinx")
+//    mavenCentral()
+//    maven(url = "https://jitpack.io")
+//    //maven(url = "https://kotlin.bintray.com/kotlinx")
     flatDir {
-        dirs("../4koma/build/libs")
+        dirs("../../4koma/build/libs")
     }
 }
 
@@ -50,12 +52,12 @@ dependencies {
     implementation(libs.bundles.kotlinx.coroutines)
     implementation(libs.kotlin.reflect)
     //implementation(libs.four.koma)
-    implementation(files("../4koma/build/libs/4koma-1.0.2.jar"))
+    implementation(files("../../4koma/build/libs/4koma-1.0.2.jar"))
     implementation("org.antlr:antlr4:4.10.1")
     implementation(libs.clikt)
     implementation(libs.bundles.log4j)
 //    implementation("com.akuleshov7:ktoml-core:0.2.11")
-    implementation("ch.qos.logback:logback-classic:1.2.10")
+    implementation("ch.qos.logback:logback-classic:1.2.11")
 
     testImplementation(kotlin("test"))
     testImplementation(libs.junit5)
@@ -113,4 +115,34 @@ tasks {
 
 application {
     mainClass.set(applicationMainClassName)
+}
+
+runtime {
+    options.set(listOf("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"))
+    modules.set(
+        listOf(
+            "java.compiler",
+            "java.datatransfer",
+            "java.desktop",
+            "java.logging",
+            "java.management",
+            "java.naming",
+            "java.prefs",
+            "java.rmi",
+            "java.scripting",
+            "java.sql",
+            "java.xml",
+            "jdk.unsupported"
+        )
+    )
+    jpackage {
+        outputDir = "jpackage"
+        imageName = "chatter14"
+        imageOptions = listOf("--icon", "src/main/installer/chatter14.ico")
+        installerName = "chatter14"
+        if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+            installerType = "msi"
+            installerOptions = listOf("--win-per-user-install", "--win-dir-chooser", "--win-menu", "--win-shortcut")
+        }
+    }
 }

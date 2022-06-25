@@ -28,8 +28,7 @@ import java.awt.event.ComponentEvent
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
 import java.awt.image.BufferedImage
-import java.io.File
-import java.util.MissingResourceException
+import java.util.*
 import javax.imageio.ImageIO
 import javax.swing.*
 import javax.swing.border.EmptyBorder
@@ -95,11 +94,10 @@ class DropFrame(
     }
 
     private fun loadImage(name: String): BufferedImage {
-        val url = DropFrame::class.java.getResource(name) ?: throw MissingResourceException(
+        val stream = DropFrame::class.java.getResourceAsStream(name) ?: throw MissingResourceException(
             "Image $name was not found", DropFrame::class.java.name, name
         )
-        val file = File(url.toURI())
-        return ImageIO.read(file)
+        return ImageIO.read(stream)
 
     }
 
