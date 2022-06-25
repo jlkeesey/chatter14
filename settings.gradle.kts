@@ -37,4 +37,3 @@ dependencyResolutionManagement {
 rootProject.name = "chatter14"
 
 include("app")
-//includeBuild("plugins")

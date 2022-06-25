@@ -40,9 +40,6 @@ val applicationMainClassName = "$applicationPackage.MainKt"
 group = applicationPackage
 
 repositories {
-//    mavenCentral()
-//    maven(url = "https://jitpack.io")
-//    //maven(url = "https://kotlin.bintray.com/kotlinx")
     flatDir {
         dirs("../../4koma/build/libs")
     }
@@ -51,15 +48,16 @@ repositories {
 dependencies {
     implementation(libs.bundles.kotlinx.coroutines)
     implementation(libs.kotlin.reflect)
-    //implementation(libs.four.koma)
-    implementation(files("../../4koma/build/libs/4koma-1.0.2.jar"))
-    implementation("org.antlr:antlr4:4.10.1")
     implementation(libs.clikt)
     implementation(libs.bundles.log4j)
-//    implementation("com.akuleshov7:ktoml-core:0.2.11")
-    implementation("ch.qos.logback:logback-classic:1.2.11")
+
+    // When 1.0.3 releases we can change back to the repository version as the fix we need will be in it
+    //implementation(libs.four.koma)
+    implementation(files("../../4koma/build/libs/4koma-1.0.2.jar"))
+
 
     testImplementation(kotlin("test"))
+    testImplementation(libs.logback)
     testImplementation(libs.junit5)
     testImplementation(libs.bundles.kotest)
     testImplementation(libs.mockk.core)
@@ -94,7 +92,7 @@ tasks {
     withType<edu.sc.seis.launch4j.tasks.DefaultLaunch4jTask> {
         outfile = "${rootProject.name}.exe"
         mainClassName = applicationMainClassName
-        icon = "$projectDir/icons/Iconka-Cat-Shadows-Cat-shadow.ico"
+        icon = "$projectDir/src/main/installer/$applicationName.ico"
         jvmOptions = setOf("-Dbuild.version=${version}")
         productName = applicationTitle
         bundledJrePath = "C:/Program Files/Java/jdk-18.0.1.1"
@@ -137,9 +135,9 @@ runtime {
     )
     jpackage {
         outputDir = "jpackage"
-        imageName = "chatter14"
-        imageOptions = listOf("--icon", "src/main/installer/chatter14.ico")
-        installerName = "chatter14"
+        imageName = applicationName
+        imageOptions = listOf("--icon", "src/main/installer/$applicationName.ico")
+        installerName = applicationName
         if (Os.isFamily(Os.FAMILY_WINDOWS)) {
             installerType = "msi"
             installerOptions = listOf("--win-per-user-install", "--win-dir-chooser", "--win-menu", "--win-shortcut")
