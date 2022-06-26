@@ -25,12 +25,14 @@ import org.apache.tools.ant.taskdefs.condition.Os
     alias(libs.plugins.dokka)
     alias(libs.plugins.gradleVersions)
     alias(libs.plugins.launch4j)
-    alias(libs.plugins.release)
+//    alias(libs.plugins.release)
 }
+val applicationVersion: String by rootProject.extra
+
+project.version = applicationVersion
 
 val applicationName: String by extra(rootProject.name)
 val applicationTitle: String by extra("Chatter XIV")
-val applicationVersion: String by extra(project.version.toString())
 
 val resourceGenerationDir by extra("${buildDir}/generated_src/main/resources")
 val resourceVersionProperties by extra("${resourceGenerationDir}/application.properties")

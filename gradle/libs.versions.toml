@@ -1,4 +1,5 @@
 [versions]
+axionRelease = "1.13.14"
 badassRuntime = "1.12.7"
 clikt = "3.5.0"
 dokka = "1.7.0"
@@ -12,10 +13,10 @@ kotlinx-coroutines = "1.6.3"
 kotlinx-swing = "1.6.3"
 launch4j = "2.5.3"
 log4j = "2.17.2"
+logback = "1.2.11"
 mockk = "1.12.4"
 mockkJunit5 = "2.0.0"
 release = "2.8.1"
-logback = "1.2.11"
 
 [libraries]
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
@@ -38,6 +39,7 @@ kotlinx-coroutines = ["kotlinx-coroutines-core", "kotlinx-coroutines-swing"]
 log4j = ["log4j-api", "log4j-core"]
 
 [plugins]
+axionRelease = { id = "pl.allegro.tech.build.axion-release", version.ref = "axionRelease" }
 badassRuntime = { id = "org.beryx.runtime", version.ref = "badassRuntime" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 gradleVersions = { id = "se.ascp.gradle.gradle-versions-filter", version.ref = "gradleVersions" }
