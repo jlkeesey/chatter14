@@ -24,20 +24,20 @@ plugins {
 scmVersion {
     useHighestVersion = true
     versionIncrementer("incrementMinor")
-    hooks {
-        preRelease {
-            fileUpdate {
-                file("README.md")
-                pattern = { previousVersion, _ -> "Stable version $previousVersion" }
-                replacement = { currentVersion, _ -> "Stable version $currentVersion" }
-            }
-            fileUpdate {
-                file("README.md")
-                pattern = { previousVersion, _ -> "Stable-$previousVersion-" }
-                replacement = { currentVersion, _ -> "Stable-$currentVersion-" }
-            }
-        }
-    }
+//    hooks {
+//        preRelease {
+//            fileUpdate {
+//                file("README.md")
+//                pattern = { previousVersion, _ -> "Stable version $previousVersion" }
+//                replacement = { currentVersion, _ -> "Stable version $currentVersion" }
+//            }
+//            fileUpdate {
+//                file("README.md")
+//                pattern = { previousVersion, _ -> "Stable-$previousVersion-" }
+//                replacement = { currentVersion, _ -> "Stable-$currentVersion-" }
+//            }
+//        }
+//    }
 }
 
 val applicationVersion: String by extra(scmVersion.version)
