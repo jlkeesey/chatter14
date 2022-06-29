@@ -151,6 +151,7 @@ runtime {
 scmVersion {
     useHighestVersion = true
     versionIncrementer("incrementMinor")
+    dryRun = true
 //    hooks {
 //        preRelease {
 //            fileUpdate {
