@@ -4,3 +4,4 @@
 /app/build/
 /buildSrc/.gradle/
 /buildSrc/build/
+release.properties

@@ -17,6 +17,8 @@
 
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.apache.tools.ant.taskdefs.condition.Os
+import java.io.FileNotFoundException
+import java.util.Properties
 
 @Suppress("DSL_SCOPE_VIOLATION", "UnstableApiUsage") plugins {
     kotlin("jvm")
@@ -28,8 +30,11 @@ import org.apache.tools.ant.taskdefs.condition.Os
     alias(libs.plugins.axionRelease)
 //    alias(libs.plugins.release)
 }
-
 project.version = scmVersion.version
+
+ext.set("release.dryRun", true)
+
+val dryrunner: String by extra("release.dryRun")
 
 val applicationName: String by extra(rootProject.name)
 val applicationTitle: String by extra("Chatter XIV")
@@ -112,6 +117,16 @@ tasks {
     dokkaHtml.configure {
         outputDirectory.set(buildDir.resolve("dokka"))
     }
+
+    register("loadAxionAutorization") {
+        val authorization = loadProperties("release.properties")
+        scmVersion.repository.customUsername = authorization["axion.username"] as String
+        scmVersion.repository.customPassword = authorization["axion.password"] as String
+    }
+
+    named("release") {
+        dependsOn("loadAxionAutorization")
+    }
 }
 
 application {
@@ -166,4 +181,14 @@ scmVersion {
 //            }
 //        }
 //    }
+}
+
+fun loadProperties(filename: String): Properties {
+    val file = rootProject.file(filename)
+    if (!file.exists()) {
+        throw FileNotFoundException("$filename file is missing")
+    }
+    return Properties().apply {
+        load(file.reader())
+    }
 }
