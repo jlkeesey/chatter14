@@ -1,11 +1,21 @@
 # Chatter14
+
 ![Stable](https://img.shields.io/badge/Stable-0.5.0-blue?style=for-the-badge "Stable version 0.5.0")
 
 Provides a way to extract Final Fantasy XIV chat conversations from an Advanced Combat
-Tracker (ACT) log. ACT is often used to view information about combat but it also extracts
+Tracker (ACT) log.
+
+## Contents
+
+ - [Introduction](#introduction)
+ - [Installation](#installation)
+
+## <a name="introduction">Introduction</a>
+
+ACT is often used to view information about combat but it also extracts
 all of the chat logs as well. However these chat logs are interspersed with all kinds of
 other information about actions happening in the environment around your character. This
-makes reading a conversation difficult. And if you are having multiple separate
+makes reading a conversation nearly impossible. And if there are multiple separate
 conversations at the same time these conversations are interspersed.
 
 This app will extract chats from the ACT logs and will further strip out all but a single
@@ -13,9 +23,25 @@ group of people that you define. It can also, optionally include all of the emot
 were used between the members of the group as many conversations occur almost entirely
 through emotes.
 
-## Installation
+The current version treats all chat types (say, yell, linkshell, etc.) the same and
+outputs them all. A future version will let you select which chat types to include in
+a particular conversation. I personal have noted that people are not consistent in the
+use of chat types even for a single conversation, switching between a linkshell, say, and
+even yell.
+
+## <a name="installation">Installation</a>
 
 ### Windows
+
+The Windows version is pacakged as an installer, just run the installer and it should
+install everything needed. This product requires Java to run and it should install the
+required files automatically but if it cannot it will prompt you to install the Java
+runtime.
+
+### Linux, MacOS
+
+Extract the tar file into an appropriate place and add the `chatter14` script to the
+PATH.
 
 ## Acknowlegements and Licenses
 
