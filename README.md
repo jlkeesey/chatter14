@@ -1,5 +1,5 @@
 # Chatter14
-![Stable version 0.1.0](https://img.shields.io/badge/Stable-0.1.0-blue?style=for-the-badge)
+![Stable version 0.4.0](https://img.shields.io/badge/Stable-0.4.0-blue?style=for-the-badge)
 
 Provides a way to extract Final Fantasy XIV chat conversations from an Advanced Combat
 Tracker (ACT) log. ACT is often used to view information about combat but it also extracts
