@@ -46,7 +46,7 @@ Chatter14 can be run from the command line or as a window that accepts drag-and-
 Starting Chatter14 with no arguments or clicking on the icon will start Chatter14 in
 windowed mode.
 
-<img src="src/main/docs/main.png">
+<img src="src/main/docs/main.png" alt="Screen shot of main window">
 
 To convert one or more ACT log files drag them to the Chatter14 window. They will be
 converted using the current options in the window. The generated files will be .txt files
@@ -59,7 +59,7 @@ match the group definition and optionally the emotes.
 The dropdown selects the group of people to filter for. These are defined in the
 [configuration file](#configuration).
 
-<img src="src/main/docs/main_drop.png">
+<img src="src/main/docs/main_drop.png" alt="Screen shot of main window with group dropdown open">
 
 The **Emotes** checkbox selects whether the emote entries for the group are included in
 the output file. Many "conversations" in **FFXIV** are carried out in a combination of
