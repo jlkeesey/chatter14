@@ -139,6 +139,8 @@ data class ParseConfiguration(
     companion object {
         private val logger by logger()
 
+        private val configurationFiles = listOf(".chatter14.toml", "chatter14.toml")
+
         /**
          * The everyone accepted group.
          */
@@ -155,11 +157,9 @@ data class ParseConfiguration(
 
         /**
          * Reads the configuration from a file.
-         *
-         * @param filename the file to read defaults to <code>.chatter14.toml</code>
          */
-        fun read(filename: String = ".chatter14.toml"): ParseConfiguration? {
-            val input = readConfigFile(filename)
+        fun read(): ParseConfiguration? {
+            val input = readConfigFile()
             return if (input == null) null else parse(input)
         }
 
@@ -190,23 +190,38 @@ data class ParseConfiguration(
          * Reads the given configuration file and returns the contents as a string. Null is returned
          * if the file cannot be read.
          */
-        private fun readConfigFile(filename: String): String? {
+        private fun readConfigFile(filenames: List<String> = configurationFiles): String? {
             try {
-                var file = File(filename)
-                if (!file.exists()) {
-                    val home = System.getProperty("user.home", ".")
-                    val homeDir = File(home)
-                    if (homeDir.exists()) {
-                        file = File(homeDir, filename)
-                    }
-                }
-                if (!file.exists()) return null
+                val file = findConfigurationFile(filenames) ?: return null
+                logger.info("Reading configuration file ${file.path}")
                 val bufferedReader: BufferedReader = file.bufferedReader()
                 return bufferedReader.use { it.readText() }
             } catch (e: IOException) {
-                logger.error("Error attempting to read the configuration file $filename", e)
+                logger.error("Error attempting to read the configuration file", e)
                 return null
             }
+        }
+
+        /**
+         * Returns a File object for the first configuration file found in the given list. Each file
+         * is tested in the current direcotry and then user's home directory. If no configuration
+         * file is found, null is returned.
+         */
+        private fun findConfigurationFile(filenames: List<String>): File? {
+            val home = System.getProperty("user.home", ".")
+            val homeDir = File(home)
+            var file: File
+            filenames.forEach { filename ->
+                file = File(filename)
+                if (file.exists()) {
+                    return file
+                }
+                file = File(homeDir, filename)
+                if (file.exists()) {
+                    return file
+                }
+            }
+            return null
         }
     }
 }

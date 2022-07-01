@@ -4,22 +4,18 @@ badassRuntime = "1.12.7"
 clikt = "3.5.0"
 dokka = "1.7.0"
 fourKoma = "1.0.1"
-gradleVersions = "0.1.16"
 junit5 = "5.8.2"
 kotest = "5.3.1"
 kotlin = "1.7.0"
 kotlin-reflect = "1.7.0"
 kotlinx-coroutines = "1.6.3"
 kotlinx-swing = "1.6.3"
-launch4j = "2.5.3"
 log4j = "2.17.2"
 logback = "1.2.11"
 mockk = "1.12.4"
 mockkJunit5 = "2.0.0"
-release = "2.8.1"
 
 [libraries]
-logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 clikt = { module = "com.github.ajalt.clikt:clikt", version.ref = "clikt" }
 fourKoma = { module = "cc.ekblad:4koma", version.ref = "fourKoma" }
 junit5 = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit5" }
@@ -30,6 +26,7 @@ kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-c
 kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-swing" }
 log4j-api = { module = "org.apache.logging.log4j:log4j-api", version.ref = "log4j" }
 log4j-core = { module = "org.apache.logging.log4j:log4j-core", version.ref = "log4j" }
+logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 mockk-core = { module = "io.mockk:mockk", version.ref = "mockk" }
 mockk-junit5 = { module = "com.github.erikhuizinga:mockk-junit5", version.ref = "mockkJunit5" }
 
@@ -42,6 +39,3 @@ log4j = ["log4j-api", "log4j-core"]
 axionRelease = { id = "pl.allegro.tech.build.axion-release", version.ref = "axionRelease" }
 badassRuntime = { id = "org.beryx.runtime", version.ref = "badassRuntime" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
-gradleVersions = { id = "se.ascp.gradle.gradle-versions-filter", version.ref = "gradleVersions" }
-launch4j = { id = "edu.sc.seis.launch4j", version.ref = "launch4j" }
-release = { id = "net.researchgate.release", version.ref = "release" }

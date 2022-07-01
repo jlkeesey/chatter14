@@ -15,13 +15,13 @@
  *
  */
 
+// This block appears to not work with the current Gradle 7.4.2. Copying the repositories
+// to build.gradle.kts works.
 pluginManagement {
-    plugins {
-        kotlin("jvm") version "1.7.0"
-    }
     repositories {
         gradlePluginPortal()
         mavenCentral()
+        maven(url = "https://jitpack.io")
     }
 }
 

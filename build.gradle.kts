@@ -23,13 +23,17 @@ import java.io.FileNotFoundException
 import java.util.*
 
 @Suppress("DSL_SCOPE_VIOLATION", "UnstableApiUsage") plugins {
-    kotlin("jvm")
+    kotlin("jvm") version "1.7.0"
     application
     alias(libs.plugins.badassRuntime)
     alias(libs.plugins.dokka)
-    alias(libs.plugins.gradleVersions)
-    alias(libs.plugins.launch4j)
     alias(libs.plugins.axionRelease)
+}
+
+repositories {
+    gradlePluginPortal()
+    mavenCentral()
+    maven(url = "https://jitpack.io")
 }
 
 project.version = scmVersion.version
@@ -56,6 +60,7 @@ dependencies {
     implementation(libs.kotlin.reflect)
     implementation(libs.clikt)
     implementation(libs.bundles.log4j)
+    //implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.0")
 
     // When 1.0.3 releases we can change back to the repository version as the fix we need will be in it
     // implementation(libs.four.koma) and we can also remove the antlr reference
@@ -93,16 +98,6 @@ tasks {
         testLogging {
             showStandardStreams = true
         }
-    }
-
-    withType<edu.sc.seis.launch4j.tasks.DefaultLaunch4jTask> {
-        outfile = "${rootProject.name}.exe"
-        mainClassName = applicationMainClassName
-        icon = "$projectDir/src/main/installer/$applicationName.ico"
-        jvmOptions = setOf("-Dbuild.version=${version}")
-        productName = applicationTitle
-        bundledJrePath = "C:/Program Files/Java/jdk-18.0.1.1"
-        jreMinVersion = "1.8.0"
     }
 
     @Suppress("SuspiciousCollectionReassignment") withType<KotlinCompile> {
@@ -157,6 +152,7 @@ runtime {
         )
     )
     jpackage {
+        appVersion = scmVersion.version.removeSuffix("-SNAPSHOT")
         outputDir = "jpackage"
         imageName = applicationName
         imageOptions = listOf("--icon", "src/main/installer/$applicationName.ico")

@@ -7,8 +7,16 @@ Tracker (ACT) log.
 
 ## Contents
 
- - [Introduction](#introduction)
- - [Installation](#installation)
+- [Introduction](#introduction)
+- [Usage](#usage)
+    - [Window](#window)
+    - [Command Line](#command)
+    - [Configuration File](#configuration)
+- [Installation](#installation)
+    - [Windows](#installation-windows)
+    - [Linux, MacOS](#installation-linux)
+- [Developing](#developing)
+- [Acknowlegements and Licenses](#installation-acknowledgement)
 
 ## <a name="introduction">Introduction</a>
 
@@ -29,70 +37,76 @@ a particular conversation. I personal have noted that people are not consistent 
 use of chat types even for a single conversation, switching between a linkshell, say, and
 even yell.
 
+## <a name="usage">Usage</a>
+
+Chatter14 can be run from the command line or as a window that accepts drag-and-drop.
+
+### <a name="window">Window</a>
+
+Starting Chatter14 with no arguments or clicking on the icon will start Chatter14 in
+windowed mode.
+
+<img src="src/main/docs/main.png">
+
+To convert one or more ACT log files drag them to the Chatter14 window. They will be
+converted using the current options in the window. The generated files will be .txt files
+in the same directory as the logs, with the a name in the form
+{original_name}-{group_short_name}.txt. It will include all of the lines from the log that
+match the group definition and optionally the emotes.
+
+#### Options
+
+The dropdown selects the group of people to filter for. These are defined in the
+[configuration file](#configuration).
+
+<img src="src/main/docs/main_drop.png">
+
+The **Emotes** checkbox selects whether the emote entries for the group are included in
+the output file. Many "conversations" in **FFXIV** are carried out in a combination of
+chat
+and emotes.
+
+The **Replace files** checkbox determines whether any existing generated files will be
+replaced. If this is not checked, any existing files will be skipped.
+
+If the **Dry run** checkbox is checked then `Chatter14` will do everything except write
+out the output files. Mostly useful for testing the program.
+
+The **Log** button will bring a window that shows the execution log. Mostly useful for
+testing but it also helps to show progress.
+
+### <a name="command">Command Line</a>
+
+### <a name="configuration">Configuration File</a>
+
+There is a special group that is always present
+called `Everyone` that selects all conversations from every person in the log. Thi
+
 ## <a name="installation">Installation</a>
 
-### Windows
+### <a name="installation-windows">Windows</a>
 
 The Windows version is pacakged as an installer, just run the installer and it should
 install everything needed. This product requires Java to run and it should install the
 required files automatically but if it cannot it will prompt you to install the Java
 runtime.
 
-### Linux, MacOS
+### <a name="installation-linux">Linux, MacOS</a>
 
 Extract the tar file into an appropriate place and add the `chatter14` script to the
 PATH.
 
-## Acknowlegements and Licenses
+## <a name="developing">Developing</a>
 
-These are the packages used in this project and their licenses.
+### Build Windows icon
 
-### Libraries
+The icon is generated from and JPG using the ImageMagick tool.
 
-#### 4koma Toml parser
+```command
+magick src\main\resources\images\chatter14.jpg -background none -extent 256x256 -define icon:auto-resize="256,128,96,64,48,32,16" src\main\installer\chatter14.ico
+```
 
-> See [LICENSE.md](https://github.com/valderman/4koma/blob/main/LICENSE) for the full
-> texts of the licenses.
+## <a name="installation-acknowledgement">Acknowlegements and Licenses</a>
 
-#### Clickt arguments processor
+Licenses are listed here [Licenses](LICENSES.md).
 
-> See [LICENSE.md](https://github.com/ajalt/clikt/blob/master/LICENSE.txt) for the full
-> texts of the licenses.
-
-#### Hack font
-
-> **Hack** work is &copy; 2018 Source Foundry Authors. MIT License
->
-> **Bitstream Vera Sans Mono** &copy; 2003 Bitstream, Inc. (with Reserved Font Names _
-> Bitstream_ and _Vera_). Bitstream Vera License.
->
-> See [LICENSE.md](https://github.com/source-foundry/Hack/blob/master/LICENSE.md) for the
-> full texts of the licenses.
-
-### Build Tools
-
-#### gradle-release plugin
-
-> See [LICENSE.md](https://github.com/researchgate/gradle-release/blob/main/LICENSE) for
-> the full texts of the licenses.
-
-#### Launch4j
-
-> See [launch4j page](http://launch4j.sourceforge.net/index.html) for links to the
-> licenses.
-
-### Graphics
-
-#### Cat Shadows images
-
-> Hello!
->
-> This is a Cat Shadow Icon Set from Iconka.com
-> It contains icons of cats, in sizes 64x64, 128x128, 256x256.
-> Format: PNG with transparent background.
->
-> This icons a free to use for non-commercial or commercial purposes.
-> You can use them in your websites, applications, or any other end product.
-> You can't sell or copyright them, or use them in templates intended for sale, or sell or
-> copyright derivatives from the icons.
-> Enjoy and thank you for your interest!
