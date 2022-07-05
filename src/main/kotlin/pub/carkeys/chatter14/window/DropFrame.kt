@@ -48,7 +48,7 @@ class DropFrame(
     private val serialVersionUID = 1L
     private var logWindow: LogFrame? = null
 
-    private val groupLabels = config.groups.keys.toList().sorted().toTypedArray()
+    private val groupLabels = config.groups.values.map { it.label }.toList().sorted().toTypedArray()
 
     private val randomImages = listOf(
         loadImage("/images/cat-shadow-ball-icon.png"),
