@@ -1,4 +1,4 @@
-# Chatter14
+# <img src="src/main/resources/images/chatter14.jpg" width="50"> Chatter14
 
 ![Stable](https://img.shields.io/badge/Stable-0.5.0-blue?style=for-the-badge "Stable version 0.5.0")
 
