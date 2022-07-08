@@ -18,7 +18,7 @@
 package pub.carkeys.chatter14.config
 
 import pub.carkeys.chatter14.ffxiv.ChatType
-import pub.carkeys.chatter14.ffxiv.DataCenter
+import pub.carkeys.chatter14.ffxiv.Universe
 
 /**
  * The options to parse with.
@@ -37,7 +37,7 @@ data class ParseOptions(
     var dryRun: Boolean = false,
     var forceReplace: Boolean = false,
     var includeEmotes: Boolean = false,
-    val dataCenter: DataCenter = DataCenter.DEFAULT,
+    val dataCenter: Universe.DataCenter = Universe.DEFAULT,
     var group: ParseConfiguration.Group = ParseConfiguration.everyone,
     val renames: Map<String, String> = mutableMapOf(),
 ) {

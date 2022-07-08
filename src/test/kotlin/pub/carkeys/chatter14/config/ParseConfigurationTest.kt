@@ -54,7 +54,7 @@ internal class ParseConfigurationTest {
         @Test
         fun `validate missing server`() {
             val bad = config.copy(server = "Bobcat")
-            shouldThrow<IllegalArgumentException> {
+            shouldThrow<ChatterConfigurationException> {
                 bad.validate()
             }
         }
@@ -78,12 +78,13 @@ internal class ParseConfigurationTest {
             config.write(builder)
 
             builder.toString() shouldBe """
+                datacenter = "Crystal"
                 dryRun = true
-                replaceIfExists = true
                 includeEmotes = false
                 performRename = false
-                datacenter = "Crystal"
+                replaceIfExists = true
                 server = "Zalera"
+
                 
                 [renames]
 

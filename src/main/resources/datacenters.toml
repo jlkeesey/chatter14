@@ -1,0 +1,42 @@
+#
+# This is the complete list of data centers and servers as of FFXIV Patch 6.18.
+#
+[[datacenter]]
+name = "Aether"
+servers = ["Adamantoise", "Cactuar", "Faerie", "Gilgamesh", "Jenova", "Midgardsormr", "Sargatanas", "Siren"]
+
+[[datacenter]]
+name = "Chaos"
+servers = ["Cerberus", "Louisoix", "Moogle", "Omega", "Phantom", "Ragnarok", "Sagittarius", "Spriggan"]
+
+[[datacenter]]
+name = "Crystal"
+servers = ["Balmung", "Brynhildr", "Coeurl", "Diabolos", "Goblin", "Malboro", "Mateus", "Zalera"]
+
+[[datacenter]]
+name = "Elemental"
+servers = ["Aegis", "Atomos", "Carbuncle", "Garuda", "Gungir", "Kujata", "Tonberry", "Typhon"]
+
+[[datacenter]]
+name = "Gaia"
+servers = ["Alexander", "Bahamut", "Durandal", "Fenrir", "Ifrit", "Ridill", "Tiamat", "Ultima"]
+
+[[datacenter]]
+name = "Light"
+servers = ["Alpha", "Lich", "Odin", "Phoenix", "Raiden", "Shiva", "Twintania", "Zodiark"]
+
+[[datacenter]]
+name = "Mana"
+servers = ["Anima", "Asura", "Chocobo", "Hades", "Ixion", "Masamune", "Pandaemonium", "Titan"]
+
+[[datacenter]]
+name = "Materia"
+servers = ["Bismarck", "Ravana", "Sephirot", "Sophia", "Zurvan"]
+
+[[datacenter]]
+name = "Meteor"
+servers = ["Belias", "Mandragora", "Ramuh", "Shinryu", "Unicorn", "Valefor", "Yojimbo", "Zeromus"]
+
+[[datacenter]]
+name = "Primal"
+servers = ["Behemoth", "Excalibur", "Exodus", "Famfrit", "Hyperion", "Lamia", "Leviathan", "Ultros"]

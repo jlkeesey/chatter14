@@ -17,8 +17,8 @@
 
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import pl.allegro.tech.build.axion.release.domain.hooks.HookContext
 import pl.allegro.tech.build.axion.release.domain.hooks.HooksConfig
-import pl.allegro.tech.build.axion.release.domain.preRelease
 import java.io.FileNotFoundException
 import java.util.*
 
@@ -60,12 +60,12 @@ dependencies {
     implementation(libs.kotlin.reflect)
     implementation(libs.clikt)
     implementation(libs.bundles.log4j)
-    //implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.0")
+    implementation(libs.fourKoma)
 
-    // When 1.0.3 releases we can change back to the repository version as the fix we need will be in it
+    // When 1.1.0 releases we can change back to the repository version as the fix we need will be in it
     // implementation(libs.four.koma) and we can also remove the antlr reference
-    implementation(files("../4koma/build/libs/4koma-1.0.2.jar"))
-    implementation("org.antlr", "antlr4-runtime", "4.10.1")
+    //implementation(files("../4koma/build/libs/4koma-1.0.2.jar"))
+    //implementation("org.antlr", "antlr4-runtime", "4.10.1")
 
     testImplementation(kotlin("test"))
     testImplementation(libs.logback)
@@ -174,14 +174,12 @@ scmVersion {
     useHighestVersion = true
     versionIncrementer("incrementMinor")
     hooks {
-        //preRelease {
-            preFileUpdate(file = "README.md",
-                          pattern = { previousVersion, _ -> "Stable version $previousVersion" },
-                          replacement = { currentVersion, _ -> "Stable version $currentVersion" })
-            preFileUpdate(file = "README.md",
-                          pattern = { previousVersion, _ -> "Stable-$previousVersion-" },
-                          replacement = { currentVersion, _ -> "Stable-$currentVersion-" })
-        //}
+        preFileUpdate(file = "README.md",
+                      pattern = { previousVersion, _ -> "Stable version $previousVersion" },
+                      replacement = { currentVersion, _ -> "Stable version $currentVersion" })
+        preFileUpdate(file = "README.md",
+                      pattern = { previousVersion, _ -> "Stable-$previousVersion-" },
+                      replacement = { currentVersion, _ -> "Stable-$currentVersion-" })
         pre("commit")
         post("push")
     }
@@ -199,8 +197,8 @@ scmVersion {
  */
 fun HooksConfig.preFileUpdate(
     file: String,
-    pattern: (String, pl.allegro.tech.build.axion.release.domain.hooks.HookContext) -> String,
-    replacement: (String, pl.allegro.tech.build.axion.release.domain.hooks.HookContext) -> String,
+    pattern: (String, HookContext) -> String,
+    replacement: (String, HookContext) -> String,
 ) {
     pre(
         "fileUpdate", mapOf(

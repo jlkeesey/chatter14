@@ -17,16 +17,9 @@
 
 package pub.carkeys.chatter14.config
 
-import cc.ekblad.toml.encodeTo
-import cc.ekblad.toml.model.TomlException
-import cc.ekblad.toml.model.TomlValue
-import cc.ekblad.toml.serialization.from
 import cc.ekblad.toml.tomlMapper
-import pub.carkeys.chatter14.ffxiv.DataCenter
+import pub.carkeys.chatter14.ffxiv.Universe
 import pub.carkeys.chatter14.logger
-import java.io.BufferedReader
-import java.io.File
-import java.io.IOException
 
 /**
  * The application settings from the configuration file(s). The Toml reader does not like
@@ -56,9 +49,11 @@ data class ParseConfiguration(
     val renames: Map<String, String> = mapOf(),
     val groupList: List<GroupEntry> = listOf(),
 ) {
-    val groups: Map<String, Group> = groupList.associateBy { it.shortName }.plus(everyone.shortName to everyone)
+    val groups: Map<String, Group> by lazy {
+        groupList.associateBy { it.shortName }.plus(everyone.shortName to everyone)
+    }
 
-    val dataCenter: DataCenter = DataCenter.centers[dataCenterName]!!
+    val dataCenter: Universe.DataCenter by lazy { Universe[dataCenterName]!! }
 
     /**
      * Defines a basic group definition.
@@ -81,10 +76,13 @@ data class ParseConfiguration(
      * @property participants the list of users to include.
      */
     data class GroupEntry(
-        override val label: String,
+        val theLabel: String?,
         val theShortName: String? = null,
         val participants: List<String>,
     ) : Group {
+        override val label: String
+            get() = theLabel!!
+
         override fun matches(name: String): Boolean {
             return participants.contains(name)
         }
@@ -113,7 +111,72 @@ data class ParseConfiguration(
      * are any violations.
      */
     fun validate() {
-        if (!dataCenter.servers.contains(server)) throw IllegalArgumentException("Unknown server '$server'")
+        var hasError = false
+        if (Universe[dataCenterName] == null) {
+            logger.error(
+                "'$dataCenterName' not a valid data center name. Valid names are: ${
+                    Universe.dataCenterNames.joinToString(
+                        ", "
+                    )
+                }"
+            )
+            hasError = true
+        } else {
+            if (!dataCenter.servers.contains(server)) {
+                logger.error(
+                    "'$server' not a valid server name in data center '$dataCenterName'. Valid names are: ${
+                        Universe[dataCenterName]?.servers?.sorted()?.joinToString(
+                            ", "
+                        )
+                    }"
+                )
+                hasError = true
+            }
+        }
+        val groupShortNames = mutableSetOf<String>()
+        val groupLabels = mutableSetOf<String>()
+        groupList.forEachIndexed { index, groupEntry ->
+            hasError = hasError or validateGroupEntry(index, groupEntry, groupShortNames, groupLabels)
+        }
+        if (hasError) throw ChatterConfigurationException("There were errors in the configuration.")
+    }
+
+    private fun validateGroupEntry(
+        index: Int,
+        groupEntry: GroupEntry,
+        groupShortNames: MutableSet<String>,
+        groupLabels: MutableSet<String>,
+    ): Boolean {
+        var hasError = false
+        if (groupEntry.theShortName == null || groupEntry.theShortName.isBlank()) {
+            logger.error("Group definition at index $index is missing a shortName")
+            hasError = true
+        }
+        if (groupShortNames.contains(groupEntry.shortName)) {
+            logger.error("There is more than one group definition with the same shortName: ${groupEntry.shortName}")
+            hasError = true
+        }
+        groupShortNames.add(groupEntry.shortName)
+        if (groupEntry.theLabel == null || groupEntry.theLabel.isBlank()) {
+            logger.error("Group definition at index $index is missing a label")
+            hasError = true
+        }
+        if (groupShortNames.contains(groupEntry.label)) {
+            logger.error("There is more than one group definition with the same label: ${groupEntry.label}")
+            hasError = true
+        }
+        groupLabels.add(groupEntry.label)
+        if (groupEntry.participants.isEmpty()) {
+            logger.error("Group definition ${groupEntry.shortName} is missing participants. Add at least one user to the participants list.")
+            hasError = true
+        }
+        groupEntry.participants.forEachIndexed { pIndex, s ->
+            if (s.isBlank()) {
+                logger.error("The participant name at index $pIndex of Group definition ${groupEntry.shortName} is missing or blank.")
+                hasError = true
+            }
+        }
+        return hasError
     }
 
     /**
@@ -133,18 +196,20 @@ data class ParseConfiguration(
      * Writes the current state of the configuration to the given Appendable.
      */
     fun write(appendable: Appendable) {
-        mapper.encodeTo(appendable, this)
+        configurationIO.write(appendable, this)
     }
 
     companion object {
-        private val logger by logger()
-
-        private val configurationFiles = listOf(".chatter14.toml", "chatter14.toml")
+        val logger by logger()
 
         /**
          * The everyone accepted group.
          */
         val everyone = GroupEveryone()
+
+        private val configurationFiles = listOf(".chatter14.toml", "chatter14.toml")
+
+        private val defaultValues = ParseConfiguration()
 
         /**
          * Used by the Toml parser to map configuration file field names to code names.
@@ -152,76 +217,14 @@ data class ParseConfiguration(
         private val mapper = tomlMapper {
             mapping<ParseConfiguration>("group" to "groupList")
             mapping<ParseConfiguration>("datacenter" to "dataCenterName")
+            mapping<GroupEntry>("label" to "theLabel")
             mapping<GroupEntry>("shortname" to "theShortName")
         }
 
-        /**
-         * Reads the configuration from a file.
-         */
-        fun read(): ParseConfiguration? {
-            val input = readConfigFile()
-            return if (input == null) null else parse(input)
-        }
+        private val configurationIO = ConfigurationIO(filenames = configurationFiles, mapper = mapper)
 
-        /**
-         * Parses a string into a ParseConfiguration. Normally this string comes from an external
-         * file.
-         */
-        private fun parse(input: String): ParseConfiguration? {
-            return try {
-                mapper.decodeWithDefaults(ParseConfiguration(), TomlValue.from(input))
-            } catch (e: TomlException.DecodingError) {
-                logger.error(cleanUpDecodingExceptionMessage(e), e)
-                null
-            }
-        }
-
-        /**
-         * Returns a more user-friendly error message from the ones given by the Toml parser.
-         */
-        private fun cleanUpDecodingExceptionMessage(e: TomlException.DecodingError): String {
-            return when (e.reason) {
-                "no value found for required parameter 'label'" -> "A group label is missing"
-                else                                            -> e.reason ?: e.localizedMessage
-            }
-        }
-
-        /**
-         * Reads the given configuration file and returns the contents as a string. Null is returned
-         * if the file cannot be read.
-         */
-        private fun readConfigFile(filenames: List<String> = configurationFiles): String? {
-            try {
-                val file = findConfigurationFile(filenames) ?: return null
-                logger.info("Reading configuration file ${file.path}")
-                val bufferedReader: BufferedReader = file.bufferedReader()
-                return bufferedReader.use { it.readText() }
-            } catch (e: IOException) {
-                logger.error("Error attempting to read the configuration file", e)
-                return null
-            }
-        }
-
-        /**
-         * Returns a File object for the first configuration file found in the given list. Each file
-         * is tested in the current direcotry and then user's home directory. If no configuration
-         * file is found, null is returned.
-         */
-        private fun findConfigurationFile(filenames: List<String>): File? {
-            val home = System.getProperty("user.home", ".")
-            val homeDir = File(home)
-            var file: File
-            filenames.forEach { filename ->
-                file = File(filename)
-                if (file.exists()) {
-                    return file
-                }
-                file = File(homeDir, filename)
-                if (file.exists()) {
-                    return file
-                }
-            }
-            return null
+        fun read(): ParseConfiguration {
+            return configurationIO.read(defaultValues)
         }
     }
 }

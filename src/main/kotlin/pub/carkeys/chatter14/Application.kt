@@ -27,7 +27,9 @@ import com.github.ajalt.clikt.parameters.options.versionOption
 import com.github.ajalt.clikt.parameters.types.choice
 import com.github.ajalt.clikt.parameters.types.file
 import org.apache.logging.log4j.Level
+import pub.carkeys.chatter14.config.ChatterConfigurationException
 import pub.carkeys.chatter14.config.ParseConfiguration
+import pub.carkeys.chatter14.ffxiv.Universe
 import pub.carkeys.chatter14.log4j.LoggerAppendable
 import pub.carkeys.chatter14.processor.ActLogFileHandler
 import pub.carkeys.chatter14.window.WindowManager
@@ -87,6 +89,9 @@ class Application(
     private val logConfig by option("-c", "--config", help = "logs the config").flag(
         default = false
     )
+    private val logUniverse by option("-u", "--universe", help = "logs the universe definition").flag(
+        default = false
+    )
     private val dryRun by option("-d", "--dryrun", help = "process without creating output files").flag(
         "-P", "--process", default = config.dryRun
     )
@@ -121,6 +126,7 @@ class Application(
             windowed = windowed
         )
         logConfiguration()
+        logUniverse()
         if (options.windowed) {
             windowManager.start(options = options, config = config, info = info, fileHandler = fileHandler)
         } else {
@@ -136,6 +142,18 @@ class Application(
             logger.info("Configuration file:")
             LoggerAppendable(logger = logger, level = Level.INFO, indent = "   ").use {
                 config.write(it)
+            }
+        }
+    }
+
+    /**
+     * Logs the current universe definition.
+     */
+    private fun logUniverse() {
+        if (logUniverse) {
+            logger.info("Universe definition:")
+            LoggerAppendable(logger = logger, level = Level.INFO, indent = "   ").use {
+                Universe.write(it)
             }
         }
     }
@@ -156,9 +174,9 @@ class Application(
                 logger.traceEntry()
                 val info = ApplicationInfo.load()
                 val config = ParseConfiguration.read()
-                if (config != null) {
-                    Application(config = config, info = info).main(args)
-                }
+                Application(config = config, info = info).main(args)
+            } catch (e: ChatterConfigurationException) {
+                logger.error(e.localizedMessage)
             } catch (e: Exception) {
                 logger.error("Something unexpected occured.", e)
             } finally {
