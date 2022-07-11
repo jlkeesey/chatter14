@@ -140,6 +140,7 @@ runtime {
             "java.compiler",
             "java.datatransfer",
             "java.desktop",
+            "java.instrument",
             "java.logging",
             "java.management",
             "java.naming",
