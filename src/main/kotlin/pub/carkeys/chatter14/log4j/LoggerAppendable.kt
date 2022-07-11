@@ -21,7 +21,7 @@ import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.Logger
 
 /**
- * An Appendble that writes to the logging system. This can be used to write out blocks
+ * An Appendable that writes to the logging system. This can be used to write out blocks
  * of text like configuration files to the log from subsystems that don't have a logging
  * interface but do have an Appendable interface.
  *

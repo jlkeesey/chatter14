@@ -27,6 +27,7 @@ import pub.carkeys.chatter14.config.ParseOptions
 import pub.carkeys.chatter14.ffxiv.ChatInfo
 import java.io.StringReader
 
+@Suppress("SpellCheckingInspection")
 internal class ActLogParserTest {
     val parser = ActLogParser()
     val defaultOptions = ParseOptions()

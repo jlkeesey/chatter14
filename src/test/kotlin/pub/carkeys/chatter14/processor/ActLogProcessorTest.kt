@@ -34,6 +34,7 @@ import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneId
 
+@Suppress("SpellCheckingInspection")
 internal class ActLogProcessorTest {
     private val clock = Clock.fixed(Instant.EPOCH, ZoneId.of("America/Los_Angeles"))
     private val parser = mockk<ActLogParser>()

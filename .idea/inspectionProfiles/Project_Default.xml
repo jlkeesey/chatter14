@@ -8,7 +8,7 @@
       <scope name="Code" level="TYPO" enabled="true" />
     </inspection_tool>
     <inspection_tool class="InlineClassDeprecatedMigration" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="LanguageDetectionInspection" enabled="true" level="WARNING" enabled_by_default="false">
+    <inspection_tool class="LanguageDetectionInspection" enabled="true" level="WARNING" enabled_by_default="true">
       <scope name="Code" level="WARNING" enabled="true" />
     </inspection_tool>
     <inspection_tool class="LocalCanBeFinal" enabled="true" level="WARNING" enabled_by_default="true">
@@ -27,7 +27,7 @@
     <inspection_tool class="RestrictReturnStatementTargetMigration" enabled="true" level="ERROR" enabled_by_default="true" />
     <inspection_tool class="SimplifiableAnnotation" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="SimplifiableEqualsExpression" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="SpellCheckingInspection" enabled="true" level="TYPO" enabled_by_default="false">
+    <inspection_tool class="SpellCheckingInspection" enabled="true" level="TYPO" enabled_by_default="true">
       <scope name="Code" level="TYPO" enabled="true">
         <option name="processCode" value="true" />
         <option name="processLiterals" value="true" />

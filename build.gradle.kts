@@ -15,6 +15,8 @@
  *
  */
 
+@file:Suppress("SpellCheckingInspection")
+
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import pl.allegro.tech.build.axion.release.domain.hooks.HookContext

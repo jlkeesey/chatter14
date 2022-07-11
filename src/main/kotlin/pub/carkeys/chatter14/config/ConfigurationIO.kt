@@ -71,7 +71,7 @@ class ConfigurationIO(
 
     /**
      * Returns a File object for the first configuration file found in the given list. Each file
-     * is tested in the current direcotry and then user's home directory. If no configuration
+     * is tested in the current directory and then user's home directory. If no configuration
      * file is found, then we attempt to open the defaultConfigResourceName as a resource. If
      * that is not found, null is returned.
      */

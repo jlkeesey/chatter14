@@ -17,4 +17,8 @@
 
 package pub.carkeys.chatter14.config
 
-open class ChatterConfigurationException(message: String) : Exception(message)
+import pub.carkeys.chatter14.I18N
+
+open class ChatterConfigurationException(message: String) : Exception(message) {
+    constructor(message: I18N.Message) : this(message.toString())
+}

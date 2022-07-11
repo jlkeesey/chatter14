@@ -14,7 +14,6 @@
  * limitations under the License.
  *
  */
-
 package pub.carkeys.chatter14
 
 import org.apache.logging.log4j.LogManager
@@ -45,7 +44,9 @@ private fun <T : Any> unwrapCompanionClass(ofClass: Class<T>): Class<*> {
     } ?: ofClass
 }
 
+@Suppress("SpellCheckingInspection", "unused")
 /*
  * Code from [StackOverflow](https://stackoverflow.com/a/34462577/18295) written by
  * [Jayson Minard](https://stackoverflow.com/users/3679676/jayson-minard).
  */
+private val placeholder = 0 // So Suppress has something to anchor to

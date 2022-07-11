@@ -57,7 +57,7 @@ class Application(
 
     override val commandHelp: String
         get() = """
-            Extracts FFXIV chat and emote lines from ACT logs.
+            Extracts Final Fantasy 14 chat and emote lines from ACT logs.
             
             This application takes one or more ACT log files and extracts various chat and optionally 
             emote lines from the log. The lines can be further filtered by a list of user names.
@@ -117,6 +117,14 @@ class Application(
      * Entry point for the main processing called by Clikt.
      */
     override fun run() {
+        val url = this::class.java.getResource("/pub/carkeys/chatter14/i18n/messages.properties")
+        val res = this::class.java.getResourceAsStream("/pub/carkeys/chatter14/i18n/messages.properties")
+
+        val woof = I18N.applicationName
+
+
+
+
         config.validate() // Do this after the command line parsing in case the parsing changed anything.
         val options = config.asOptions().copy(
             dryRun = dryRun,
@@ -178,7 +186,7 @@ class Application(
             } catch (e: ChatterConfigurationException) {
                 logger.error(e.localizedMessage)
             } catch (e: Exception) {
-                logger.error("Something unexpected occured.", e)
+                logger.error("Something unexpected occurred.", e)
             } finally {
                 logger.traceExit()
             }

@@ -18,12 +18,14 @@
 package pub.carkeys.chatter14.ffxiv
 
 import cc.ekblad.toml.tomlMapper
+import pub.carkeys.chatter14.I18N
 import pub.carkeys.chatter14.config.ChatterConfigurationException
 import pub.carkeys.chatter14.config.ConfigurationIO
 
 /**
- * The complete set of data centers for FFXIV. The data is read from a configuration file so
- * that it can be updated if there are any changes between releases of this application.
+ * The complete set of data centers for Final Fantasy 14. The data is read from a
+ * configuration file so that it can be updated if there are any changes between releases of
+ * this application.
  *
  * @property dataCenters the list of data centers.
  */
@@ -41,7 +43,7 @@ data class Universe(val dataCenters: List<DataCenter> = listOf()) {
      * Returns null if there is no data center with the given name.
      */
     operator fun get(name: String): DataCenter? {
-        // This is ineffecient as it scans the list every time. However, in this app the list is
+        // This is inefficient as it scans the list every time. However, in this app the list is
         // only scanned once so it is not a problem. If that changes, a map should be created from
         // the list and that used to find the data center.
         return dataCenters.firstOrNull { it.name.equals(name, ignoreCase = true) }
@@ -62,7 +64,7 @@ data class Universe(val dataCenters: List<DataCenter> = listOf()) {
          * because that's my data center.
          */
         val DEFAULT: DataCenter by lazy {
-            INSTANCE["Crystal"] ?: throw IllegalStateException("Default data center Crystal not defined")
+            INSTANCE["Crystal"] ?: throw ChatterConfigurationException(I18N.defaultDataCenterNotFound)
         }
 
         val dataCenterNames: List<String>
@@ -108,7 +110,7 @@ data class Universe(val dataCenters: List<DataCenter> = listOf()) {
         private fun read(): Universe {
             val result = configurationIO.read(defaultValues)
             if (result.dataCenters.isEmpty()) {
-                throw ChatterConfigurationException("Data center definitions caould not be loaded.")
+                throw ChatterConfigurationException(I18N.dataCenterDefinitionsNotLoaded)
             }
             return result
         }

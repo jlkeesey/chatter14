@@ -18,11 +18,11 @@
 package pub.carkeys.chatter14.ffxiv
 
 /**
- * These are the secondary codes for each chat type in FFXIV. There are many more than this
- * but these are the ones that we are most interested in. All the system messages have a type
- * like for NPC conversations, notifications of teleport, novice network, etc. These aren't
- * "chat" types as most people consider it. If these are desired the keep all messages option
- * can be selected.
+ * These are the secondary codes for each chat type in Final Fantasy 14. There are many more
+ * than this but these are the ones that we are most interested in. All the system messages
+ * have a type like for NPC conversations, notifications of teleport, novice network, etc.
+ * These aren't "chat" types as most people consider it. If these are desired the keep all
+ * messages option can be selected.
  */
 enum class ChatCode(val code: String, val type: ChatType) {
     SAY("000A", ChatType.CHAT),

@@ -33,8 +33,8 @@ fun main(args: Array<String>) {
 /**
  * Reads the arguments for a logging level setting value and if present uses that to set the
  * current logging level of the system. If the parameter is present it is removed from the
- * command line before passing it on ht eothe Application. This needs to be handled here
- * before any other porcessing so that the logging level can be changed for all logging
+ * command line before passing it on to the Application. This needs to be handled here
+ * before any other processing so that the logging level can be changed for all logging
  * messages.
  *
  * We process all setting arguments int order, so the last one will win.
