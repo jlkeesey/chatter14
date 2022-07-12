@@ -34,6 +34,7 @@ import pub.carkeys.chatter14.log4j.LoggerAppendable
 import pub.carkeys.chatter14.processor.ActLogFileHandler
 import pub.carkeys.chatter14.window.WindowManager
 import java.io.File
+import java.util.MissingResourceException
 
 /**
  * The application class. The run() method will be invoked by the Clikt command line
@@ -56,22 +57,13 @@ class Application(
     }
 
     override val commandHelp: String
-        get() = """
-            Extracts Final Fantasy 14 chat and emote lines from ACT logs.
-            
-            This application takes one or more ACT log files and extracts various chat and optionally 
-            emote lines from the log. The lines can be further filtered by a list of user names.
-            
-            This command can be run in either command line or windowed modes. Command line mode
-            is useful for experience users or inclusion in scripts. Windowed mode allows for 
-            drag-and-drop actions to convert files. The default is to use windowed mode.
-        """.trimIndent()
+        get() = I18N.commandHelpText.toString()
 
     override val commandHelpEpilog: String
         get() {
             val builder = StringBuilder()
             builder.append("```\n")
-            builder.append("Configured groups:\n")
+            builder.append("${I18N.configuredGroupHeader}\n")
             builder.append("\n")
             config.groups.values.sortedBy { it.shortName }.forEach { group ->
                 builder.append("  ${group.label} (${group.shortName})\n")
@@ -86,30 +78,30 @@ class Application(
             return builder.toString()
         }
 
-    private val logConfig by option("-c", "--config", help = "logs the config").flag(
+    private val logConfig by option("-c", "--config", help = I18N.commandLineLogConfigHelp.toString()).flag(
         default = false
     )
-    private val logUniverse by option("-u", "--universe", help = "logs the universe definition").flag(
+    private val logUniverse by option("-u", "--universe", help = I18N.commandLineLogUniverseHelp.toString()).flag(
         default = false
     )
-    private val dryRun by option("-d", "--dryrun", help = "process without creating output files").flag(
+    private val dryRun by option("-d", "--dryrun", help = I18N.commandLineDryRunHelp.toString()).flag(
         "-P", "--process", default = config.dryRun
     )
-    private val replace by option("-r", "--replace", help = "replace existing text files").flag(
+    private val replace by option("-r", "--replace", help = I18N.commandLineReplaceHelp.toString()).flag(
         "-S", "--no-replace", default = config.replaceIfExists
     )
-    private val includeEmotes by option("-e", "--emotes", help = "include emotes in the output").flag(
+    private val includeEmotes by option("-e", "--emotes", help = I18N.commandLineIncludeEmotesHelp.toString()).flag(
         "-E", "--no-emotes", default = config.includeEmotes
     )
-    private val windowed by option("-w", "--window", help = "display drag-and-drop target window").flag(
+    private val windowed by option("-w", "--window", help = I18N.commandLineWindowedHelp.toString()).flag(
         "-W", "--no-window", default = true
     )
 
-    private val group by option("-g", "--group", help = "group (list of users) to filter for").choice(
+    private val group by option("-g", "--group", help = I18N.commandLineGroupHelp.toString()).choice(
         config.groups.values.associate { Pair(it.shortName, it.shortName) }.toSortedMap(), ignoreCase = true
     ).default(ParseConfiguration.everyone.shortName)
 
-    private val files: List<File> by argument(help = "The log files to process")
+    private val files: List<File> by argument(help = I18N.commandLineFilesToProcessHelp.toString())
         .file(mustExist = false, canBeFile = true)
         .multiple()
 
@@ -117,14 +109,6 @@ class Application(
      * Entry point for the main processing called by Clikt.
      */
     override fun run() {
-        val url = this::class.java.getResource("/pub/carkeys/chatter14/i18n/messages.properties")
-        val res = this::class.java.getResourceAsStream("/pub/carkeys/chatter14/i18n/messages.properties")
-
-        val woof = I18N.applicationName
-
-
-
-
         config.validate() // Do this after the command line parsing in case the parsing changed anything.
         val options = config.asOptions().copy(
             dryRun = dryRun,
@@ -143,11 +127,11 @@ class Application(
     }
 
     /**
-     * Logs the current configuration.
+     * Logs the current configuration if requested.
      */
     private fun logConfiguration() {
         if (logConfig) {
-            logger.info("Configuration file:")
+            logger.info(I18N.logConfigurationFileHeader.toString())
             LoggerAppendable(logger = logger, level = Level.INFO, indent = "   ").use {
                 config.write(it)
             }
@@ -155,11 +139,11 @@ class Application(
     }
 
     /**
-     * Logs the current universe definition.
+     * Logs the current universe definition if requested.
      */
     private fun logUniverse() {
         if (logUniverse) {
-            logger.info("Universe definition:")
+            logger.info(I18N.logUniverseDefinitionHeader.toString())
             LoggerAppendable(logger = logger, level = Level.INFO, indent = "   ").use {
                 Universe.write(it)
             }
@@ -183,10 +167,12 @@ class Application(
                 val info = ApplicationInfo.load()
                 val config = ParseConfiguration.read()
                 Application(config = config, info = info).main(args)
+            } catch (e:MissingResourceException) {
+                logger.error(e.localizedMessage, e)
             } catch (e: ChatterConfigurationException) {
                 logger.error(e.localizedMessage)
             } catch (e: Exception) {
-                logger.error("Something unexpected occurred.", e)
+                logger.error(I18N.logUnexpectedError, e)
             } finally {
                 logger.traceExit()
             }

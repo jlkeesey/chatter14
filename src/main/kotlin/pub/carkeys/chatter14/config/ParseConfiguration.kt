@@ -18,6 +18,7 @@
 package pub.carkeys.chatter14.config
 
 import cc.ekblad.toml.tomlMapper
+import pub.carkeys.chatter14.I18N
 import pub.carkeys.chatter14.ffxiv.Universe
 import pub.carkeys.chatter14.logger
 
@@ -100,7 +101,7 @@ data class ParseConfiguration(
     /**
      * Group definition that includes everyone.
      */
-    data class GroupEveryone(override val label: String = "Everyone") : Group {
+    data class GroupEveryone(override val label: String = I18N.labelEveryone.toString()) : Group {
         override fun matches(name: String): Boolean {
             return true
         }
@@ -114,21 +115,17 @@ data class ParseConfiguration(
         var hasError = false
         if (Universe[dataCenterName] == null) {
             logger.error(
-                "'$dataCenterName' not a valid data center name. Valid names are: ${
-                    Universe.dataCenterNames.joinToString(
-                        ", "
-                    )
-                }"
+                I18N.logInvalidDataCenterName.format(dataCenterName, Universe.dataCenterNames.joinToString(", "))
             )
             hasError = true
         } else {
             if (!dataCenter.servers.contains(server)) {
                 logger.error(
-                    "'$server' not a valid server name in data center '$dataCenterName'. Valid names are: ${
-                        Universe[dataCenterName]?.servers?.sorted()?.joinToString(
+                    I18N.logInvalidServerName.format(
+                        server, dataCenterName, Universe[dataCenterName]?.servers?.sorted()?.joinToString(
                             ", "
-                        )
-                    }"
+                        ) ?: "???"
+                    )
                 )
                 hasError = true
             }
@@ -138,9 +135,10 @@ data class ParseConfiguration(
         groupList.forEachIndexed { index, groupEntry ->
             hasError = hasError or validateGroupEntry(index, groupEntry, groupShortNames, groupLabels)
         }
-        if (hasError) throw ChatterConfigurationException("There were errors in the configuration.")
+        if (hasError) throw ChatterConfigurationException(I18N.logConfigurationErrors)
     }
 
+    @Suppress("DuplicatedCode")
     private fun validateGroupEntry(
         index: Int,
         groupEntry: GroupEntry,
@@ -149,30 +147,30 @@ data class ParseConfiguration(
     ): Boolean {
         var hasError = false
         if (groupEntry.theShortName == null || groupEntry.theShortName.isBlank()) {
-            logger.error("Group definition at index $index is missing a shortName")
+            logger.error(I18N.logGroupMissingShortName.format(index))
             hasError = true
         }
         if (groupShortNames.contains(groupEntry.shortName)) {
-            logger.error("There is more than one group definition with the same shortName: ${groupEntry.shortName}")
+            logger.error(I18N.logGroupDuplicateShortName.format(groupEntry.shortName))
             hasError = true
         }
         groupShortNames.add(groupEntry.shortName)
         if (groupEntry.theLabel == null || groupEntry.theLabel.isBlank()) {
-            logger.error("Group definition at index $index is missing a label")
+            logger.error(I18N.logGroupMissingLabel.format(index))
             hasError = true
         }
         if (groupShortNames.contains(groupEntry.label)) {
-            logger.error("There is more than one group definition with the same label: ${groupEntry.label}")
+            logger.error(I18N.logGroupDuplicateLabel.format(groupEntry.label))
             hasError = true
         }
         groupLabels.add(groupEntry.label)
         if (groupEntry.participants.isEmpty()) {
-            logger.error("Group definition ${groupEntry.shortName} is missing participants. Add at least one user to the participants list.")
+            logger.error(I18N.logGroupParticipantsMissing.format(groupEntry.shortName))
             hasError = true
         }
         groupEntry.participants.forEachIndexed { pIndex, s ->
             if (s.isBlank()) {
-                logger.error("The participant name at index $pIndex of Group definition ${groupEntry.shortName} is missing or blank.")
+                logger.error(I18N.logGroupParticipantNameMissing.format(pIndex, groupEntry.shortName))
                 hasError = true
             }
         }

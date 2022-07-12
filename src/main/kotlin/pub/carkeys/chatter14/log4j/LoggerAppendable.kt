@@ -55,7 +55,7 @@ class LoggerAppendable(
 
     override fun append(c: Char): java.lang.Appendable {
         if (c == '\n') {
-            flush(true)
+            flush()
         } else {
             if (atBol) {
                 builder.append(indent)
@@ -66,8 +66,8 @@ class LoggerAppendable(
         return this
     }
 
-    private fun flush(force: Boolean = false) {
-        if (force || builder.isNotEmpty()) {
+    private fun flush() {
+        if (builder.isNotEmpty()) {
             logger.log(level, builder.toString())
             builder.clear()
         }

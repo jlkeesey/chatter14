@@ -17,6 +17,7 @@
 
 package pub.carkeys.chatter14
 
+import pub.carkeys.chatter14.I18N.Companion.applicationPropertiesLoadFailed
 import java.io.IOException
 import java.util.*
 
@@ -48,11 +49,11 @@ data class ApplicationInfo(val name: String, val title: String, val version: Str
                     properties.load(it)
                 }
             } catch (e: IOException) {
-                logger.error("Failed to load application.properties", e)
+                logger.error(applicationPropertiesLoadFailed.toString(), e)
             }
             val name = properties["application.name"] as? String ?: "App"
             val title = properties["application.title"] as? String ?: "App"
-            val version = properties["application.version"] as? String ?: "1.4"
+            val version = properties["application.version"] as? String ?: "?.?"
             return ApplicationInfo(name = name, title = title, version = version)
         }
     }

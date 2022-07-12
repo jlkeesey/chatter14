@@ -20,6 +20,7 @@ package pub.carkeys.chatter14.config
 import cc.ekblad.toml.TomlMapper
 import cc.ekblad.toml.decodeWithDefaults
 import cc.ekblad.toml.encodeTo
+import pub.carkeys.chatter14.I18N
 import pub.carkeys.chatter14.logger
 import java.io.BufferedReader
 import java.io.File
@@ -64,7 +65,7 @@ class ConfigurationIO(
             val bufferedReader: BufferedReader = stream.bufferedReader()
             return bufferedReader.use { it.readText() }
         } catch (e: IOException) {
-            logger.error("Error attempting to read the configuration", e)
+            logger.error(I18N.logConfigurationReadError.format(filenames.joinToString(", ")), e)
             return ""
         }
     }
@@ -82,19 +83,19 @@ class ConfigurationIO(
         filenames.forEach { filename ->
             file = File(filename)
             if (file.exists()) {
-                logger.info("Reading configuration file ${file.path}")
+                logger.info(I18N.logConfigurationFileExists.format())
                 return file.inputStream()
             }
             file = File(homeDir, filename)
             if (file.exists()) {
-                logger.info("Reading configuration file ${file.path}")
+                logger.info(I18N.logConfigurationFileExists.format())
                 return file.inputStream()
             }
         }
         if (defaultConfigResourceName == null) {
             return null
         }
-        logger.info("Reading default configuration resource $defaultConfigResourceName")
+        logger.info(I18N.logConfigurationUsingDefaults.format(defaultConfigResourceName))
         return this.javaClass.getResourceAsStream("/$defaultConfigResourceName")
     }
 
