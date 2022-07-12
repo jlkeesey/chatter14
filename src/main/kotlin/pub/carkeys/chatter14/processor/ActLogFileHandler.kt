@@ -17,6 +17,7 @@
 
 package pub.carkeys.chatter14.processor
 
+import pub.carkeys.chatter14.I18N
 import pub.carkeys.chatter14.config.ParseOptions
 import pub.carkeys.chatter14.logger
 import java.io.File
@@ -42,7 +43,7 @@ class ActLogFileHandler(
             if (current.isFile) {
                 processFile(options, current)
             } else if (current.isDirectory) {
-                logger.info("Processing all log files in ${current.path}")
+                logger.info(I18N.logProcessingFiles.format(current.path))
                 fileManager.forEachFile(current, "*.log") { processFile(options, it, indent = "   ") }
             } else {
                 fileManager.forEachFile(current.parentFile, current.name) { processFile(options, it, indent = "   ") }
@@ -52,21 +53,21 @@ class ActLogFileHandler(
 
     private fun processFile(options: ParseOptions, inputFile: File, indent: String = "") {
         if (!inputFile.exists()) {
-            logger.warn("${indent}Input file ${inputFile.path} does not exist")
+            logger.warn(I18N.logInputFileMissing.format(indent, inputFile.path))
             return
         }
         if (!inputFile.isFile) {
-            logger.warn("${indent}Input name ${inputFile.path} is not a file")
+            logger.warn(I18N.logInputNameNotAFile.format(indent, inputFile.path))
             return
         }
         val outputFile = fileManager.makeOutputFileName(inputFile, options.group.shortName)
         if (!options.forceReplace && outputFile.exists()) {
-            logger.warn("${indent}Target file exists, skipping: '${outputFile.path}'")
+            logger.warn(I18N.logTargetExists.format(indent, outputFile.path))
             return
         }
         fileManager.openForRead(inputFile).use { reader ->
             fileManager.openForWrite(outputFile).use { writer ->
-                logger.info("${indent}Processing ${inputFile.path}")
+                logger.info(I18N.logProcessingFile.format(indent, inputFile.path))
                 processor.process(inputFile.path, options, reader, writer)
             }
         }

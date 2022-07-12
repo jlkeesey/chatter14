@@ -107,7 +107,6 @@ class LogFrame(private val owner: JFrame, title: String) : JFrame("$title Log") 
     fun makeVisible() {
         locateRelativeTo(owner)
         isVisible = true
-        logger.info("Made the log window visible")
     }
 
     /**

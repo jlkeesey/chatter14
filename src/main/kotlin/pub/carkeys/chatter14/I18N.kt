@@ -18,6 +18,7 @@
 package pub.carkeys.chatter14
 
 import java.text.MessageFormat
+import java.time.OffsetDateTime
 import java.util.*
 
 /**
@@ -284,6 +285,90 @@ class I18N private constructor() {
             """.trimIndent()
         )
 
+        val logProcessingFiles = Message(
+            "log_processing_files", "Processing all log files in {0}", """
+                Logged at the beginning of processing the list of log files.
+            """.trimIndent()
+        )
+
+        val logInputFileMissing = Message(
+            "log_input_file_missing", "{0}Input file {1} does not exist", """
+                Logged when an input file name does not exist.
+            """.trimIndent()
+        )
+
+        val logInputNameNotAFile = Message(
+            "log_input_not_a_file", "{0}Input name {1} is not a file", """
+                Logged when an input name exists but is not a file.
+            """.trimIndent()
+        )
+
+        val logTargetExists = Message(
+            "log_target_exists", "{0}Target file exists, skipping: {1}", """
+                Logged when the target file name exists and the replace flag is false.
+            """.trimIndent()
+        )
+
+        val logProcessingFile = Message(
+            "log_processing_a_file", "{0}Processing {1}", """
+                Logged when a log file is being processed.
+            """.trimIndent()
+        )
+
+        val outputHeader = Message(
+            "output_header", "# Created at {0}", """
+                Written as the first line of each output file.
+            """.trimIndent()
+        )
+
+        val outputNoLinesMatched = Message(
+            "output_no_lines_matched", "# No lines matched the criteria", """
+                Written after the header if there are no lines to write to the output.
+            """.trimIndent()
+        )
+
+        val labelLog = Message(
+            "label_log", "Log", """
+                Label for button that opens the log window
+            """.trimIndent()
+        )
+
+        val labelDryRun = Message(
+            "label_dry_run", "Dry run", """
+                Label for dry run checkbox
+            """.trimIndent()
+        )
+
+        val labelEmotes = Message(
+            "label_emotes", "Emotes", """
+                Label for include emotes checkbox
+            """.trimIndent()
+        )
+
+        val labelReplaceFiles = Message(
+            "label_replace_files", "Replace files", """
+                Label for replace files checkbox
+            """.trimIndent()
+        )
+
+        val logRegisteringFont = Message(
+            "label_registering_font", "Registering font {0}", """
+                Logged when a font is being registered with the window manager.
+            """.trimIndent()
+        )
+
+        val logFontReadError = Message(
+            "label_font_read_error", "IO error reading font '{0}'", """
+                Logged when a font cannot be read.
+            """.trimIndent()
+        )
+
+        val logFontFormatError = Message(
+            "label_font_format_error", "Font format error reading font '{0}'", """
+                Logged when a font file is in the wrong format and cannot be processed.
+            """.trimIndent()
+        )
+
         /**
          * All of the translatable strings of the system. All new messages should be added at the end
          * of this list to simplify translation. DO NOT SORT this list.
@@ -319,6 +404,20 @@ class I18N private constructor() {
             logGroupDuplicateLabel,
             logGroupParticipantsMissing,
             logGroupParticipantNameMissing,
+            logProcessingFiles,
+            logInputFileMissing,
+            logInputNameNotAFile,
+            logTargetExists,
+            logProcessingFile,
+            outputHeader,
+            outputNoLinesMatched,
+            labelLog,
+            labelDryRun,
+            labelEmotes,
+            labelReplaceFiles,
+            logRegisteringFont,
+            logFontReadError,
+            logFontFormatError,
         )
 
         /**

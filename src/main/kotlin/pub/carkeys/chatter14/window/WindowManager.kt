@@ -18,6 +18,7 @@
 package pub.carkeys.chatter14.window
 
 import pub.carkeys.chatter14.ApplicationInfo
+import pub.carkeys.chatter14.I18N
 import pub.carkeys.chatter14.config.ParseConfiguration
 import pub.carkeys.chatter14.config.ParseOptions
 import pub.carkeys.chatter14.logger
@@ -90,15 +91,15 @@ class WindowManager {
         filename: String,
         format: Int = Font.TRUETYPE_FONT,
     ) {
-        logger.info("Registering font $filename")
+        logger.debug(I18N.logRegisteringFont.format(filename))
         this.javaClass.getResourceAsStream(filename).use { input ->
             try {
                 val customFont = Font.createFont(format, input)
                 graphicsEnvironment.registerFont(customFont)
             } catch (e: IOException) {
-                logger.error("IO error reading font '${filename}'", e)
+                logger.error(I18N.logFontReadError.format(filename), e)
             } catch (e: FontFormatException) {
-                logger.error("Font format error reading font '${filename}'", e)
+                logger.error(I18N.logFontFormatError.format(filename), e)
             }
         }
     }

@@ -17,6 +17,7 @@
 
 package pub.carkeys.chatter14.processor
 
+import pub.carkeys.chatter14.I18N
 import pub.carkeys.chatter14.config.ParseOptions
 import pub.carkeys.chatter14.ffxiv.ChatInfo
 import pub.carkeys.chatter14.logger
@@ -49,9 +50,9 @@ class ActLogProcessor(
      * unless the force flag was supplied.
      */
     private fun writeChats(name: String, output: Writer, chatLog: List<ChatInfo>) {
-        output.write("# Created at ${OffsetDateTime.now(clock)}\n")
+        output.write("${I18N.outputHeader.format(OffsetDateTime.now(clock))}\n")
         if (chatLog.isEmpty()) {
-            output.write("# No lines matched the criteria\n")
+            output.write("${I18N.outputNoLinesMatched}\n")
             logger.info("$name is empty")
             return
         }

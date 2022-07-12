@@ -41,7 +41,7 @@ repositories {
 project.version = scmVersion.version
 
 val applicationName: String by extra(rootProject.name)
-val applicationTitle: String by extra("Chatter XIV")
+val applicationTitle: String by extra("Chatter 14")
 val applicationVersion: String = scmVersion.version
 
 val resourceGenerationDir by extra("${buildDir}/generated_src/main/resources")

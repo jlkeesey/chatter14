@@ -18,6 +18,7 @@
 package pub.carkeys.chatter14.window
 
 import pub.carkeys.chatter14.ApplicationInfo
+import pub.carkeys.chatter14.I18N
 import pub.carkeys.chatter14.config.ParseConfiguration
 import pub.carkeys.chatter14.config.ParseOptions
 import pub.carkeys.chatter14.processor.ActLogFileHandler
@@ -107,7 +108,6 @@ class DropFrame(
      * suitably sized for a drop target.
      */
     private fun createDropLabel(): JLabel {
-        //val label = JLabel("Drag log files here!", SwingConstants.CENTER)
         val label = JLabel("", SwingConstants.CENTER)
         setImage(label, currentImage)
         label.addComponentListener(object : ComponentAdapter() {
@@ -161,7 +161,6 @@ class DropFrame(
      * Creates the top panel which contains all the controls for affecting the log processor.
      */
     private fun createTopPanel(): JPanel {
-        // val panel = JPanel(FlowLayout())
         val topPanel = JPanel(FlowLayout())
         val panel = JPanel(GridLayout(0, 2, 10, 0))
         panel.border = EmptyBorder(0, 10, 0, 0)
@@ -178,12 +177,11 @@ class DropFrame(
      * Creates the show log button.
      */
     private fun createShowLogControl(): JButton {
-        val control = JButton("Log")
+        val control = JButton(I18N.labelLog.toString())
         control.setSize(20, control.height)
         control.addActionListener {
             if (logWindow == null) {
                 logWindow = LogFrame(owner = this, title = info.title)
-                //myLogger.setMessenger(logWindow!!)
             }
             logWindow?.makeVisible()
         }
@@ -208,7 +206,7 @@ class DropFrame(
      * Creates the dry run checkbox.
      */
     private fun createDryRunControl(): JCheckBox {
-        val checkBox = JCheckBox("Dry run", options.dryRun)
+        val checkBox = JCheckBox(I18N.labelDryRun.toString(), options.dryRun)
         checkBox.addActionListener { action ->
             val cb = action.source as JCheckBox
             options.dryRun = cb.isSelected
@@ -220,7 +218,7 @@ class DropFrame(
      * Creates the process emotes checkbox.
      */
     private fun createEmotesControl(): JCheckBox {
-        val checkBox = JCheckBox("Emotes", options.includeEmotes)
+        val checkBox = JCheckBox(I18N.labelEmotes.toString(), options.includeEmotes)
         checkBox.addActionListener { action ->
             val cb = action.source as JCheckBox
             options.includeEmotes = cb.isSelected
@@ -232,12 +230,11 @@ class DropFrame(
      * Creates the force file replacement checkbox.
      */
     private fun createForceControl(): JCheckBox {
-        val checkBox = JCheckBox("Replace files", options.forceReplace)
+        val checkBox = JCheckBox(I18N.labelReplaceFiles.toString(), options.forceReplace)
         checkBox.addActionListener { action ->
             val cb = action.source as JCheckBox
             options.forceReplace = cb.isSelected
         }
         return checkBox
     }
-
 }
