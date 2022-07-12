@@ -17,8 +17,8 @@
 
 package pub.carkeys.chatter14
 
+import java.lang.Integer.min
 import java.text.MessageFormat
-import java.time.OffsetDateTime
 import java.util.*
 
 /**
@@ -55,8 +55,10 @@ class I18N private constructor() {
          * message file so that it matches the code.
          */
         fun write(appendable: Appendable) {
-            description.split("\n").forEach { line -> appendable.append("# ").append(line).append('\n') }
-            appendable.append(key).append("=").append(fallback)
+            splitToFit(description).forEach { line ->
+                appendable.append("# ").append(line).append('\n')
+            }
+            appendable.append(key).append("=").append(escapeNL(fallback))
         }
     }
 
@@ -280,7 +282,7 @@ class I18N private constructor() {
             "log_group_participant_name_missing",
             "The participant name at index {0,number,integer} of Group definition {1} is missing or blank.",
             """
-                Logged when the configuration is validated and a group has a participant whoe
+                Logged when the configuration is validated and a group has a participant whose
                 name is missing or blank.
             """.trimIndent()
         )
@@ -427,8 +429,58 @@ class I18N private constructor() {
         fun write(appendable: Appendable) {
             messages.forEach { message ->
                 message.write(appendable)
-                appendable.append("\n")
+                appendable.append("\n\n")
             }
         }
+
+        private const val maxLineLength: Int = 78
+
+        /**
+         * Escape the newlines in the given string for writing to a properties file.
+         */
+        private fun escapeNL(input: String): String {
+            return if (input.contains('\n')) {
+                input.replace("\n", "\\n\\\n")
+            } else {
+                input
+            }
+        }
+
+        /**
+         * Splits the given string in parts that are no longer than the maxLineLength.
+         */
+        private fun splitToFit(input: String): List<String> {
+            val result = mutableListOf<String>()
+            val line = StringBuilder(input.replace("\n", " "))
+            while (line.isNotEmpty()) {
+                if (line.length <= maxLineLength) {
+                    result.add(line.toString().trim())
+                    break
+                }
+                var didOutput = false
+                val end = min(line.length - 1, maxLineLength)
+                for (i in end downTo 0) {
+                    if (Character.isSpaceChar(line[i])) {
+                        result.add(line.substring(0, i).trim())
+                        var ind = i
+                        while (ind < line.length && Character.isSpaceChar(line[ind])) {
+                            ind++
+                        }
+                        line.delete(0, ind)
+                        didOutput = true
+                        break
+                    }
+                }
+                if (!didOutput) {
+                    result.add(line.substring(0, maxLineLength).trim())
+                    line.delete(0, maxLineLength)
+                }
+            }
+            return result
+        }
     }
+}
+
+fun main() {
+    I18N.write(System.out)
 }
