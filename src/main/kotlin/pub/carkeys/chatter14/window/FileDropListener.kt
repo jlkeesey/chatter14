@@ -27,6 +27,7 @@ import java.awt.datatransfer.DataFlavor
 import java.awt.dnd.*
 import java.io.File
 
+
 /**
  * Listens to file drop messages and invokes the log processor for each one.
  *
@@ -63,8 +64,6 @@ class FileDropListener(
     /**
      * Handle dragging into the component. We change the background color to show that a drop is
      * possible.
-     *
-     * TODO: this should look for file types and only signal acceptance if they are files.
      */
     override fun dragEnter(event: DropTargetDragEvent?) {
         panel.randomImage()

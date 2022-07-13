@@ -63,6 +63,8 @@ class DropFrame(
     private var currentImage = normalImage
     private val label = createDropLabel()
 
+    private val dropColor = Color(0.22353f, 0.67451f, 0.45098f)
+
     init {
         defaultCloseOperation = DISPOSE_ON_CLOSE
         val panelSize = Dimension(350, 200)
@@ -86,12 +88,14 @@ class DropFrame(
     fun resetImage() {
         currentImage = normalImage
         setImage(label, currentImage)
+        label.background = Color.WHITE
     }
 
     fun randomImage() {
         currentImage = randomImages[imageIndex]
         imageIndex = (imageIndex + 1) % randomImages.size
         setImage(label, currentImage)
+        label.background = dropColor
     }
 
     private fun loadImage(name: String): BufferedImage {
@@ -99,7 +103,6 @@ class DropFrame(
             "Image $name was not found", DropFrame::class.java.name, name
         )
         return ImageIO.read(stream)
-
     }
 
     /**
