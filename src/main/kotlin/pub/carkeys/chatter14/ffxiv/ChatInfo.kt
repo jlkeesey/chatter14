@@ -57,10 +57,22 @@ data class ChatInfo(
             )
         }
 
+        /**
+         * Parses the timestamp string from the log.
+         */
         private fun parseTimestamp(timestamp: String): OffsetDateTime {
             return OffsetDateTime.parse(timestamp, timestampParser)
         }
 
+        /**
+         * Parses the chat code type into the proper ChatCode. If the name is not a valid user name
+         * then this is some sort of system generate message and should not be handled as a user chat
+         * code.
+         *
+         * @param code the code to parse.
+         * @param name the name to check for being a system message.
+         * @return the corresponding ChatCode.
+         */
         private fun parseCode(code: String, name: String): ChatCode {
             if (name.isEmpty()) {
                 return ChatCode.OTHER
@@ -76,8 +88,7 @@ data class ChatInfo(
          * unlikely, partly because people rarely spell out worlds correctly.
          */
         private fun cleanUpMsg(options: ParseOptions, msg: String, fullName: String): String {
-            // TODO: we should remove the user name if it starts the message
-            var result = msg
+            var result = stripPrivateUse(msg)
             var changed = true
             while (changed) {
                 changed = false
@@ -99,20 +110,11 @@ data class ChatInfo(
         }
 
         /**
-         * Cleans up the name. We remove any of the high Unicode values because they don't display
-         * correctly. If the name is recognized, we convert it to a short form.
-         *
-         * NOTE: this may have to be revisited in asian countries.
-         *
-         * TODO: maybe it would be better to just remove the known offending characters or possibly
-         *     from the one plane that they are in. I believe it is a user plane.
+         * Cleans up the name. If the name is recognized, we convert it to a short form.
          */
         private fun cleanUpName(options: ParseOptions, name: String): String {
-            var result = name
+            var result = stripPrivateUse(name)
             if (result.isNotEmpty()) {
-                if (result[0].code > 0x1000) {
-                    result = result.substring(1)
-                }
                 options.dataCenter.servers.forEach { world ->
                     if (result.endsWith(world)) {
                         result = result.substring(0, result.length - world.length)
@@ -121,6 +123,19 @@ data class ChatInfo(
             }
             result = result.trim()
             return result
+        }
+
+        /**
+         * Returns the given string with all characters from the lower private use are removed.
+         * FFXIV uses the private use area for certain special characters that are not part of the
+         * Unicode standard (exactly what the private use area is for). However, these do not display
+         * properly one any other medium so we remove them to prevent the output from looking messy.
+         *
+         * NOTE: currently we only strip out the lower private use block as FFXIV does not seem to
+         * use the high block.
+         */
+        private fun stripPrivateUse(text: String): String {
+            return text.filter { ch -> ch.code !in 0xE000..0xF8FF }
         }
 
         /**

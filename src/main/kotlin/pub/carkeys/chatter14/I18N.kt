@@ -43,7 +43,10 @@ class I18N private constructor() {
         }
 
         override fun toString(): String {
-            return message
+            // We need to invoke MessageFormat even if there are no replacement parameters
+            // so that single quotes are handled the same. Having some lines need doubled
+            // single quotes and some not would be too confusing.
+            return format()
         }
 
         fun format(vararg values: Any): String {
@@ -71,13 +74,6 @@ class I18N private constructor() {
          */
         private val bundle = ResourceBundle.getBundle(
             "pub.carkeys.chatter14.i18n.messages", Locale.getDefault(), Companion::class.java.classLoader
-        )
-
-        val applicationName = Message(
-            "application_name", "Chatter 14", """
-                The name of this application. Not sure if this should be translated but here it 
-                is in case it should be.
-            """.trimIndent()
         )
 
         val defaultDataCenterNotFound = Message(
@@ -376,7 +372,6 @@ class I18N private constructor() {
          * of this list to simplify translation. DO NOT SORT this list.
          */
         private val messages = listOf(
-            applicationName,
             defaultDataCenterNotFound,
             dataCenterDefinitionsNotLoaded,
             applicationPropertiesLoadFailed,
