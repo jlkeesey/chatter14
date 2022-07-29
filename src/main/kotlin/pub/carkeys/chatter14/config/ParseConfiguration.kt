@@ -30,14 +30,18 @@ import pub.carkeys.chatter14.logger
  * application: ParseConfiguration and friends.
  *
  * @property dryRun true if no output file should be generated.
- * @property replaceIfExists true if an existing output file should be replaced, otherwise it
- *     will be skipped.
+ * @property replaceIfExists true if an existing output file should be replaced, otherwise
+ *     it will be skipped.
  * @property includeEmotes true if emote "chat" lines should be included in the output.
- * @property dataCenter the data center name this chat is from. Used to process server names.
- * @property server the name of the server the main user is from. Generally this will be the
- *     user that is executing this application. This server will not be included in the output.
- * @property performRename true if usernames should be renamed according to the renames list.
- * @property renames any username renames, usually used to shorten the names of common users.
+ * @property dataCenter the data center name this chat is from. Used to process server
+ *     names.
+ * @property server the name of the server the main user is from. Generally this will be
+ *     the user that is executing this application.
+ *     This server will not be included in the output.
+ * @property performRename true if usernames should be renamed according to the renames
+ *     list.
+ * @property renames any username renames, usually used to shorten the names of common
+ *     users.
  * @property groups the group definitions. One of these will be used to process the files.
  */
 data class ParseConfiguration(
@@ -108,8 +112,8 @@ data class ParseConfiguration(
     }
 
     /**
-     * Validates the configuration for consistency. Throw an IllegalArgumentException if there
-     * are any violations.
+     * Validates the configuration for consistency. Throw an IllegalArgumentException if
+     * there are any violations.
      */
     fun validate() {
         var hasError = false

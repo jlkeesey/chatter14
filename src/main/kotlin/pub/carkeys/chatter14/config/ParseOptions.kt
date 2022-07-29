@@ -28,9 +28,10 @@ import pub.carkeys.chatter14.ffxiv.Universe
  *     will be skipped.
  * @property includeEmotes true if emote "chat" lines should be included in the output.
  * @property dataCenter the data center this chat is from. Used to process server names.
- * @property group what lines should be kept in the output. This is usually a list of users
- *     whose chats are desired.
- * @property renames any username renames, usually used to shorten the names of common users.
+ * @property group what lines should be kept in the output. This is usually a list of
+ *     users whose chats are desired.
+ * @property renames any username renames, usually used to shorten the names of common
+ *     users.
  */
 data class ParseOptions(
     var windowed: Boolean = false,

@@ -28,10 +28,12 @@ class I18N private constructor() {
     /**
      * Defines a translatable string.
      *
-     * @property key the key used to lookup the message in the locale specific resource bundle.
+     * @property key the key used to lookup the message in the locale specific resource
+     *     bundle.
      * @property fallback the fallback string when the key is not found in the bundle.
-     * @property description the description of the string to help the translators translate the
-     *     string. This will be written to the default message bundle as a comment.
+     * @property description the description of the string to help the translators
+     *     translate the string. This will be written
+     *     to the default message bundle as a comment.
      */
     class Message(private val key: String, private val fallback: String, private val description: String) {
         private val message: String by lazy {
@@ -54,8 +56,8 @@ class I18N private constructor() {
         }
 
         /**
-         * Writes this message to the given Appendable. This is only used to create the default
-         * message file so that it matches the code.
+         * Writes this message to the given Appendable. This is only used to create the
+         * default message file so that it matches the code.
          */
         fun write(appendable: Appendable) {
             splitToFit(description).forEach { line ->
@@ -69,8 +71,9 @@ class I18N private constructor() {
         /**
          * The appropriate message bundle based on the current locale.
          *
-         * NOTE: In the current system, this is only called once at startup time so changing the
-         * locale after the application starts will have no effect on this application.
+         * NOTE: In the current system, this is only called once at startup time so
+         * changing the locale after the application starts will have no effect on this
+         * application.
          */
         private val bundle = ResourceBundle.getBundle(
             "pub.carkeys.chatter14.i18n.messages", Locale.getDefault(), Companion::class.java.classLoader
@@ -368,8 +371,8 @@ class I18N private constructor() {
         )
 
         /**
-         * All of the translatable strings of the system. All new messages should be added at the end
-         * of this list to simplify translation. DO NOT SORT this list.
+         * All of the translatable strings of the system. All new messages should be added
+         * at the end of this list to simplify translation. DO NOT SORT this list.
          */
         private val messages = listOf(
             defaultDataCenterNotFound,
@@ -418,8 +421,8 @@ class I18N private constructor() {
         )
 
         /**
-         * Writes out all of the messages, in order, to the given Appendable. This is only used to
-         * create the default message file so that it matches the code.
+         * Writes out all of the messages, in order, to the given Appendable. This is only
+         * used to create the default message file so that it matches the code.
          */
         fun write(appendable: Appendable) {
             messages.forEach { message ->

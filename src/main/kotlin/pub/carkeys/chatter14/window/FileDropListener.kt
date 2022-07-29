@@ -31,15 +31,15 @@ import java.io.File
 /**
  * Listens to file drop messages and invokes the log processor for each one.
  *
- * I get the felling that there is a newer, better way of doing this, but it works for this
- * simple situation so why mess with it?
+ * I get the felling that there is a newer, better way of doing this, but it works for
+ * this simple situation so why mess with it?
  */
 class FileDropListener(
     private val options: ParseOptions, private val panel: DropFrame, private val fileHandler: ActLogFileHandler,
 ) : DropTargetListener {
     /**
-     * Handles the drop action on the control. For each drop item if it is a file type we collect
-     * it into a list and the pass the list to log processor to handle each one.
+     * Handles the drop action on the control. For each drop item if it is a file type we
+     * collect it into a list and the pass the list to log processor to handle each one.
      */
     @OptIn(DelicateCoroutinesApi::class)
     override fun drop(event: DropTargetDropEvent) {
@@ -62,8 +62,8 @@ class FileDropListener(
     }
 
     /**
-     * Handle dragging into the component. We change the background color to show that a drop is
-     * possible.
+     * Handle dragging into the component. We change the background color to show that a
+     * drop is possible.
      */
     override fun dragEnter(event: DropTargetDragEvent?) {
         panel.randomImage()

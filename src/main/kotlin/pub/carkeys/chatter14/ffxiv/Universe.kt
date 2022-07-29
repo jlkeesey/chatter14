@@ -24,8 +24,8 @@ import pub.carkeys.chatter14.config.ConfigurationIO
 
 /**
  * The complete set of data centers for Final Fantasy 14. The data is read from a
- * configuration file so that it can be updated if there are any changes between releases of
- * this application.
+ * configuration file so that it can be updated if there are any changes between releases
+ * of this application.
  *
  * @property dataCenters the list of data centers.
  */
@@ -60,8 +60,8 @@ data class Universe(val dataCenters: List<DataCenter> = listOf()) {
         private val INSTANCE: Universe by lazy { read() }
 
         /**
-         * The default data center to use if no other center is specified. Currently set to Crystal
-         * because that's my data center.
+         * The default data center to use if no other center is specified. Currently set
+         * to Crystal because that's my data center.
          */
         val DEFAULT: DataCenter by lazy {
             INSTANCE["Crystal"] ?: throw ChatterConfigurationException(I18N.defaultDataCenterNotFound)
@@ -83,8 +83,8 @@ data class Universe(val dataCenters: List<DataCenter> = listOf()) {
         private val dataCenterFiles = listOf(".chatter14.datacenters.toml", "chatter14.datacenters.toml")
 
         /**
-         * Default data center configuration resource name. This is loaded if no other configuration
-         * is present.
+         * Default data center configuration resource name. This is loaded if no other
+         * configuration is present.
          */
         private const val defaultDataCenterConfiguration = "datacenters.toml"
 

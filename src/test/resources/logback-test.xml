@@ -28,6 +28,6 @@ can be ignored. If they can be ignored why are they warnings?
         </encoder>
     </appender>
     <root level="error">
-        <appender-ref ref="STDOUT" />
+        <appender-ref ref="STDOUT"/>
     </root>
 </configuration>

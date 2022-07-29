@@ -106,9 +106,9 @@ class DropFrame(
     }
 
     /**
-     * Creates the label which is the drop target for this application. The label is added to the
-     * BorderLayout.CENTER which makes if fill all remaining space after the controls, so it is
-     * suitably sized for a drop target.
+     * Creates the label which is the drop target for this application. The label is
+     * added to the BorderLayout.CENTER which makes if fill all remaining space after the
+     * controls, so it is suitably sized for a drop target.
      */
     private fun createDropLabel(): JLabel {
         val label = JLabel("", SwingConstants.CENTER)
@@ -161,7 +161,8 @@ class DropFrame(
     }
 
     /**
-     * Creates the top panel which contains all the controls for affecting the log processor.
+     * Creates the top panel which contains all the controls for affecting the log
+     * processor.
      */
     private fun createTopPanel(): JPanel {
         val topPanel = JPanel(FlowLayout())

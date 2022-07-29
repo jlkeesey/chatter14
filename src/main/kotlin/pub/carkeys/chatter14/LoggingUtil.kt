@@ -21,8 +21,8 @@ import org.apache.logging.log4j.Logger
 import kotlin.reflect.full.companionObject
 
 /**
- * Return the logger for this class. If this class is a companion object, gets the logger for
- * the containing class.
+ * Return the logger for this class. If this class is a companion object, gets the logger
+ * for the containing class.
  */
 fun <R : Any> R.logger(): Lazy<Logger> {
     return lazy { logger(this.javaClass) }

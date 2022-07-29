@@ -30,8 +30,8 @@ import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
 
 /**
- * The log processor. This parsers the given Reader as an ACT log, filters for the requested
- * items, and then writes them to the given Writer.
+ * The log processor. This parsers the given Reader as an ACT log, filters for the
+ * requested items, and then writes them to the given Writer.
  */
 class ActLogProcessor(
     private val parser: ActLogParser = ActLogParser(),
@@ -46,8 +46,8 @@ class ActLogProcessor(
     }
 
     /**
-     * Writes the filtered contents to the target file. We fail if the target already exists
-     * unless the force flag was supplied.
+     * Writes the filtered contents to the target file. We fail if the target already
+     * exists unless the force flag was supplied.
      */
     private fun writeChats(name: String, output: Writer, chatLog: List<ChatInfo>) {
         output.write("${I18N.outputHeader.format(OffsetDateTime.now(clock))}\n")

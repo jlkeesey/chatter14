@@ -48,16 +48,16 @@ class ConfigurationIO(
     }
 
     /**
-     * Tries to read the configuration from each of the files and default resource. If none of
-     * them can be read, the defaultValue is returned.
+     * Tries to read the configuration from each of the files and default resource. If
+     * none of them can be read, the defaultValue is returned.
      */
     inline fun <reified T : Any> read(defaultValue: T): T {
         return mapper.decodeWithDefaults(defaultValue, readConfigFile())
     }
 
     /**
-     * Reads the given configuration file and returns the contents as a string. Null is returned
-     * if the file cannot be read.
+     * Reads the given configuration file and returns the contents as a string. Null is
+     * returned if the file cannot be read.
      */
     fun readConfigFile(): String {
         try {
@@ -71,10 +71,10 @@ class ConfigurationIO(
     }
 
     /**
-     * Returns a File object for the first configuration file found in the given list. Each file
-     * is tested in the current directory and then user's home directory. If no configuration
-     * file is found, then we attempt to open the defaultConfigResourceName as a resource. If
-     * that is not found, null is returned.
+     * Returns a File object for the first configuration file found in the given list.
+     * Each file is tested in the current directory and then user's home directory. If no
+     * configuration file is found, then we attempt to open the defaultConfigResourceName
+     * as a resource. If that is not found, null is returned.
      */
     private fun findConfigurationFile(filenames: List<String>): InputStream? {
         val home = System.getProperty("user.home", ".")

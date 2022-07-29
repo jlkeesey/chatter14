@@ -43,8 +43,8 @@ import java.util.MissingResourceException
  * @property config the ParseConfig to use to parse any files.
  * @property info the application info.
  * @property windowManager the window manager to use if windowed is requested.
- * @property fileHandler the file handler to use. This will be used by both the command line
- *     and windowed.
+ * @property fileHandler the file handler to use. This will be used by both the command
+ *     line and windowed.
  */
 class Application(
     private val config: ParseConfiguration,
@@ -154,12 +154,13 @@ class Application(
         private val logger by logger()
 
         /**
-         * Main entry point for the application. We read the configuration file if present then
-         * invoke the command line processing library to handle and command line arguments which then
-         * invokes the run() method of our application class.
+         * Main entry point for the application. We read the configuration file if present
+         * then invoke the command line processing library to handle and command line
+         * arguments which then invokes the run() method of our application class.
          *
-         * This is only present because we need to load the configuration file before starting the
-         * command line processing as the configuration can affect the command line processing.
+         * This is only present because we need to load the configuration file before
+         * starting the command line processing as the configuration can affect the
+         * command line processing.
          */
         fun start(args: Array<String>) {
             try {
@@ -167,7 +168,7 @@ class Application(
                 val info = ApplicationInfo.load()
                 val config = ParseConfiguration.read()
                 Application(config = config, info = info).main(args)
-            } catch (e:MissingResourceException) {
+            } catch (e: MissingResourceException) {
                 logger.error(e.localizedMessage, e)
             } catch (e: ChatterConfigurationException) {
                 logger.error(e.localizedMessage)

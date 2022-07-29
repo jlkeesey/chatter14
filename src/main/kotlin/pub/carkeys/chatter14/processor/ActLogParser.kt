@@ -25,8 +25,8 @@ import java.io.Reader
 class ActLogParser {
 
     /**
-     * Returns a sequence of filtered ChatInfo objects from the reader. This filters for the info
-     * objects that match the user's requirements.
+     * Returns a sequence of filtered ChatInfo objects from the reader. This filters for
+     * the info objects that match the user's requirements.
      */
     fun readLog(reader: Reader, options: ParseOptions): List<ChatInfo> {
         return readChats(reader, options).filter { info ->

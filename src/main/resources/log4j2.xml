@@ -29,8 +29,8 @@
                 <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
             </PatternLayout>
             <Policies>
-                <OnStartupTriggeringPolicy />
-                <TimeBasedTriggeringPolicy />
+                <OnStartupTriggeringPolicy/>
+                <TimeBasedTriggeringPolicy/>
                 <SizeBasedTriggeringPolicy size="10 MB"/>
             </Policies>
         </RollingFile>

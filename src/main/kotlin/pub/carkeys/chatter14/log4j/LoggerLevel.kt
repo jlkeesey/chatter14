@@ -24,8 +24,8 @@ import org.apache.logging.log4j.core.config.Configuration
 import org.apache.logging.log4j.core.config.LoggerConfig
 
 /**
- * Sets the logging level for the given logger and all of its children. The default is to set
- * the level for the root logger.
+ * Sets the logging level for the given logger and all of its children. The default is to
+ * set the level for the root logger.
  */
 fun loggerLevel(level: Level, loggerName: String = LogManager.ROOT_LOGGER_NAME) {
     val context: LoggerContext = LogManager.getContext(false) as LoggerContext

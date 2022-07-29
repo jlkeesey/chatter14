@@ -23,8 +23,8 @@ import pub.carkeys.chatter14.logger
 import java.io.File
 
 /**
- * The ACT log processor. This reads each log file in turn, filters for the requested items,
- * and then writes them to a file.
+ * The ACT log processor. This reads each log file in turn, filters for the requested
+ * items, and then writes them to a file.
  */
 class ActLogFileHandler(
     private val processor: ActLogProcessor = ActLogProcessor(),

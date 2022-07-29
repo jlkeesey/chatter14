@@ -24,8 +24,8 @@ import java.time.format.DateTimeFormatterBuilder
 import java.time.temporal.ChronoField
 
 /**
- * Contains the parsed information from a log line. This only captures chat and emote types
- * which the logs basically treat as the same.
+ * Contains the parsed information from a log line. This only captures chat and emote
+ * types which the logs basically treat as the same.
  */
 data class ChatInfo(
     val lineNumber: Int,
@@ -40,8 +40,8 @@ data class ChatInfo(
 
     companion object {
         /**
-         * This should be used to construct new ChatInfo objects as it massages the data into a clean
-         * form.
+         * This should be used to construct new ChatInfo objects as it massages the data
+         * into a clean form.
          */
         fun create(
             options: ParseOptions, lineNumber: Int, name: String, code: String, msg: String, timestamp: String,
@@ -65,9 +65,9 @@ data class ChatInfo(
         }
 
         /**
-         * Parses the chat code type into the proper ChatCode. If the name is not a valid user name
-         * then this is some sort of system generate message and should not be handled as a user chat
-         * code.
+         * Parses the chat code type into the proper ChatCode. If the name is not a valid
+         * user name then this is some sort of system generate message and should not be
+         * handled as a user chat code.
          *
          * @param code the code to parse.
          * @param name the name to check for being a system message.
@@ -81,11 +81,12 @@ data class ChatInfo(
         }
 
         /**
-         * Cleans up the message. We remove any mention of a world as that is just messy. We only
-         * remove the world if it is abutted to the previous word and that signifies that it is part
-         * of a name. We only want to remove the world if it is part of a name. This is not perfect
-         * as a typo that leaves out the space before a world will be removed, but that should be
-         * unlikely, partly because people rarely spell out worlds correctly.
+         * Cleans up the message. We remove any mention of a world as that is just messy.
+         * We only remove the world if it is abutted to the previous word and that
+         * signifies that it is part of a name. We only want to remove the world if it is
+         * part of a name. This is not perfect as a typo that leaves out the space before
+         * a world will be removed, but that should be unlikely, partly because people
+         * rarely spell out worlds correctly.
          */
         private fun cleanUpMsg(options: ParseOptions, msg: String, fullName: String): String {
             var result = stripPrivateUse(msg)
@@ -126,21 +127,22 @@ data class ChatInfo(
         }
 
         /**
-         * Returns the given string with all characters from the lower private use are removed.
-         * FFXIV uses the private use area for certain special characters that are not part of the
-         * Unicode standard (exactly what the private use area is for). However, these do not display
-         * properly one any other medium so we remove them to prevent the output from looking messy.
+         * Returns the given string with all characters from the lower private use are
+         * removed. FFXIV uses the private use area for certain special characters that
+         * are not part of the Unicode standard (exactly what the private use area is
+         * for). However, these do not display properly one any other medium so we remove
+         * them to prevent the output from looking messy.
          *
-         * NOTE: currently we only strip out the lower private use block as FFXIV does not seem to
-         * use the high block.
+         * NOTE: currently we only strip out the lower private use block as FFXIV does not
+         * seem to use the high block.
          */
         private fun stripPrivateUse(text: String): String {
             return text.filter { ch -> ch.code !in 0xE000..0xF8FF }
         }
 
         /**
-         * This "formatter" is used only to parse the timestamp from the log file which has a
-         * specific format.
+         * This "formatter" is used only to parse the timestamp from the log file which
+         * has a specific format.
          */
         private val timestampParser = DateTimeFormatterBuilder()
             .parseCaseInsensitive()
