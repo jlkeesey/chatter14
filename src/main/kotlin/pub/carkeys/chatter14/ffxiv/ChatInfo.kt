@@ -47,14 +47,25 @@ data class ChatInfo(
             options: ParseOptions, lineNumber: Int, name: String, code: String, msg: String, timestamp: String,
         ): ChatInfo {
             val cleanName = cleanUpName(options, name)
+            val parsedCode = parseCode(code, cleanName)
+            val shortName = cleanUpShortName(options, parsedCode, cleanName)
             return ChatInfo(
                 lineNumber = lineNumber,
                 name = cleanName,
-                shortName = options.renames[cleanName] ?: cleanName,
-                code = parseCode(code, cleanName),
+                shortName = shortName,
+                code = parsedCode,
                 msg = cleanUpMsg(options, msg, cleanName),
                 timestamp = parseTimestamp(timestamp)
             )
+        }
+
+        private fun cleanUpShortName(options: ParseOptions, parsedCode: ChatCode, name: String): String {
+            val renamedName = options.renames[name] ?: name
+            return if (options.me.isBlank() || parsedCode != ChatCode.TELL_TO) {
+                renamedName
+            } else {
+                options.me
+            }
         }
 
         /**

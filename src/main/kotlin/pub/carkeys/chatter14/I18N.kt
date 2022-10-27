@@ -370,6 +370,12 @@ class I18N private constructor() {
             """.trimIndent()
         )
 
+        val logMissingMeError = Message(
+            "log_missing_me", "The me configuration field cannot be blank", """
+                Logged when the me configuration field is set to blank.
+            """.trimIndent()
+        )
+
         /**
          * All of the translatable strings of the system. All new messages should be added
          * at the end of this list to simplify translation. DO NOT SORT this list.

@@ -60,6 +60,14 @@ internal class ParseConfigurationTest {
         }
 
         @Test
+        fun `validate missing me`() {
+            val bad = config.copy(me = "")
+            shouldThrow<ChatterConfigurationException> {
+                bad.validate()
+            }
+        }
+
+        @Test
         fun asOptions() {
             val options = config.asOptions()
 
@@ -67,6 +75,7 @@ internal class ParseConfigurationTest {
                 dryRun = config.dryRun,
                 forceReplace = config.replaceIfExists,
                 includeEmotes = config.includeEmotes,
+                me = "Me",
                 dataCenter = config.dataCenter,
                 renames = config.renames
             )
@@ -81,6 +90,7 @@ internal class ParseConfigurationTest {
                 datacenter = "Crystal"
                 dryRun = true
                 includeEmotes = false
+                me = "Me"
                 performRename = false
                 replaceIfExists = true
                 server = "Zalera"

@@ -28,9 +28,8 @@ enum class ChatCode(val code: String, val type: ChatType) {
     SAY("000A", ChatType.CHAT),
     YELL("001E", ChatType.CHAT),
     SHOUT("000B", ChatType.CHAT),
-    TELL("000C", ChatType.CHAT),
-    // Don't know what 000D really is but it seems to be similar to tell
-    TELL2("000D", ChatType.CHAT),
+    TELL_TO("000C", ChatType.CHAT), // A tell to another player
+    TELL_FROM("000D", ChatType.CHAT), // A tell from another player
     FREE_COMPANY("0018", ChatType.CHAT),
     PARTY("000E", ChatType.CHAT),
     ALLIANCE("000F", ChatType.CHAT),
@@ -59,8 +58,8 @@ enum class ChatCode(val code: String, val type: ChatType) {
             SAY.code to SAY,
             YELL.code to YELL,
             SHOUT.code to SHOUT,
-            TELL.code to TELL,
-            TELL2.code to TELL2,
+            TELL_TO.code to TELL_TO,
+            TELL_FROM.code to TELL_FROM,
             FREE_COMPANY.code to FREE_COMPANY,
             PARTY.code to PARTY,
             ALLIANCE.code to ALLIANCE,

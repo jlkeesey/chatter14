@@ -38,6 +38,7 @@ data class ParseOptions(
     var dryRun: Boolean = false,
     var forceReplace: Boolean = false,
     var includeEmotes: Boolean = false,
+    var me: String = "Me",
     val dataCenter: Universe.DataCenter = Universe.DEFAULT,
     var group: ParseConfiguration.Group = ParseConfiguration.everyone,
     val renames: Map<String, String> = mutableMapOf(),

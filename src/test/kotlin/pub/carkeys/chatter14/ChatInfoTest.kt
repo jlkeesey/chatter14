@@ -34,7 +34,7 @@ internal class ChatInfoTest {
     private val expectedTimestamp = OffsetDateTime.of(2022, 6, 4, 12, 17, 32, 0, ZoneOffset.ofHours(-7))
     private val stringTimestamp = "2022-06-04T12:17:32.0000000-07:00"
     private val expectedName = "Shooty McShootFace"
-    private val expectedCode = ChatCode.TELL
+    private val expectedCode = ChatCode.SAY
     private val expectedLinenumber = 1745
     private val expectedMessage = "Say something"
     private val expectedChatInfo = ChatInfo(

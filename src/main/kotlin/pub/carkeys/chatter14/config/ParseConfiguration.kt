@@ -36,8 +36,8 @@ import pub.carkeys.chatter14.logger
  * @property dataCenter the data center name this chat is from. Used to process server
  *     names.
  * @property server the name of the server the main user is from. Generally this will be
- *     the user that is executing this application.
- *     This server will not be included in the output.
+ *     the user that is executing this application. This server will not be included in
+ *     the output.
  * @property performRename true if usernames should be renamed according to the renames
  *     list.
  * @property renames any username renames, usually used to shorten the names of common
@@ -49,6 +49,7 @@ data class ParseConfiguration(
     val replaceIfExists: Boolean = false,
     val includeEmotes: Boolean = true,
     val performRename: Boolean = true,
+    val me: String = "Me",
     val dataCenterName: String = "Crystal",
     val server: String = "Zalera",
     val renames: Map<String, String> = mapOf(),
@@ -117,6 +118,12 @@ data class ParseConfiguration(
      */
     fun validate() {
         var hasError = false
+        if (me.isBlank()) {
+            logger.error(
+                I18N.logMissingMeError
+            )
+            hasError = true
+        }
         if (Universe[dataCenterName] == null) {
             logger.error(
                 I18N.logInvalidDataCenterName.format(dataCenterName, Universe.dataCenterNames.joinToString(", "))
@@ -150,7 +157,7 @@ data class ParseConfiguration(
         groupLabels: MutableSet<String>,
     ): Boolean {
         var hasError = false
-        if (groupEntry.theShortName == null || groupEntry.theShortName.isBlank()) {
+        if (groupEntry.theShortName.isNullOrBlank()) {
             logger.error(I18N.logGroupMissingShortName.format(index))
             hasError = true
         }
@@ -159,7 +166,7 @@ data class ParseConfiguration(
             hasError = true
         }
         groupShortNames.add(groupEntry.shortName)
-        if (groupEntry.theLabel == null || groupEntry.theLabel.isBlank()) {
+        if (groupEntry.theLabel.isNullOrBlank()) {
             logger.error(I18N.logGroupMissingLabel.format(index))
             hasError = true
         }
@@ -189,6 +196,7 @@ data class ParseConfiguration(
             dryRun = dryRun,
             forceReplace = replaceIfExists,
             includeEmotes = includeEmotes,
+            me = me,
             dataCenter = dataCenter,
             renames = if (performRename) renames.toMap() else mapOf()
         )
